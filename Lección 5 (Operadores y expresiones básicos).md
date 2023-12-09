@@ -87,6 +87,18 @@ Hay dos operadores unarios especiales sobre `Number` que se comporta de una mane
 2. Decremento (`--`):
    El operador de decremento puede utilizarse de manera análoga a las dos manera de utilizar el `Incremento`, solamente que en lugar de sumar, debe restar.
 
+### Castear un String a un Number.
+
+En general, JavaScript intentará convertir un `String` a un `Number` si hacemos algunas operaciones. Por consiguiente, podemos convertir un `String` a un `Number` simplemente usando el operador unario `+`. De forma general, sea `x una variable, constante o valor del tipo String`, si hacemos `+x`, entonces si `x` está compuesto solamente de números entonces va a devolver `x` convertido a un `Number`, pero en caso de no poder va a devolver `NaN`.
+
+Veamos los siguientes ejemplo:
+
+```javascript
+console.log(+"1234"); // Imprime 1234 (ya que es un Number).
+
+console.log(+"1234ssad"); // Imprime NaN (ya que no puede convertirlo a Number).
+```
+
 ## Operadores de String.
 
 Aquí podemos encontrar el operador de `concatenación`, el cuál se simboliza como un `+`. Sea `x una variable, constante o valor del tipo String` y sea `z una variable, constante o valor del tipo String`, entonces `x + y` lo que hace es concatenar el valor de `z` detrás del valor de `x`. Por ejemplo:
@@ -116,7 +128,7 @@ Todos los operadores de comparación dan como resultado un valor `Boolean`. Sea 
 | Mayor que               | `x > z`   | Devuelve `true` si el valor del lado izquierdo es mayor que el valor del lado derecho. En caso contrario, da `false`         | `1000 > 1` da como resultado `true`   |
 | Mayor o igual que       | `x >= z`  | Devuelve `true` si el valor del lado izquierdo es mayor o igual que el valor del lado derecho.                               | `1 >= 1` da como resultado `true`     |
 | Menor que               | `x < z`   | Devuelve `true` si el valor del lado izquierdo es menor que el valor del lado derecho. En caso contrario, da `false`         | `1000 < 1` da como resultado `false`  |
-| Menor o igual que       | `x >= z`  | Devuelve `true` si el valor del lado izquierdo es menor o igual que el valor del lado derecho.                               | `1 <= 100` da como resultado `true`   |
+| Menor o igual que       | `x <= z`  | Devuelve `true` si el valor del lado izquierdo es menor o igual que el valor del lado derecho.                               | `1 <= 100` da como resultado `true`   |
 
 ## Operadores de lógicos.
 

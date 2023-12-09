@@ -9,5 +9,6 @@
 7. Agregar una lección sobre sentencias de control.
 8. Agregar una lección sobre sentencias de iteración.
 8. Agregar una lección sobre algunas estructuras de datos definidas por defecto como el `Map` o el `Set`.
+9. Agregar una lección sobre métodos de string: https://www.w3schools.com/js/js_string_methods.asp
 
 
