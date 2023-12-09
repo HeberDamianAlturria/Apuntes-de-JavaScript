@@ -86,3 +86,44 @@ Hay dos operadores unarios especiales sobre `Number` que se comporta de una mane
 
 2. Decremento (`--`):
    El operador de decremento puede utilizarse de manera análoga a las dos manera de utilizar el `Incremento`, solamente que en lugar de sumar, debe restar.
+
+## Operadores de String.
+
+Aquí podemos encontrar el operador de `concatenación`, el cuál se simboliza como un `+`. Sea `x una variable, constante o valor del tipo String` y sea `z una variable, constante o valor del tipo String`, entonces `x + y` lo que hace es concatenar el valor de `z` detrás del valor de `x`. Por ejemplo:
+
+```javascript
+const x = "Hola ",
+  y = "Mundo";
+console.log(x + y); // Imprime "Hola Mundo".
+```
+
+También cabe mencionar que si intentamos utilizar el `operador de concatenación` entre un String y un Number, el resultado será un String que tendrá concatenado el Number como si fuese un String. Por ejemplo:
+
+```javascript
+console.log("Hola " + 1234); // Imprime "Hola 1234".
+```
+
+## Operadores de comparación.
+
+Todos los operadores de comparación dan como resultado un valor `Boolean`. Sea `x una variable, constante o valor` y sea `z una variable, constante o valor` donde puede suceder que `x` y `z` tengan `distinto tipo`. Entonces, tenemos:
+
+| Nombre                  | Operador  | Descripción                                                                                                                  | Ejemplo                               |
+| ----------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Igualdad no estricta    | `x == z`  | Devuelve `true` si los valores son iguales, sin importar el tipo. En caso contrario, da `false`                              | `"3" == 3` da como resultado `true`   |
+| Desigualdad no estricta | `x != z`  | Devuelve `true` si los valores son distintos, sin importar el tipo. En caso contrario, da `false`                            | `"3" != 23` da como resultado `true`  |
+| Igualdad estricta       | `x === z` | Devuelve `true` si los valores son iguales y del mismo tipo. En caso contrario, da `false`                                   | `"3" === 3` da como resultado `false` |
+| Desigualdad estricta    | `x !== z` | Devuelve `true` si los valores son del mismo tipo pero no iguales, o si son de diferente tipo. En caso contrario, da `false` | `"3" !== 3` da como resultado `true`  |
+| Mayor que               | `x > z`   | Devuelve `true` si el valor del lado izquierdo es mayor que el valor del lado derecho. En caso contrario, da `false`         | `1000 > 1` da como resultado `true`   |
+| Mayor o igual que       | `x >= z`  | Devuelve `true` si el valor del lado izquierdo es mayor o igual que el valor del lado derecho.                               | `1 >= 1` da como resultado `true`     |
+| Menor que               | `x < z`   | Devuelve `true` si el valor del lado izquierdo es menor que el valor del lado derecho. En caso contrario, da `false`         | `1000 < 1` da como resultado `false`  |
+| Menor o igual que       | `x >= z`  | Devuelve `true` si el valor del lado izquierdo es menor o igual que el valor del lado derecho.                               | `1 <= 100` da como resultado `true`   |
+
+## Operadores de lógicos.
+
+Generalmente, los `operadores de comparación` suelen utilizarse con `operadores lógicos` para crear sentencias más complejas. Sea `x una variable, constante o valor de tipo Boolean (puede ser fruto de una comparación)` y sea `z una variable, constante o valor de tipo Boolean (puede ser fruto de una comparación)`, entonces definimos:
+
+| Nombre     | Operador   | Descripción                                                                                                                              | Ejemplo                                         |
+| ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| AND Lógico | `x && z`   | Cuando se usa con valores booleanos, `&&` devuelve `true` si ambos valores son `true`; de lo contrario, devuelve `false`.                | `1 === "1" && true` da como resultado `false`   |
+| OR lógico  | `x \|\| z` | Cuando se usa con valores booleanos, `\|\|` devuelve `true` si alguno de los operandos es `true`; si ambos son falsos, devuelve `false`. | `1 === 1000 \|\| true` da como resultado `true` |
+| NOT lógico | `!x`       | Devuelve el valor opuesto. Es decir, si el valor es `true`, entonces da `false`; En cambio, si el valor es `false`, da `true`            | `!(1 === 1000)` da como resultado `true`        |
