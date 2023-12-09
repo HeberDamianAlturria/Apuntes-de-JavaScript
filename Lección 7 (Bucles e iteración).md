@@ -135,6 +135,7 @@ i: 4, j: 0
 i: 4, j: 1
 i: 4, j: 2
 ```
+
 ## El break.
 
 La sentencia `break` se utiliza para salir de un bucle en el que ha sido llamado antes que la expresión de `condición` devuelva `false`. Dicho de otra manera, el `break` se utiliza para salir de un bucle de manera abrupta y sin importar el valor de la `condición`.
@@ -183,7 +184,7 @@ Básicamente, lo que hace el `for...of` es que para cada elemento perteneciente 
 A continuación veremos un ejemplo sencillo de como esto funciona:
 
 ```javascript
-const array = [1,2,3,4];
+const array = [1, 2, 3, 4];
 
 for (const num of array) {
   console.log(num);
@@ -193,3 +194,37 @@ for (const num of array) {
 Esto va a imprimir por consola todos lo número que pertenecen al `array`.
 
 ## Bucle for...in
+
+Este iterador tendrá más sentido cuando hablemos sobre `objetos`, pero lo escribo aquí para tener centralizado todo lo referido a bucles e iteradores.
+
+El bucle `for...in` es utilizado para iterar sobre las claves de un `objeto`. Se utiliza de la siguiente manera:
+
+```javascript
+for (const variable in objeto) {
+  /* Cuerpo del for...ib */
+}
+```
+
+Básicamente, lo que hace el `for...in` es que para cada clave perteneciente al `objeto` se lo asigna a la `variable` y ejecuta el `Cuerpo del for...in`. Se termina de iterar cuando el `objeto` no tiene más claves para asignarle a la `variable`. Cabe mencionar que esto no afecta de ninguna manera al `objeto`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const information = {
+  name: "Heber Alturria",
+  age: 22,
+  gender: "Male",
+};
+
+for (const key in information) {
+  console.log(`El key ${key} tiene asociado el value ${information[key]}.`);
+}
+```
+
+Y esto va a mostrar por consola lo siguiente:
+
+```powershell
+El key name tiene asociado el value Heber Alturria.
+El key age tiene asociado el value 22.
+El key gender tiene asociado el value Male.
+```
