@@ -1,4 +1,4 @@
-# Sentencias de control.
+# Sentencias condicionales.
 
 En esta lección aprenderemos a como crear condicionales en JavaScript.
 
