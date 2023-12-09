@@ -2,7 +2,7 @@
 
 1. Agregar una lección sobre strings.
 2. Agregar una lección sobre arrays.
-3. Agregar una lección sobre objectos.
+3. Agregar una lección sobre objetos.
 4. Agregar una lección sobre funciones.
 5. Agregar lecciones de programación orientada a objetos.
 6. Agregar una lección sobre bitwise.
