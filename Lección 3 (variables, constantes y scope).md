@@ -14,7 +14,7 @@ Para crear variables mediante el uso de `let`, debemos hacerlo de la siguiente f
 let nombreDeLaVariable;
 ```
 
-Como se puede observar, creamos una variable que inicialmente tendrá el valor por defecto de `undefined`, ya que no se le ha asignado ningún valor inicial. Este valor es especial en JavaScript, ya que nos indica que la variable no tiene ningún valor definido.
+Como se puede observar, creamos una variable que inicialmente tendrá el valor por defecto de `undefined`, ya que no se le ha asignado ningún valor inicial. Este valor es especial en JavaScript, ya que nos indica que la variable no tiene ningún valor definido. `Esto a bajo nivel lo que hace es reservar espacio en la memoria para la variable`.
 
 Podríamos asignarle un valor de la siguiente manera general:
 
@@ -311,7 +311,9 @@ La constantes se crean mediante la palabra `const` y, al igual que el `let`, tie
 const nombreDeLaConstante = ALGUN_VALOR;
 ```
 
-Y la particularidad de las constantes es que nunca podremos asignarle otro valor. Cabe menciona que, debido a esto, las constantes no pueden definirse de la siguiente manera:
+Y la particularidad de las constantes es que nunca podremos asignarle otro valor. `Esto a bajo nivel lo que hace es reservar espacio en la memoria para la variable`. 
+
+Cabe menciona que, debido a que nunca podremos asignarle otro valor, las constantes no pueden definirse de la siguiente manera:
 
 ```javascript
 /* Incorrecto */
