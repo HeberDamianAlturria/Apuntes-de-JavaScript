@@ -425,3 +425,41 @@ console.log(text2.split(" ")); // Imprime: [ 'Hola', 'soy', 'Heber' ]
 const text3 = "Heber";
 console.log(text3.split("")); // Imprime: [ 'H', 'e', 'b', 'e', 'r' ]
 ```
+
+## Interpolación de Strings.
+
+La interpolación de Strings nos permite `insertar fácilmente expresiones de JavaScript dentro de un string`. La manera de hacerlo se ve similar a la siguiente forma general:
+
+```javascript
+const stringInterpolado = `Texto fijo ${EXPRESION_DE_JAVASCRIPT} más texto fijo`;
+```
+
+Como se puede observar, debemos estar usando la comillas invertidas ` `` ` para definir al string (en lugar de usar las `''` o las `""`). Dentro de este string, colocamos la expresión que deseamos inyectar siguiendo este formato: `${EXPRESION_DE_JAVASCRIPT}`. Lo que sucede es que el valor de `EXPRESION_DE_JAVASCRIPT` es calculado y agregado al string en el lugar donde se ha escrito el `${EXPRESION_DE_JAVASCRIPT}`. Todo lo que se encuentra dentro de `${}` es evaluado como código JavaScript. `Podemos interpolar en un mismo string toda la cantidad que querramos de expresiones de JavaScript`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const name = "Heber",
+  age = 22;
+
+/* Ejemplo 1 */
+
+const interpolado = `Hola, soy ${name} y tengo ${age} años`;
+
+console.log(interpolado); // Imprime "Hola, soy Heber y tengo 22 años".
+
+// Y esto es equivalente a:
+const concatenado = "Hola, soy " + name + " y tengo " + age + " años";
+
+console.log(concatenado); // Imprime "Hola, soy Heber y tengo 22 años".
+
+
+/* Ejemplo 2 */
+
+const interpoladoTernario = `Yo soy ${age > 18 ? "mayor de edad" : "menor de edad"}`;
+
+console.log(interpoladoTernario); // Imprime "Yo soy mayor de edad".
+
+```
+
+En este ejemplo podemos observar como podemos hacer lo mismo que la `interpolacion de strings` utilizando simplemente la `concatenación de strings`. El problema es que la `concatenación de strings` es muy difícil de leer, por eso `nunca hay que usarla`.
