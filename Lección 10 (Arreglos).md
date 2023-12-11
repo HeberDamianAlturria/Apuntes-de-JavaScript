@@ -350,3 +350,87 @@ Hay varias maneras de eliminar elementos de un `array`:
    arreglo.splice(3, 1);
    console.log(arreglo); // Imprime [1,2,3,5]
    ```
+
+## El método slice()
+
+El método slice va a obtener un `subArray` en base a un `array` y a un `índice inicial` y un `índice final` (este último es opcional). Esto funciona de la siguiente forma general:
+
+```javascript
+const subArray = ARRAY.slice(INDICE_INICIAL, INDICE_FINAL);
+```
+
+Y esto lo que hará será devolver un subArray que estará conformado por los elementos del `ARRAY` desde el `INDICE_INICIAL` hasta el `INDICE_FINAL - 1` (es decir, hasta el `INDICE_FINAL` no incluido). Notemos que el `INDICE_FINAL` es opcional, ya que por defecto tendrá el valor de `ARRAY.length`.
+
+A continuación veremos algunos ejemplos:
+
+```javascript
+const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
+
+console.log(arreglo.slice(1, 3)); // Imprime ["Banana", "Kiwi"]
+```
+
+### Ejemplo visual de como funciona con índices positivos
+
+Ahora voy a hacer un ejemplo visual de como funciona el `slice()` con `índices positivos`. Para ello, vamos a tener la siguiente expresión:
+
+```javascript
+const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
+
+console.log(arreglo.slice(1, 3)); // Imprime ["Banana", "Kiwi"]
+```
+
+Notemos que en este caso el `índice inicial` es 1 y el `índice final` es 3. Y esto se ve visualmente como:
+
+```
+            indexStart          indexEnd
+                ↓                   ↓
+|    0    |     1    |    2   |     3    |
+| "Apple" | "Banana" | "Kiwi" | "Orange" |
+
+          [ "Banana" , "Kiwi" ]
+          _____________________
+                    ↑
+                  Result
+```
+
+Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
+
+### Trabajando con índices negativos.
+
+El método `slice()` también nos permite trabajar con `índices negativos`. A continuación veremos algunos ejemplos:
+
+```javascript
+const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
+
+console.log(arreglo.slice(0, -1)); // Imprime [ 'Apple', 'Banana', 'Kiwi' ]
+
+console.log(arreglo.slice(-2)); // Imprime [ 'Kiwi', 'Orange' ]
+
+console.log(arreglo.slice(-3, -2)); // Imprime [ 'Banana' ]
+```
+
+### Ejemplo visual de como funciona con índices negativos
+
+Ahora voy a hacer un ejemplo visual de como funciona el `slice()` con `índices negativos`. Para ello, vamos a tener la siguiente expresión:
+
+```javascript
+const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
+
+console.log(arreglo.slice(-3, -1)); // Imprime [ 'Banana', 'Kiwi' ]
+```
+
+Notemos que en este caso el `índice inicial` es -3 y el `índice final` es -1. Y esto se ve visualmente como:
+
+```
+            indexStart          indexEnd
+                ↓                   ↓
+|   -4    |    -3    |   -2   |    -1    |
+| "Apple" | "Banana" | "Kiwi" | "Orange" |
+
+          [ "Banana" , "Kiwi" ]
+          _____________________
+                    ↑
+                  Result
+```
+
+Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
