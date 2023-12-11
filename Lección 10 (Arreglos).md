@@ -144,7 +144,7 @@ Esto significa que sea `arr` un `array`, los índices se cuentan desde el `0` y 
    console.log(arreglo.at(-3)); // Imprime 3.
    ```
 
-## Modificación de elementos de un Array.
+## Modificar elementos de un array.
 
 Para modificar el valor de un elemento en un `array`, asignamos un nuevo valor utilizando su `índice positivo`. Esto se hace de la siguiente forma general:
 
@@ -164,3 +164,189 @@ arreglo[1] = "Hola";
 console.log(arreglo); // Imprime [1, "Hola", 3, 4, 5]
 ```
 
+## Agregar elementos a un array.
+
+Hay muchas maneras de agregar elementos a un array:
+
+1. `Utilizando el método push() para agreagar un elemento al final del array`:
+   El método `push()` nos permite agregar elementos al `final` de un array. Este método `modifica al array` en el que es usado. Se utiliza de la siguiente forma general:
+
+   ```javascript
+   ARRAY.push(VALOR_A_AGREGAR);
+   ```
+
+   Esto lo que hará será modificar el `ARRAY` para agregar al `final` el `VALOR_A_AGREGAR`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.push("Hola");
+   console.log(arreglo); // Imprime [1, 2, 3, 4, 5, "Hola"].
+   ```
+
+   También podemos agregar más de un elemento a la vez al `final` del array de la siguiente forma general:
+
+   ```javascript
+   ARRAY.push(VALOR_A_AGREGAR_1, VALOR_A_AGREGAR_2, ... , VALOR_A_AGREGAR_N);
+   ```
+
+   Esto lo que hará será modificar el `ARRAY` para agregar al `final` todos los valores en el orden dado. Por ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.push("Hola", "Chau", 200);
+   console.log(arreglo); // Imprime [1, 2, 3, 4, 5, "Hola", "Chau", 200].
+   ```
+
+2. `Utilizando un índice cualquiera` (No recomendado).
+
+   Podemos asignarle un valor a cualquier posición de un array de la siguiente forma general:
+
+   ```javascript
+   ARRAY[NUMERO_INDICE] = VALOR_A_AGREGAR;
+   ```
+
+   Donde notemos que debe cumplirse que `ARRAY.length >= NUMER_INDICE`, de esa manera asignamos el `VALOR_A_AGREGAR` en un índice que aún no había sido utilizado en el `ARRAY`.
+
+   A continuación veremos un ejemplo de por qué no es bueno utilizar esta manera de hacerlo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo[100] = "Hola";
+   console.log(arreglo); // Imprime [1, 2, 3, 4, 5, <95 empty items>, 'Hola']
+   ```
+
+   Eso significa que puedo asignarle valores a un `array` en cualquier posición deseada. `Debemos tener presente este comportamiento para evitar agregar elementos a un array por error cuando en realidad queremos modificar un valor existente`.
+
+3. `Utilizando el método unshift() para agreagar un elemento al inicio del array`:
+
+   El método `unshift()` nos permite agregar elementos al `inicio` de un array. Este método `modifica al array` en el que es usado. Se utiliza de la siguiente forma general:
+
+   ```javascript
+   ARRAY.unshift(VALOR_A_AGREGAR);
+   ```
+
+   Esto lo que hará será modificar el `ARRAY` para agregar al `inicio` el `VALOR_A_AGREGAR`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.unshift("Hola");
+   console.log(arreglo); // Imprime ["Hola", 1, 2, 3, 4, 5].
+   ```
+
+   También podemos agregar más de un elemento a la vez al `inicio` del array de la siguiente forma general:
+
+   ```javascript
+   ARRAY.unshift(VALOR_A_AGREGAR_1, VALOR_A_AGREGAR_2, ... , VALOR_A_AGREGAR_N);
+   ```
+
+   Esto lo que hará será modificar el `ARRAY` para agregar al `inicio` todos los valores en el orden dado. Por ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.unshift("Hola", "Chau", 200);
+   console.log(arreglo); // Imprime ["Hola", "Chau", 200, 1, 2, 3, 4, 5].
+   ```
+
+4. `Utilizando el método splice() para agreagar un elemento en cualquier posición del array`:
+
+   El método `splice()` es una verdadera navaja suiza, ya que nos permita agregar elementos en cualquier posición y eliminar elementos en cualquier posición. En este caso `nos enfocaremos en como agregar elementos en cualquier posición`. Eso se hace de la siguiente forma general:
+
+   ```javascript
+   ARRAY.splice(NUMERO_INDICE, 0, VALOR_A_AGREGAR);
+   ```
+
+   Esto lo que hará será `modificar el ARRAY` para agregar el `VALOR_A_AGREGAR` en el índice `NUMERO_INDICE`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.splice(1, 0, "Hola");
+   console.log(arreglo); // Imprime [1, "Hola", 2, 3, 4, 5].
+   ```
+
+   También podemos agregar más de un elemento a la vez al en cualquier posición del array de la siguiente forma general:
+
+   ```javascript
+   ARRAY.splice(NUMERO_INDICE, 0, VALOR_A_AGREGAR_1, VALOR_A_AGREGAR_2, ... , VALOR_A_AGREGAR_N);
+   ```
+
+   Esto lo que hará será modificar el `ARRAY` para agregar en el índice `NUMERO_INDICE` todos los valores en el orden dado. Por ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.splice(1, 0, "Hola", "Chau", 200);
+   console.log(arreglo); // Imprime [1, "Hola", "Chau", 200, 2, 3, 4, 5].
+   ```
+
+## Eliminar elementos de un array.
+
+Hay varias maneras de eliminar elementos de un `array`:
+
+1. `Eliminando el último elemento usando el método pop()`:
+
+   Podemos utilizar el método `pop()` para eliminar el `último` elemento de un `array`. Este método me modifica el `array`. Se utiliza de la siguiente forma general:
+
+   ```javascript
+   ARRAY.pop();
+   ```
+
+   A continuación veremos un ejemplo de este método:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.pop();
+   console.log(arreglo); // Imprime [1,2,3,4]
+   ```
+
+2. `Eliminando el primer elemento usando el método shift()`:
+
+   Podemos utilizar el método `shift()` para eliminar el `primer` elemento de un `array`. Este método me modifica el `array`. Se utiliza de la siguiente forma general:
+
+   ```javascript
+   ARRAY.shift();
+   ```
+
+   A continuación veremos un ejemplo de este método:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.shift();
+   console.log(arreglo); // Imprime [2,3,4,5]
+   ```
+
+3. `Eliminar múltiples elementos en cualquiero posición usando el método splice()`:
+
+   También podemos utilizar el método `splice()` para eliminar `múltiples elementos` en `cualquier posición` del `array`. Este método modifica el `array`. Se utiliza de la siguiente forma general:
+
+   ```javascript
+   ARRAY.splice(INDICE_INICIAL, CANTIDAD_A_BORRAR);
+   ```
+
+   Esto lo que hará será en el `ARRAY` a partir del índice `INDICE_INICIAL` borrar una `CANTIDAD_A_BORRAR` de elementos. Si no especificamos el valor de `CANTIDAD_A_BORRAR`, entonces borrará hasta el final del `ARRAY`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.splice(1, 2); // A partir del índice 1 borra 2 elementos.
+   console.log(arreglo); // Imprime [1,4,5]
+   ```
+
+   Generalmente lo utilizaremos para `borrar un único elemento`, por lo que lo usaremos de la siguiente forma general:
+
+   ```javascript
+   ARRAY.splice(INDICE_ELEMENTO_A_BORRAR, 1);
+   ```
+
+   De esa manera, podemos modificar el `ARRAY` borrando el elemento en el índice `INDICE_ELEMENTO_A_BORRAR`. A continuación veremos un ejemplo:
+
+   ```javascript
+   const arreglo = [1, 2, 3, 4, 5];
+   arreglo.splice(3, 1);
+   console.log(arreglo); // Imprime [1,2,3,5]
+   ```
