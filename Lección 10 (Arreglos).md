@@ -46,7 +46,7 @@ Hay dos maneras de definir un `array`:
 
 ## Los array son una referencia.
 
-Los `array` son un tipo de dato no primitivo, por ende los `array` se asignan por `referencia`. Esto quiere decir que `el array se va a guardar en una posición de la memoria distinta a la posición en memoria de la variable o constante que definamos, y lo que se le asigna a dicha variable o constante es la posición de la memoria con el que puedo referencia al array`.
+Los `array` son un tipo de dato no primitivo, por ende los `array` se asignan por `referencia`. Esto quiere decir que `el array se va a guardar en una posición de la memoria distinta a la posición en memoria de la variable o constante que definamos, y lo que se le asigna a dicha variable o constante es la posición de la memoria con el que puedo referenciar al array`. Esto significa que las constantes o variables que tengan asignadas un `array` en realidad `trabajan como si fuesen punteros` a la posición en memoria donde realmente se encuentra almacenado dicho array.
 
 Recomiendo definir el valor de un `array` siempre como una `constante`, ya que de esa manera nunca vamos a perder la `referencia` a dicho array (por ende, el código es más seguro). Es decir, de forma general:
 
@@ -351,6 +351,39 @@ Hay varias maneras de eliminar elementos de un `array`:
    console.log(arreglo); // Imprime [1,2,3,5]
    ```
 
+## Comparar dos arrays.
+
+Para comparar dos arrays uno pensaría que puede hacerlo de la siguiente forma general:
+
+```javascript
+/* Manera incorrecta ⛔ */
+ARRAY_1 === ARRAY_2; // Daría siempre false.
+```
+
+Pero esto es `absolutamente incorrecto`. El problema aquí radica en que `ARRAY_1` y `ARRAY_2` actuarían como punteros a posiciones de la memoria. Por ende, `ARRAY_1 === ARRAY_2` daría siempre `false`, ya que las posiciones de las memorias serían distintas.
+
+### Solución a este problema.
+
+La manera más simple de resolver este problema es conviertiendo el arreglo completo en un `string` y comparando si ambos strings son iguales. Esto se hace de la siguiente forma general:
+
+```javascript
+JSON.stringify(ARRAY_1) === JSON.stringify(ARRAY_2);
+```
+
+Si ambos strings son iguales, entonces eso significa que los arreglos son iguales y, por ende, el resultado es `true`. Caso contrario, el resultado es `false`.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const arreglo1 = [1, "Hola", [1, 2], { name: "heber" }];
+const arreglo2 = [1, "Hola", [1, 2], { name: "heber" }];
+const arreglo3 = [1, "Hola", [1, 2], { name: "jasdjashdkjsahk" }];
+
+console.log(JSON.stringify(arreglo1) === JSON.stringify(arreglo2)); // Imprime true
+
+console.log(JSON.stringify(arreglo1) === JSON.stringify(arreglo3)); // Imprime false
+```
+
 ## El método slice()
 
 El método slice va a obtener un `subArray` en base a un `array` y a un `índice inicial` y un `índice final` (este último es opcional). Esto funciona de la siguiente forma general:
@@ -434,3 +467,45 @@ Notemos que en este caso el `índice inicial` es -3 y el `índice final` es -1. 
 ```
 
 Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
+
+## Como concatenar dos arreglos.
+
+Para concatenar dos arreglos debemos utilizar el método `concat`, el cuál no modifica ningún arreglo, sino que devuevle un arreglo nuevo con ambos arreglos concatenados. Eso se utiliza de la siguiente forma general:
+
+```javascript
+const arregloResultante = ARRAY_1.concat(ARRAY_2);
+```
+
+Esto lo que hará será agregar todos los elementos de `ARRAY_2` al final del `ARRAY_1`.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const fruits = ["Apple", "Banana", "Kiwi"], names = ["Heber", "Nat"];
+const fruitsAndNames = fruits.concat(names);
+console.log(fruitsAndNames); // Imprime [ 'Apple', 'Banana', 'Kiwi', 'Heber', 'Nat' ]
+```
+
+## Operador Spread.
+
+### Utilizando el operador Spread para concatenar dos arreglos.
+
+## Destructuring Arreglo.
+
+## Arreglos multidimensionales.
+
+## Arreglo de objetos.
+
+## Métodos avanzados sobre Arreglos
+
+### El método filter.
+
+### El método map.
+
+### El método find.
+
+### El método forEach.
+
+### El método reduce.
+
+### El método sort.
