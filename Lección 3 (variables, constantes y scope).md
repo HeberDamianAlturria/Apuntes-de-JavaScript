@@ -269,7 +269,7 @@ En su lugar, si definimos a la variable x usando `var` de la siguiente manera:
 ```javascript
 {
   /* Scope interno */
-  let x = 20;
+  var x = 20;
 }
 
 console.log(x); // imprime 20.
