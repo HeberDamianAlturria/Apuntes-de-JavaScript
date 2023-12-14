@@ -207,7 +207,7 @@ Hay muchas maneras de agregar elementos a un array:
    ARRAY[NUMERO_INDICE] = VALOR_A_AGREGAR;
    ```
 
-   Donde notemos que debe cumplirse que `ARRAY.length >= NUMER_INDICE`, de esa manera asignamos el `VALOR_A_AGREGAR` en un índice que aún no había sido utilizado en el `ARRAY`.
+   Donde notemos que debe cumplirse que `NUMERO_INDICE >= ARRAY.length`, de esa manera asignamos el `VALOR_A_AGREGAR` en un índice que aún no había sido utilizado en el `ARRAY`.
 
    A continuación veremos un ejemplo de por qué no es bueno utilizar esta manera de hacerlo:
 
