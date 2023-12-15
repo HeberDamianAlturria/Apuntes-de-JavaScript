@@ -747,6 +747,121 @@ console.log(b); // Imprime 1
 
 ## Arreglos multidimensionales.
 
+Notemos que un `arreglo` puede tener como elementos a más `arreglos`. A los `arreglos que contienen como elementos a más arreglos` se les conocen como `arreglos multidimensionales`. 
+
+Veremos a continuación un conjunto conocido y útil de arreglos multidimensionales.
+
+### Matrices (Arreglos bidimensionales).
+
+Las matrices son un tipo de arreglo bidimensional muy utilizado. Se definen de la siguiente forma general:
+
+```javascript
+const matriz = [
+   [ELEM_0_0, ELEM_0_1, /*...*/, ELEM_0_(M-1)],
+   [ELEM_1_0, ELEM_1_1, /*...*/, ELEM_0_(M-1)],
+   /*...*/
+   [ELEM_(N-1)_0, ELEM_(N-1)_1, /*...*/, ELEM_(N-1)_(M-1)],
+];
+```
+Esto va a definir una matriz de `N filas` por `M columnas`. Notemos que las filas van a contarse desde el `índice 0` hasta el `índice N-1` y las columnas van a contarse desde el `índice 0` hasta el `índice M-1`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const matriz = [
+   [1, 2],
+   [3, 4],
+];
+
+console.log(matriz); // Imprime [ [ 1, 2 ], [ 3, 4 ] ]
+```
+
+#### Actualizando el valor de una matriz.
+
+De forma general, si tengo una matriz con `N filas` y `M columnas`, puedo modificar el valor de un elemento de la siguiente forma general:
+
+```javascript
+matriz[i][j] = NUEVO_VALOR;
+```
+
+Y esto lo que hará será modificar el valor del elemento en la `fila i` (con `0 <= i < N`) y `columna j` (con `0 <= j < M`)  por un `NUEVO_VALOR`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const matriz = [
+   [1, 2],
+   [3, 4],
+];
+
+matriz[1][0] = 100000; // Cambio el valor de la fila 1, columna 0.
+
+console.log(matriz); // Imprime [ [ 1, 2 ], [ 100000, 4 ] ]
+```
+
+#### Iterando una matriz.
+
+Para iterar una matriz, debemos ir iterando `cada fila` y por cada fila debemos iterar `cada columna`. Esto se puede hacer de la siguiente forma general:
+
+```javascript
+for (let row = 0; row < MATRIZ.length; row++) {
+   for (let column = 0; column < MATRIZ[0].length; column++) {
+      /*
+       * Puedo haceder a cada elemento de la matriz siguiente manera:
+       * ARRAY[row][column]
+       */
+   }
+}
+```
+
+A continuación veremos un pequeño ejemplo:
+
+```javascript
+const matriz = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+
+for (let row = 0; row < matriz.length; row++) {
+  for (let column = 0; column < matriz[0].length; column++) {
+     console.log(matriz[row][column]);
+  }
+}
+```
+En este ejemplo, vamos a imprimir cada elemento que compone a la matriz. Por lo que se imprimirá: `1 2 3 4 5 6 7 8 9`.
+
+También podemos iterar la matriz usando el `for...of` de la siguiente forma general:
+
+```javascript
+for (row of MATRIZ) {
+   for (element of row) {
+      /*
+       * Cuerpo del for.
+       */
+   }
+}
+```
+`Recomiendo hacerlo así`, ya que es mucho más resumida y fácil de leer.
+
+A continuación veremos un ejemplo de esta sintáxis:
+
+```javascript
+const matriz = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+
+for (row of matriz) {
+  for (element of row) {
+     console.log(element);
+  }
+}
+```
+En este ejemplo, vamos a imprimir cada elemento que compone a la matriz. Por lo que se imprimirá: `1 2 3 4 5 6 7 8 9`.
+
+
 ## Arreglo de objetos.
 
 ## Métodos avanzados sobre Arreglos
