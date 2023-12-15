@@ -482,14 +482,14 @@ console.log(arreglo); // Imprime [1, [20000], 3, {hola: "miau"}]
 console.log(nuevoArreglo); // Imprime [1, [20000], 3, {hola: "miau"}]
 ```
 
-Como se puede observar, al tener un `aliasing` entre los objetos internos del `arreglo`, al hacer una copia superficial de la forma `[...arreglo]`, entonces si modificamos en el `nuevoArreglo` algún valor de los objetos, entonces el cambio se verá reflejado en `arreglo`.
+Como se puede observar, al hacer una `copia superficial` de la forma `[...arreglo]`, entonces se generan `aliasing` entre los objetos internos del `arreglo` y del `nuevoArreglo`. Esto resulta en que si modificamos en el `nuevoArreglo` algún valor de los objetos, entonces el cambio se verá reflejado en `arreglo`.
 
 ### Utilizando el operador Spread para agregar elementos a un array.
 
 Podemos utilizar el operador `spread` para agregar elementos al inicio o al final de un arreglo. Esto podemos hacerlo de la siguiente forma general:
 
 ```javascript
-let ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+let ARRAY = [ELEM_1, ELEM_2, /*...*/ , ELEM_n];
 
 /* Así se agrega un elemento por adelante. */
 ARRAY = [ELEM_ADELANTE, ...ARRAY]; // Equivale a [ELEM_ADELANTE, ELEM_1, ELEM_2, /*...*/, ELEM_n]
@@ -532,6 +532,84 @@ const arreglo1 = [1,2,3], arreglo2 = ["Hola", "soy", "Heber"];
 const arregloConcatenado = [...arreglo1, ...arreglo2];
 
 console.log(arregloConcatenado); // Imprime [ 1, 2, 3, 'Hola', 'soy', 'Heber' ]
+```
+
+### Utilizando el operador Spread para pasar argumentos a una función desde un array.
+
+En futuras lecciones aprenderemos sobre funciones. Por ahora, vamos a aprender como hacer para pasarle los valores de un array como argumentos a una función utilizando el operador `spread`. Esto se hace de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_n];
+
+nombreDeLaFuncion(...ARRAY); // Es equivalente a hacer: nombreDeLaFuncion(ELEM_1, ELEM_2, /*...*/, ELEM_n);
+```
+
+Esto se hace para pasarle múltiples argumentos a una función en base a un arreglo. Se puede hacer esto sobre cualquier función debido a que si hay más elementos en el `array` que `parametros` en la función, entonces los elementos sobrantes del `array` serán `ignorados`. Aunque, es especialmente útil para las `funciones que usan rest parameters`, ya que pueden tomar una `cantidad indefinida de argumentos` y, por consiguiente, pueden aceptar todos los elementos del `array` como argumentos.
+
+También notemos que esto se puede generalizar para `más de un arreglo` de la siguiente forma general:
+
+```javascript
+nombreDeLaFuncion(...ARRAY_1, ...ARRAY_2, /*...*/, ...ARRAY_n);
+```
+
+Aunque esta generalización es raramente utilizada.
+
+#### Ejemplo creando funciones con parametros finitos.
+
+Vamos a ver como funciona esto para una función que tiene una `cantidad finita de argumentos`:
+
+```javascript
+function sumar(a, b, c) {
+   return a + b + c;
+}
+
+const numeros = [1, 2, 3, 4, 5];
+
+console.log(sumar(...numeros)); // Imprime 6
+```
+
+Lo que sucede es que `sumar(...numeros)` es equivalente a `sumar(1, 2, 3, 4, 5)`. Pero notemos que la función `sumar` puede tomar solamente `3 argumentos`, por lo tanto vamos a tener que `a = 1`, `b = 2` y `c = 3`, mientras que los demás valores (que son el `4` y el `5`) serán ignorados.
+
+#### Ejemplo creando funciones con parametros infinitos.
+
+Vamos a ver ahora como funciona esto para una función que tiene una `cantidad infinita de argumentos`:
+
+```javascript
+function sumar(...args) {
+   let resultado = 0;
+
+   for (numero of args) {
+      resultado += numero;
+   }
+
+   return resultado;
+}
+
+const numeros = [1, 2, 3, 4, 5];
+
+console.log(sumar(...numeros)); // Imprime 15
+```
+
+Lo que aquí está pasando es que `sumar(...numeros)` es equivalente a `sumar(1, 2, 3, 4, 5)`. Y como `sumar` puede tomar una cantidad infinita de argumentos, entonces va a hacer la suma entre todos los argumentos sin ignorar ninguno.
+
+#### Ejemplo importante:
+
+Si tenemos un `arreglo de números` y queremos hallar el valor máximo y el valor mínimo, podemos utilizar la función `Math.max()` y `Math.min()`, ya que dichas funciones pueden tomar una cantidad indefinida de argumentos. Esto se hace de la siguiente forma general:
+
+```javascript
+const maximoValor = Math.max(...ARREGLO_DE_NUMEROS);
+const minimoValor = Math.min(...ARREGLO_DE_NUMEROS);
+```
+
+A continuación, veremos un ejemplo:
+
+```javascript
+const arregloDeNumeros = [1,2,3];
+const maximoNumero = Math.max(...arregloDeNumeros);
+const minimoNumero = Math.min(...arregloDeNumeros);
+
+console.log(maximoNumero); // Imprime 3.
+console.log(minimoNumero); // Imprime 1.
 ```
 
 ## Destructuring Arreglo.
