@@ -346,3 +346,7 @@ console.log(nombre); // Imprime "Heber".
 console.log(apellido); // Imprime "Alturria".
 console.log(edad); // Imprime 22.
 ```
+
+## Reglas para nombrar a las constantes y variables:
+
+Generalmente, las variables o constantes en JavaScript serán nombradas usando `camel case`. Por ejemplo: `userInfo` es un nombre correcto. También es común que las `constantes` se definan usando solo mayúsculas, por ejemplo: `USERNAME` sería correcto.
