@@ -44,6 +44,94 @@ Hay dos maneras de definir un `array`:
    console.log(arreglo); // Imprime: [ 1, 'Hola', 3.4, true ]
    ```
 
+   También podemos crear un `arreglo vacío` de la siguiente forma general:
+
+   ```javascript
+   const arreglo = [];
+   ```
+
+## Creando un arreglo con N posiciones.
+
+### Arreglo vacío con N posiciones.
+
+Podemos crear un `arreglo vacío` con N posiciones de la siguiente forma general:
+
+```javascript
+const ARRAY = new Array(N);
+```
+
+siendo `N` un número que representa la cantidad de posiciones vacías que debe tener el arreglo.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const arreglo = new Array(100);
+
+console.log(arreglo); // Imprime [ <100 empty items> ]
+```
+
+### Arreglo con N posiciones con valor por defecto en cada posición.
+
+También podemos crear un `arreglo` con N posiciones con un valor por defecto en cada posición de la siguiente forma general:
+
+```javascript
+const ARRAY = new Array(N).fill(VALOR_DEFECTO);
+```
+
+siendo `N` un número que representa la cantidad de posiciones que debe tener el arreglo. Y notemos que `VALOR_DEFECTO` es el valor que quiero que haya en cada posición. Siempre `VALOR_DEFECTO` debe ser de `tipo primitivo`, ya que los `tipos no primitivos` van a generar `aliasing` en las N posiciones (y veremos como resolver este problema más adelante).
+
+A continuación veremos un ejemplo:
+
+```javascript
+const arreglo = new Array(5).fill("Hi");
+
+console.log(arreglo); // Imprime [ 'Hi', 'Hi', 'Hi', 'Hi', 'Hi' ]
+```
+
+#### Resolviendo el problema de los tipo no primitivos.
+
+A continuación veremos un error de `aliasing` por usar tipos no primitivos:
+
+```javascript
+/* Codigo erróneo */
+
+const arreglo = new Array(4).fill({ hola: "hi" });
+
+console.log(arreglo); // Imprime [ { hola: 'hi' }, { hola: 'hi' }, { hola: 'hi' }, { hola: 'hi' } ]
+
+arreglo[1].hola = "chau";
+
+console.log(arreglo); // Imprime [ { hola: 'chau' }, { hola: 'chau' }, { hola: 'chau' }, { hola: 'chau' } ]
+```
+
+Esto significa que todas las posiciones comparten la misma referencia en memoria a donde está `{hola: "hi"}`, por eso al modificar uno cambian todos.
+
+Esto puede resolverse de la siguiente forma general:
+
+```javascript
+const ARRAY = new Array(N).fill().map(() => {
+  return VALOR_DEFECTO_NO_PRIMITIVO;
+});
+```
+
+Siendo `N` un número que representa la cantidad de posiciones que debe tener el arreglo. Y notemos que `VALOR_DEFECTO_NO_PRIMITIVO` es el valor no primitivo que quiero que haya en cada posición. Entenderemos mejor el por qué esto funciona cuando casi al final de esta lección veamos el método `map`.
+
+A continuación veremos como corregir el ejemplo anterior:
+
+```javascript
+const arreglo = new Array(4).fill().map(() => {
+  return { hola: "hi" };
+});
+
+console.log(arreglo); // Imprime [ { hola: 'hi' }, { hola: 'hi' }, { hola: 'hi' }, { hola: 'hi' } ]
+
+arreglo[1].hola = "chau";
+
+console.log(arreglo); // Imprime [ { hola: 'hi' }, { hola: 'chau' }, { hola: 'hi' }, { hola: 'hi' } ]
+```
+
+Y notemos que ahora estamos evitando el `aliasing`.
+
 ## Los array son una referencia.
 
 Los `array` son un tipo de dato no primitivo, por ende los `array` se asignan por `referencia`. Esto quiere decir que `el array se va a guardar en una posición de la memoria distinta a la posición en memoria de la variable o constante que definamos, y lo que se le asigna a dicha variable o constante es la posición de la memoria con el que puedo referenciar al array`. Esto significa que las constantes o variables que tengan asignadas un `array` en realidad `trabajan como si fuesen punteros` a la posición en memoria donde realmente se encuentra almacenado dicho array.
@@ -472,7 +560,7 @@ Veremos un ejemplo de este error:
 ```javascript
 /* Código incorrecto */
 
-const arreglo = [1, [2], 3, {hola: "chau"}];
+const arreglo = [1, [2], 3, { hola: "chau" }];
 const nuevoArreglo = [...arreglo];
 
 nuevoArreglo[1][0] = 20000;
@@ -489,7 +577,7 @@ Como se puede observar, al hacer una `copia superficial` de la forma `[...arregl
 Podemos utilizar el operador `spread` para agregar elementos al inicio o al final de un arreglo. Esto podemos hacerlo de la siguiente forma general:
 
 ```javascript
-let ARRAY = [ELEM_1, ELEM_2, /*...*/ , ELEM_n];
+let ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
 
 /* Así se agrega un elemento por adelante. */
 ARRAY = [ELEM_ADELANTE, ...ARRAY]; // Equivale a [ELEM_ADELANTE, ELEM_1, ELEM_2, /*...*/, ELEM_n]
@@ -520,7 +608,7 @@ Pero tengamos cuidado de que todos los elementos de `ARRAY` sean de `tipo primit
 Podemos concatenar dos o más arreglos utilizando el operador `spread` de la siguiente forma general:
 
 ```javascript
-const arregloConcatenado = [...ARRAY_1, ...ARRAY_2, /*...*/, ...ARRAY_n];
+const arregloConcatenado = [...ARRAY_1, ...ARRAY_2 /*...*/, , ...ARRAY_n];
 ```
 
 Esto funcionará a la perfección si es que `ARRAY_1, ARRAY_2, /*...*/, ARRAY_n` son arreglos compuestos de `tipos primitivos`. Si alguno tiene un `tipo no primitivo`, entonces tendremos problemas de `aliasing` como hemos mencionado previamente.
@@ -528,7 +616,8 @@ Esto funcionará a la perfección si es que `ARRAY_1, ARRAY_2, /*...*/, ARRAY_n`
 A continuación veremos un ejemplo:
 
 ```javascript
-const arreglo1 = [1,2,3], arreglo2 = ["Hola", "soy", "Heber"];
+const arreglo1 = [1, 2, 3],
+  arreglo2 = ["Hola", "soy", "Heber"];
 const arregloConcatenado = [...arreglo1, ...arreglo2];
 
 console.log(arregloConcatenado); // Imprime [ 1, 2, 3, 'Hola', 'soy', 'Heber' ]
@@ -539,7 +628,7 @@ console.log(arregloConcatenado); // Imprime [ 1, 2, 3, 'Hola', 'soy', 'Heber' ]
 En futuras lecciones aprenderemos sobre funciones. Por ahora, vamos a aprender como hacer para pasarle los valores de un array como argumentos a una función utilizando el operador `spread`. Esto se hace de la siguiente forma general:
 
 ```javascript
-const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_n];
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
 
 nombreDeLaFuncion(...ARRAY); // Es equivalente a hacer: nombreDeLaFuncion(ELEM_1, ELEM_2, /*...*/, ELEM_n);
 ```
@@ -560,7 +649,7 @@ Vamos a ver como funciona esto para una función que tiene una `cantidad finita 
 
 ```javascript
 function sumar(a, b, c) {
-   return a + b + c;
+  return a + b + c;
 }
 
 const numeros = [1, 2, 3, 4, 5];
@@ -576,13 +665,13 @@ Vamos a ver ahora como funciona esto para una función que tiene una `cantidad i
 
 ```javascript
 function sumar(...args) {
-   let resultado = 0;
+  let resultado = 0;
 
-   for (numero of args) {
-      resultado += numero;
-   }
+  for (numero of args) {
+    resultado += numero;
+  }
 
-   return resultado;
+  return resultado;
 }
 
 const numeros = [1, 2, 3, 4, 5];
@@ -604,7 +693,7 @@ const minimoValor = Math.min(...ARREGLO_DE_NUMEROS);
 A continuación, veremos un ejemplo:
 
 ```javascript
-const arregloDeNumeros = [1,2,3];
+const arregloDeNumeros = [1, 2, 3];
 const maximoNumero = Math.max(...arregloDeNumeros);
 const minimoNumero = Math.min(...arregloDeNumeros);
 
@@ -617,13 +706,13 @@ console.log(minimoNumero); // Imprime 1.
 Podemos destructurar un arreglo para asignarle sus valores a `variables o constantes` de la siguiente forma general:
 
 ```javascript
-const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_n];
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
 
 // Destructuring assignment con constantes.
-const [CONST_1, CONST_2, /*...*/, CONST_n] = ARRAY;
+const [CONST_1, CONST_2 /*...*/, , CONST_n] = ARRAY;
 
 // Destructuring assignment con variables.
-let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_n] = ARRAY;
+let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_n] = ARRAY;
 ```
 
 Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_n = ELEM_n` (lo mismo pasa para las constantes).
@@ -631,7 +720,7 @@ Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
-const arreglo = [1,2,3];
+const arreglo = [1, 2, 3];
 
 const [a, b, c] = arreglo;
 
@@ -645,13 +734,13 @@ console.log(c); // Imprime 3
 Cabe mencionar que en la forma general anterios, existía la misma cantidad de variables/constantes que elementos del array. Pero notemos que si hay menos variables/constantes que elementos del array, eso no es problema ya que entonces funcionaría de la siguiente forma general:
 
 ```javascript
-const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_i, ELEM_(i+1), /*...*/ ELEM_n];
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_i, ELEM_(i + 1), /*...*/ ELEM_n];
 
 // Destructuring assignment con constantes.
-const [CONST_1, CONST_2, /*...*/, CONST_i] = ARRAY;
+const [CONST_1, CONST_2 /*...*/, , CONST_i] = ARRAY;
 
 // Destructuring assignment con variables.
-let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_i] = ARRAY;
+let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_i] = ARRAY;
 ```
 
 Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), pero lo elementos del array que son `ELEM_(i+1), ..., ELEM_n` serán completamente ignorados.
@@ -659,7 +748,7 @@ Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
-const arreglo = [1,2,3,4,5,6,7];
+const arreglo = [1, 2, 3, 4, 5, 6, 7];
 
 const [a, b, c] = arreglo;
 
@@ -687,7 +776,7 @@ Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
-const arreglo = [1,2];
+const arreglo = [1, 2];
 
 const [a, b, c = 2000] = arreglo;
 
@@ -701,13 +790,13 @@ console.log(c); // Imprime 2000
 También puede ser que querramos destructurar de un arreglo una cierta cantidad de `variables/constantes` y el resto de elementos sin asignar guardarlos en otro arreglo. Esto se puede hacer utilizando el operador `rest` de la siguiente forma general:
 
 ```javascript
-const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_i, ELEM_(i+1), /*...*/ ELEM_n];
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_i, ELEM_(i + 1), /*...*/ ELEM_n];
 
 // Destructuring assignment con constantes.
-const [CONST_1, CONST_2, /*...*/, CONST_i, ...RESTO_ARRAY] = ARRAY;
+const [CONST_1, CONST_2 /*...*/, , CONST_i, ...RESTO_ARRAY] = ARRAY;
 
 // Destructuring assignment con variables.
-let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_i, ...RESTO_ARRAY] = ARRAY;
+let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_i, ...RESTO_ARRAY] = ARRAY;
 ```
 
 Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), y finalmente a los elementos que restan del `ARRAY` los asignamos como un arreglo a el `RESTO_ARRAY` resultando en que `RESTO_ARRAY = [ELEM_i, ELEM_(i+1), /*...*/, ELEM_n]`. `IMPORTANTE:` el `operador rest` siempre `va a ir al final`.
@@ -715,7 +804,7 @@ Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
-const arreglo = [1,2,3,4,5,6,7];
+const arreglo = [1, 2, 3, 4, 5, 6, 7];
 
 const [a, b, ...resto] = arreglo;
 
@@ -729,7 +818,8 @@ console.log(resto); // Imprime [3,4,5,6,7]
 Podemos intercambiar dos valores de una manera sencilla utilizando la siguiente forma general:
 
 ```javascript
-let a = VALOR_1, b = VALOR_2;
+let a = VALOR_1,
+  b = VALOR_2;
 
 [a, b] = [b, a]; // Ahora a = VALOR_2 y b = VALOR_1
 ```
@@ -737,7 +827,8 @@ let a = VALOR_1, b = VALOR_2;
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
-let a = 1, b = 2000;
+let a = 1,
+  b = 2000;
 
 [a, b] = [b, a];
 
@@ -747,9 +838,9 @@ console.log(b); // Imprime 1
 
 ## Arreglos multidimensionales.
 
-Notemos que un `arreglo` puede tener como elementos a más `arreglos`. A los `arreglos que contienen como elementos a más arreglos` se les conocen como `arreglos multidimensionales`. 
+Notemos que un `arreglo` puede tener como elementos a más `arreglos`. A los `arreglos que contienen como elementos a más arreglos` se les conocen como `arreglos multidimensionales`.
 
-Veremos a continuación un conjunto conocido y útil de arreglos multidimensionales.
+Nos enfocaremos principalmente en las matrices, ya que raramente se utilizan arreglo de dimensiones más altas que 2.
 
 ### Matrices (Arreglos bidimensionales).
 
@@ -763,14 +854,15 @@ const matriz = [
    [ELEM_(N-1)_0, ELEM_(N-1)_1, /*...*/, ELEM_(N-1)_(M-1)],
 ];
 ```
+
 Esto va a definir una matriz de `N filas` por `M columnas`. Notemos que las filas van a contarse desde el `índice 0` hasta el `índice N-1` y las columnas van a contarse desde el `índice 0` hasta el `índice M-1`.
 
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
 const matriz = [
-   [1, 2],
-   [3, 4],
+  [1, 2],
+  [3, 4],
 ];
 
 console.log(matriz); // Imprime [ [ 1, 2 ], [ 3, 4 ] ]
@@ -784,14 +876,14 @@ De forma general, si tengo una matriz con `N filas` y `M columnas`, puedo modifi
 matriz[i][j] = NUEVO_VALOR;
 ```
 
-Y esto lo que hará será modificar el valor del elemento en la `fila i` (con `0 <= i < N`) y `columna j` (con `0 <= j < M`)  por un `NUEVO_VALOR`.
+Y esto lo que hará será modificar el valor del elemento en la `fila i` (con `0 <= i < N`) y `columna j` (con `0 <= j < M`) por un `NUEVO_VALOR`.
 
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
 const matriz = [
-   [1, 2],
-   [3, 4],
+  [1, 2],
+  [3, 4],
 ];
 
 matriz[1][0] = 100000; // Cambio el valor de la fila 1, columna 0.
@@ -805,12 +897,12 @@ Para iterar una matriz, debemos ir iterando `cada fila` y por cada fila debemos 
 
 ```javascript
 for (let row = 0; row < MATRIZ.length; row++) {
-   for (let column = 0; column < MATRIZ[0].length; column++) {
-      /*
-       * Puedo haceder a cada elemento de la matriz siguiente manera:
-       * ARRAY[row][column]
-       */
-   }
+  for (let column = 0; column < MATRIZ[0].length; column++) {
+    /*
+     * Puedo haceder a cada elemento de la matriz siguiente manera:
+     * ARRAY[row][column]
+     */
+  }
 }
 ```
 
@@ -825,23 +917,25 @@ const matriz = [
 
 for (let row = 0; row < matriz.length; row++) {
   for (let column = 0; column < matriz[0].length; column++) {
-     console.log(matriz[row][column]);
+    console.log(matriz[row][column]);
   }
 }
 ```
+
 En este ejemplo, vamos a imprimir cada elemento que compone a la matriz. Por lo que se imprimirá: `1 2 3 4 5 6 7 8 9`.
 
 También podemos iterar la matriz usando el `for...of` de la siguiente forma general:
 
 ```javascript
 for (row of MATRIZ) {
-   for (element of row) {
-      /*
-       * Cuerpo del for.
-       */
-   }
+  for (element of row) {
+    /*
+     * Cuerpo del for.
+     */
+  }
 }
 ```
+
 `Recomiendo hacerlo así`, ya que es mucho más resumida y fácil de leer.
 
 A continuación veremos un ejemplo de esta sintáxis:
@@ -855,12 +949,48 @@ const matriz = [
 
 for (row of matriz) {
   for (element of row) {
-     console.log(element);
+    console.log(element);
   }
 }
 ```
+
 En este ejemplo, vamos a imprimir cada elemento que compone a la matriz. Por lo que se imprimirá: `1 2 3 4 5 6 7 8 9`.
 
+#### Matriz vacío con N filas y M columnas:
+
+Se puede crear una `matriz vacía` con `N filas` y `M columnas` de la siguiente forma general:
+
+```javascript
+const MATRIZ = new Array(N).fill().map(() => new Array(M));
+```
+
+Siendo `N` la cantidad de fila y `M` la cantidad de columnas.
+
+A continuación veremos un ejemplo sencillo;
+
+```javascript
+const matriz = new Array(3).fill().map(() => new Array(2));
+
+console.log(matriz); // Imprime [ [ <2 empty items> ], [ <2 empty items> ], [ <2 empty items> ] ]
+```
+
+#### Matriz con N filas y M columnas y valor primitivo por defecto:
+
+Se puede crear una `matriz` con `N filas`, `M columnas` y un valor primitivo por defecto de la siguiente forma general:
+
+```javascript
+const MATRIZ = new Array(N).fill().map(() => new Array(M).fill(VALOR_PRIMITIVO_DEFECTO));
+```
+
+Siendo `N` la cantidad de fila y `M` la cantidad de columnas y `VALOR_PRIMITIVO_DEFECTO` el valor primitivo que tenga cada posición.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const matriz = new Array(3).fill().map(() => new Array(2).fill(1));
+
+console.log(matriz); // Imprime [ [ 1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
+```
 
 ## Arreglo de objetos.
 
