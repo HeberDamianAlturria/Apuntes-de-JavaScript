@@ -612,9 +612,138 @@ console.log(maximoNumero); // Imprime 3.
 console.log(minimoNumero); // Imprime 1.
 ```
 
-## Destructuring Arreglo.
+## Destructuring assignment Arreglo.
+
+Podemos destructurar un arreglo para asignarle sus valores a `variables o constantes` de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_n];
+
+// Destructuring assignment con constantes.
+const [CONST_1, CONST_2, /*...*/, CONST_n] = ARRAY;
+
+// Destructuring assignment con variables.
+let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_n] = ARRAY;
+```
+
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_n = ELEM_n` (lo mismo pasa para las constantes).
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const arreglo = [1,2,3];
+
+const [a, b, c] = arreglo;
+
+console.log(a); // Imprime 1
+console.log(b); // Imprime 2
+console.log(c); // Imprime 3
+```
+
+### ¿Qué pasa si hay menos variables/constantes que elementos en el array?
+
+Cabe mencionar que en la forma general anterios, existía la misma cantidad de variables/constantes que elementos del array. Pero notemos que si hay menos variables/constantes que elementos del array, eso no es problema ya que entonces funcionaría de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_i, ELEM_(i+1), /*...*/ ELEM_n];
+
+// Destructuring assignment con constantes.
+const [CONST_1, CONST_2, /*...*/, CONST_i] = ARRAY;
+
+// Destructuring assignment con variables.
+let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_i] = ARRAY;
+```
+
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), pero lo elementos del array que son `ELEM_(i+1), ..., ELEM_n` serán completamente ignorados.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const arreglo = [1,2,3,4,5,6,7];
+
+const [a, b, c] = arreglo;
+
+console.log(a); // Imprime 1
+console.log(b); // Imprime 2
+console.log(c); // Imprime 3
+```
+
+### Valores por defecto.
+
+Ahora veremos como asignarle un valor por defecto en caso de que el `arreglo` tenga menos elementos que la cantidad de `variables/constantes`. La forma general se ve así:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_i];
+
+// Destructuring assignment con constantes.
+const [CONST_1, CONST_2, /*...*/, CONST_i, CONST_(i+1) = VALOR_DEFECTO_1, /*...*/, CONST_n = VALOR_DEFECTO_m] = ARRAY;
+
+// Destructuring assignment con variables.
+let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_i, VARIABLE_(i+1) = VALOR_DEFECTO_1, /*...*/, VARIABLE_n = VALOR_DEFECTO_m] = ARRAY;
+```
+
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), pero como ya no habría más elementos de `ARRAY` entonces se empezarían a asignar los valores por defecto de la siguiente manera: `VARIABLE_(i+1) = VALOR_DEFECTO_1, ..., VARIABLE_n = VALOR_DEFECTO_m` (lo mismo pasa para las constantes). Cabe mencionar que todas las variables/constantes pueden tener valor por defecto si así lo deseamos.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const arreglo = [1,2];
+
+const [a, b, c = 2000] = arreglo;
+
+console.log(a); // Imprime 1
+console.log(b); // Imprime 2
+console.log(c); // Imprime 2000
+```
 
 ### El operador rest.
+
+También puede ser que querramos destructurar de un arreglo una cierta cantidad de `variables/constantes` y el resto de elementos sin asignar guardarlos en otro arreglo. Esto se puede hacer utilizando el operador `rest` de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_i, ELEM_(i+1), /*...*/ ELEM_n];
+
+// Destructuring assignment con constantes.
+const [CONST_1, CONST_2, /*...*/, CONST_i, ...RESTO_ARRAY] = ARRAY;
+
+// Destructuring assignment con variables.
+let [VARIABLE_1, VARIABLE_2, /*...*/, VARIABLE_i, ...RESTO_ARRAY] = ARRAY;
+```
+
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), y finalmente a los elementos que restan del `ARRAY` los asignamos como un arreglo a el `RESTO_ARRAY` resultando en que `RESTO_ARRAY = [ELEM_i, ELEM_(i+1), /*...*/, ELEM_n]`. `IMPORTANTE:` el `operador rest` siempre `va a ir al final`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const arreglo = [1,2,3,4,5,6,7];
+
+const [a, b, ...resto] = arreglo;
+
+console.log(a); // Imprime 1
+console.log(b); // Imprime 2
+console.log(resto); // Imprime [3,4,5,6,7]
+```
+
+### Truco interesante para hacer swap de dos valores.
+
+Podemos intercambiar dos valores de una manera sencilla utilizando la siguiente forma general:
+
+```javascript
+let a = VALOR_1, b = VALOR_2;
+
+[a, b] = [b, a]; // Ahora a = VALOR_2 y b = VALOR_1
+```
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+let a = 1, b = 2000;
+
+[a, b] = [b, a];
+
+console.log(a); // Imprime 2000
+console.log(b); // Imprime 1
+```
 
 ## Arreglos multidimensionales.
 
