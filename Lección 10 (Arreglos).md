@@ -667,7 +667,7 @@ Vamos a ver ahora como funciona esto para una función que tiene una `cantidad i
 function sumar(...args) {
   let resultado = 0;
 
-  for (numero of args) {
+  for (const numero of args) {
     resultado += numero;
   }
 
@@ -927,8 +927,8 @@ En este ejemplo, vamos a imprimir cada elemento que compone a la matriz. Por lo 
 También podemos iterar la matriz usando el `for...of` de la siguiente forma general:
 
 ```javascript
-for (row of MATRIZ) {
-  for (element of row) {
+for (const row of MATRIZ) {
+  for (const element of row) {
     /*
      * Cuerpo del for.
      */
@@ -947,8 +947,8 @@ const matriz = [
   [7, 8, 9],
 ];
 
-for (row of matriz) {
-  for (element of row) {
+for (const row of matriz) {
+  for (const element of row) {
     console.log(element);
   }
 }
@@ -993,6 +993,28 @@ console.log(matriz); // Imprime [ [ 1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
 ```
 
 ## Arreglo de objetos.
+
+En la siguiente lección aprenderemos sobre los `objetos`. Pero por ahora vamos a aprender como trabajar con `arreglos de objetos`, ya que es lo más utilizado en proyectos reales. La forma general en la que se ve un arreglo de objetos es así:
+
+```javascript
+const arregloDeObjetos = [
+   { // Objeto 1
+      clave1: valor1,
+      clave2: valor2,
+      /*...*/
+   }, 
+   { // Objeto 2.
+      clave1: valor3,
+      clave2: valor4,
+      /*...*/
+   },
+   // Más objetos.
+];
+```
+
+Es importante aclarar que NO es necesario que `todos los objetos` del arreglo tengan exactamente las `mismas claves` o `la misma cantidad de claves`. 
+
+Lo importante es saber que al ser un `arreglo`, podemos aplicarle todos los métodos que veremos a continuación y podremos aplicarle todo lo visto en esta lección.
 
 ## Métodos avanzados sobre Arreglos
 
@@ -1080,13 +1102,114 @@ Notemos que en este caso el `índice inicial` es -3 y el `índice final` es -1. 
 
 Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
 
+### El método forEach.
+
+El método `forEach` va a recorrer el `arreglo` y va a ejecutar por cada elemento una `función callback`. Se utiliza de la siguiente forma general:
+
+```javascript
+ARRAY.forEach((elemento, indice) => {
+   /* Cuerpo de la función */
+});
+```
+
+Básicamente, el método `forEach` toma como argumento una función. Lo que hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; la función no va a retornar nada. Es muy similar a utilizar un `for...of`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const listOfInfo = [
+   {
+      firstName: "Heber",
+      lastName: "Alturria",
+      DNI: 43690658,
+   },
+   {
+      firstName: "Natasha",
+      lastName: "Ivancich",
+      DNI: 43142142,
+   },
+];
+
+listOfInfo.forEach((info) => {
+   console.log(info.firstName);
+   console.log(info.lastName);
+   console.log(info.DNI);
+});
+```
+
 ### El método filter.
 
-### El método map.
+El método filter es utilizado para filtrar elementos de un array bajo cierto criterio. toma como argumento una `función de callback` y va a retornar un nuevo array con los elementos ya filtrado. Se utiliza de la siguiente forma general:
+
+```javascript
+const nuevoArreglo = ARRAY.filter((elemento, indice) => {
+   /* Cuerpo de la función */
+
+   return // valor booleano que define si filtrar o no. 
+});
+```
+
+Básicamente, el filter toma como argumento una función. Lo que `filter` hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces se va a `quedar el elemento`, en cambio si retorna `false` entonces se va a `filtrar el elemento`.
+
+La sintáxis puede tener más sentido cuando en futuras lecciones aprendamos sobre las `arrow functions`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = [1, 2, 3, 4, 5, 6, 7, 8];
+
+const soloPares = arreglo.filter((numero) => numero % 2 == 0);
+
+console.log(soloPares);
+```
 
 ### El método find.
 
-### El método forEach.
+El método find es utilizado para encontrar `el primer elemento` de un array que `cumpla con cierta condición`. toma como argumento una `función de callback` y va a retornar `el primer elemento en cumplir la condición`. Se utiliza de la siguiente forma general:
+
+```javascript
+const elementoSatisfaceCondicion = ARRAY.find((elemento, indice) => {
+   /* Cuerpo de la función */
+
+   return // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+Básicamente, el find toma como argumento una función. Lo que `find` hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces significa que el `elemento` ha cumplido la condición y se `devuelve dicho elemento como resultado del método`, en cambio si retorna `false` entonces se sigue iterando. Si ningún elemento cumple la condición, entonces va a retornar `undefined`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = [1, 2, 3, 5, 6, 7, 8];
+
+const mayorA3 = arreglo.find((numero) => numero > 3);
+
+console.log(mayorA3); // Imprime 5.
+```
+
+### El método findIndex.
+
+Este método funciona exactamente igual al `find`, pero en lugar de devolver el elemento que cumple la condición, va a devolver `el índice del elemento que cumple la condición`. Se utiliza de la siguiente forma general:
+
+```javascript
+const indexElementoSatisfaceCondicion = ARRAY.findIndex((elemento, indice) => {
+   /* Cuerpo de la función */
+
+   return // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = ["Hola", "Chau", "Sol", "Maincra"];
+
+const indiceResultado = arreglo.findIndex((word) => word.length <= 3);
+
+console.log(indiceResultado); // Imprime 2.
+```
+
+### El método map.
 
 ### El método reduce.
 
