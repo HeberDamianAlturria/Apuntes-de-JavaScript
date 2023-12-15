@@ -979,7 +979,9 @@ console.log(matriz); // Imprime [ [ <2 empty items> ], [ <2 empty items> ], [ <2
 Se puede crear una `matriz` con `N filas`, `M columnas` y un valor primitivo por defecto de la siguiente forma general:
 
 ```javascript
-const MATRIZ = new Array(N).fill().map(() => new Array(M).fill(VALOR_PRIMITIVO_DEFECTO));
+const MATRIZ = new Array(N)
+  .fill()
+  .map(() => new Array(M).fill(VALOR_PRIMITIVO_DEFECTO));
 ```
 
 Siendo `N` la cantidad de fila y `M` la cantidad de columnas y `VALOR_PRIMITIVO_DEFECTO` el valor primitivo que tenga cada posición.
@@ -998,21 +1000,23 @@ En la siguiente lección aprenderemos sobre los `objetos`. Pero por ahora vamos 
 
 ```javascript
 const arregloDeObjetos = [
-   { // Objeto 1
-      clave1: valor1,
-      clave2: valor2,
-      /*...*/
-   }, 
-   { // Objeto 2.
-      clave1: valor3,
-      clave2: valor4,
-      /*...*/
-   },
-   // Más objetos.
+  {
+    // Objeto 1
+    clave1: valor1,
+    clave2: valor2,
+    /*...*/
+  },
+  {
+    // Objeto 2.
+    clave1: valor3,
+    clave2: valor4,
+    /*...*/
+  },
+  // Más objetos.
 ];
 ```
 
-Es importante aclarar que NO es necesario que `todos los objetos` del arreglo tengan exactamente las `mismas claves` o `la misma cantidad de claves`. 
+Es importante aclarar que NO es necesario que `todos los objetos` del arreglo tengan exactamente las `mismas claves` o `la misma cantidad de claves`.
 
 Lo importante es saber que al ser un `arreglo`, podemos aplicarle todos los métodos que veremos a continuación y podremos aplicarle todo lo visto en esta lección.
 
@@ -1108,7 +1112,7 @@ El método `forEach` va a recorrer el `arreglo` y va a ejecutar por cada element
 
 ```javascript
 ARRAY.forEach((elemento, indice) => {
-   /* Cuerpo de la función */
+  /* Cuerpo de la función */
 });
 ```
 
@@ -1118,22 +1122,22 @@ A continuación veremos un ejemplo sencillo:
 
 ```javascript
 const listOfInfo = [
-   {
-      firstName: "Heber",
-      lastName: "Alturria",
-      DNI: 43690658,
-   },
-   {
-      firstName: "Natasha",
-      lastName: "Ivancich",
-      DNI: 43142142,
-   },
+  {
+    firstName: "Heber",
+    lastName: "Alturria",
+    DNI: 43690658,
+  },
+  {
+    firstName: "Natasha",
+    lastName: "Ivancich",
+    DNI: 43142142,
+  },
 ];
 
 listOfInfo.forEach((info) => {
-   console.log(info.firstName);
-   console.log(info.lastName);
-   console.log(info.DNI);
+  console.log(info.firstName);
+  console.log(info.lastName);
+  console.log(info.DNI);
 });
 ```
 
@@ -1143,9 +1147,9 @@ El método filter es utilizado para filtrar elementos de un array bajo cierto cr
 
 ```javascript
 const nuevoArreglo = ARRAY.filter((elemento, indice) => {
-   /* Cuerpo de la función */
+  /* Cuerpo de la función */
 
-   return // valor booleano que define si filtrar o no. 
+  return; // valor booleano que define si filtrar o no.
 });
 ```
 
@@ -1169,9 +1173,9 @@ El método find es utilizado para encontrar `el primer elemento` de un array que
 
 ```javascript
 const elementoSatisfaceCondicion = ARRAY.find((elemento, indice) => {
-   /* Cuerpo de la función */
+  /* Cuerpo de la función */
 
-   return // valor booleano que define si el elemento satisface la condición.
+  return; // valor booleano que define si el elemento satisface la condición.
 });
 ```
 
@@ -1189,15 +1193,17 @@ console.log(mayorA3); // Imprime 5.
 
 ### El método findIndex.
 
-Este método funciona exactamente igual al `find`, pero en lugar de devolver el elemento que cumple la condición, va a devolver `el índice del elemento que cumple la condición`. Se utiliza de la siguiente forma general:
+El método `findIndex` funciona exactamente igual al `find`, pero en lugar de devolver el elemento que cumple la condición, va a devolver `el índice del elemento que cumple la condición`. Se utiliza de la siguiente forma general:
 
 ```javascript
 const indexElementoSatisfaceCondicion = ARRAY.findIndex((elemento, indice) => {
-   /* Cuerpo de la función */
+  /* Cuerpo de la función */
 
-   return // valor booleano que define si el elemento satisface la condición.
+  return; // valor booleano que define si el elemento satisface la condición.
 });
 ```
+
+Básicamente, el findIndex toma como argumento una función. Lo que `findIndex` hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces significa que el `elemento` ha cumplido la condición y se `devuelve el índice de dicho elemento como resultado del método`, en cambio si retorna `false` entonces se sigue iterando. Si ningún elemento cumple la condición, entonces el método `findIndex` va a retornar `-1`.
 
 A continuación veremos un ejemplo de como es que esto funciona:
 
@@ -1207,6 +1213,54 @@ const arreglo = ["Hola", "Chau", "Sol", "Maincra"];
 const indiceResultado = arreglo.findIndex((word) => word.length <= 3);
 
 console.log(indiceResultado); // Imprime 2.
+```
+
+### El método some.
+
+El método `some` funciona de una manera similar a los dos anteriores. Lo que hace es returnar `true` si `existe` elemento del `array` cumpla la condición. Se utiliza de la siguiente forma general:
+
+```javascript
+const existeElementoSatisfaceCondicion = ARRAY.some((elemento, indice) => {
+  /* Cuerpo de la función */
+
+  return; // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+Básicamente, el some toma como argumento una función. Lo que `some` hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces significa que el `elemento` ha cumplido la condición y se `devuelve true como resultado del método`, en cambio si retorna `false` entonces se sigue iterando. Si ningún elemento cumple la condición, entonces el método `some` va a retornar `false`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = [1, 2, 3, 4, 6, 100000];
+
+const existeNumeroGrande = arreglo.some((numero) => numero >= 1000);
+
+console.log(existeNumeroGrande); // Imprime true.
+```
+
+### El método every.
+
+El método `every` es similar al `some`, solamente que va a retornar `true` si `todos` los elementos del `arreglo` cumplen la condición. Se utiliza de la siguiente forma general
+
+```javascript
+const todolementoSatisfaceCondicion = ARRAY.every((elemento, indice) => {
+  /* Cuerpo de la función */
+
+  return; // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+Básicamente, el every toma como argumento una función. Lo que `every` hará será iterar el `ARRAY` y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces sigue iterando, en cambio si retorna `false` entonces `el método va a retornar false`. Si se cumple que `todos` los elementos del `ARRAY` han hecho que la `función de callback` sea `true`, entonces el `método devuelve true`, en cambios si hubo al menos un elemento que hizo que la `función de callback` sea `false` entonces el `método devulve false`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = [1, 2, 3, 4, 6, 10];
+
+const existeNumeroPequeño = arreglo.every((numero) => numero <= 10);
+
+console.log(existeNumeroGrande); // Imprime true.
 ```
 
 ### El método map.
