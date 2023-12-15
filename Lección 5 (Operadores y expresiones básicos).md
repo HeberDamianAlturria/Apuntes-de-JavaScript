@@ -139,3 +139,43 @@ Generalmente, los `operadores de comparación` suelen utilizarse con `operadores
 | AND Lógico | `x && z`   | Cuando se usa con valores booleanos, `&&` devuelve `true` si ambos valores son `true`; de lo contrario, devuelve `false`.                | `1 === "1" && true` da como resultado `false`   |
 | OR lógico  | `x \|\| z` | Cuando se usa con valores booleanos, `\|\|` devuelve `true` si alguno de los operandos es `true`; si ambos son falsos, devuelve `false`. | `1 === 1000 \|\| true` da como resultado `true` |
 | NOT lógico | `!x`       | Devuelve el valor opuesto. Es decir, si el valor es `true`, entonces da `false`; En cambio, si el valor es `false`, da `true`            | `!(1 === 1000)` da como resultado `true`        |
+
+A continuación veremos como utilizar los `operadores lógicos` y los `operadores de comparación` para crear sentencias lógicas más completas:
+
+```javascript
+const number = 120;
+
+// number es mayor a 100 o menor a 50, y a su vez number es par.
+const isNumberCorrect = (number > 100 || number < 50) && number % 2 === 0; 
+
+console.log(isNumberCorrect); // Imprime true.
+```
+
+## La expresión typeof.
+
+Esta expresión se utiliza de la siguiente forma general:
+
+```javascript
+typeof(VALOR_O_EXPRESION);
+```
+Y lo que hará será decirnos cuál es el tipo del `VALOR_O_EXPRESION`.
+
+A continuación veremos unos ejemplos:
+
+```javascript
+console.log(typeof([1,2,3])); // Imprime 'object'
+
+console.log(typeof(12)); // Imprime 'number'
+
+console.log(typeof("hola")); // Imprime 'string'
+
+console.log(typeof(12n)); // Imprime 'bigint'
+
+console.log(typeof(true)); // Imprime 'boolean'
+
+console.log(typeof({name: "heber"})); // Imprime 'object'
+```
+
+## El operador spread.
+
+Este operador puede ser utilizado para `strings`, `arreglos`, `objetos` y también otro tipo de `objetos iterables`. Es un operador muy versatil que veremos a lo largo de las distintas lecciones como utilizarlo de manera correcta bajo distintas circunstancias. El operador se simboliza como `...`.

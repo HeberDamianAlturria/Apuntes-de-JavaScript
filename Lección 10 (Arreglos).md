@@ -384,7 +384,167 @@ console.log(JSON.stringify(arreglo1) === JSON.stringify(arreglo2)); // Imprime t
 console.log(JSON.stringify(arreglo1) === JSON.stringify(arreglo3)); // Imprime false
 ```
 
-## El método slice()
+## Como concatenar dos arreglos.
+
+Para concatenar dos arreglos debemos utilizar el método `concat`, el cuál no modifica ningún arreglo, sino que devuevle un arreglo nuevo con ambos arreglos concatenados. Eso se utiliza de la siguiente forma general:
+
+```javascript
+const arregloResultante = ARRAY_1.concat(ARRAY_2);
+```
+
+Esto lo que hará será agregar todos los elementos de `ARRAY_2` al final del `ARRAY_1`.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const fruits = ["Apple", "Banana", "Kiwi"],
+  names = ["Heber", "Nat"];
+const fruitsAndNames = fruits.concat(names);
+console.log(fruitsAndNames); // Imprime [ 'Apple', 'Banana', 'Kiwi', 'Heber', 'Nat' ]
+```
+
+También se pueden concatenar varios arreglos de la siguiente forma general:
+
+```javascript
+const arregloResultante = ARRAY_1.concat(ARRAY_2, ARRAY_3, ..., ARRAY_N);
+```
+
+## Como clonar un array.
+
+Queremos evitar el `aliasing` a la hora de clonar un array. Para lograrlo, tenemos que hacer un `deep clone`, lo que significa que debemos copiar en nueva memoria no solamente al arreglo, sino a cada elemento que compone al arreglo como pueden ser `otros arreglos internos u objectos`. Así que para hacer un `deep clone`, recomiendo hacerlo de la siguiente forma general:
+
+```javascript
+const deepCloneArray = JSON.parse(JSON.stringify(ARRAY));
+```
+
+A continuación veremos un ejemplo de como esto se hace:
+
+```javascript
+const nestedArray = [1, [2], 3, { hola: "mundo" }];
+const arrayCopy = JSON.parse(JSON.stringify(nestedArray));
+
+arrayCopy[1][0] = 2000;
+arrayCopy[3].hola = "Adios";
+
+console.log(arrayCopy); // Imprime [ 1, [ 2000 ], 3, { hola: 'Adios' } ]
+console.log(nestedArray); // Imprime [ 1, [ 2 ], 3, { hola: 'mundo' } ]
+```
+
+`Importante:` Cabe mencionar que esto funcionará especialmente para arreglos que tengan un formato de tipo JSON. Si no tiene este formato, entonces recomiendo buscar otra alternativa, ya que puede que algunos valores cambien.
+
+`OTRO DATO IMPORTANTE:` recomiendo hacer un `deep clone` únicamente si necesitamos crear una copia de un arreglo para modificarla sin modificar el arreglo original. En otros casos, recomiendo utilizar otra alternativa como puede ser el `spread operator`, ya que hacer `JSON.parse(JSON.stringify(ARRAY))` es muy costoso computacionalmente.
+
+## Operador Spread.
+
+El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para arreglos.
+
+El operador `spread` es utilizado para expandir los elementos de un `arreglo`. Supongamos que tenemos un arreglo llamado `ARRAY` que es igual a `[ELEM_1, ELEM_2, ..., ELEM_n]` entonces el operador `spread` se escribe como `...ARRAY` y da como resultando `ELEM_1, ELEM_2, ..., ELEM_n`, por lo que podemos pensar que el operador `spread` le quita los `[]` al `ARRAY` para dejar solamente los elementos que lo conforman.
+
+A continuación veremos una serie de usos que podemos darle al operador `spread`:
+
+### Utilizando el operador Spread para copiar un arreglo.
+
+Notemos que nosotros podemos utilizar el operado `spread` para crear un nuevo arreglo utilizando los elementos de otro arreglo. Esto se ve de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+const nuevoArreglo = [...ARRAY]; // Equivale a [ELEM_1, ELEM_2, /*...*/, ELEM_n]
+```
+
+Es decir, hemos creado un `nuevoArreglo` en función de los elementos del `ARRAY`. Esto funciona a la perfección si `todos los elementos del ARRAY` son `tipos primitivos`.
+
+Veamos a continuación un ejemplo de como esto funciona bien:
+
+```javascript
+const arreglo = [1, 2, 3, 4, "Hola", true];
+const nuevoArreglo = [...arreglo];
+
+nuevoArreglo[4] = "Chau";
+
+console.log(arreglo); // Imprime [1,2,3,4, "Hola", true]
+console.log(nuevoArreglo); // Imprime [1,2,3,4, "Chau", true]
+```
+
+El problema radica cuando el `ARRAY` tiene elementos `no primitivos`, ya que utilizar el operador `spread` genera una `copia superficial`, lo que significa que la memoria de los `elemento no primitivos` será la misma en el `arreglo copiado` generando un `aliasing`.
+
+Veremos un ejemplo de este error:
+
+```javascript
+/* Código incorrecto */
+
+const arreglo = [1, [2], 3, {hola: "chau"}];
+const nuevoArreglo = [...arreglo];
+
+nuevoArreglo[1][0] = 20000;
+nuevoArreglo[3].hola = "miau";
+
+console.log(arreglo); // Imprime [1, [20000], 3, {hola: "miau"}]
+console.log(nuevoArreglo); // Imprime [1, [20000], 3, {hola: "miau"}]
+```
+
+Como se puede observar, al tener un `aliasing` entre los objetos internos del `arreglo`, al hacer una copia superficial de la forma `[...arreglo]`, entonces si modificamos en el `nuevoArreglo` algún valor de los objetos, entonces el cambio se verá reflejado en `arreglo`.
+
+### Utilizando el operador Spread para agregar elementos a un array.
+
+Podemos utilizar el operador `spread` para agregar elementos al inicio o al final de un arreglo. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+let ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+
+/* Así se agrega un elemento por adelante. */
+ARRAY = [ELEM_ADELANTE, ...ARRAY]; // Equivale a [ELEM_ADELANTE, ELEM_1, ELEM_2, /*...*/, ELEM_n]
+
+/* Así se agrega un elemento por detrás. */
+ARRAY = [...ARRAY, ELEM_ATRAS]; // Equivale a [ELEM_ADELANTE, ELEM_1, ELEM_2, /*...*/, ELEM_n, ELEM_ATRAS]
+```
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+let arreglo = [1, 2, 3, 4, "Hola", true];
+arreglo = ["Inicio", ...arreglo, "Final"];
+
+console.log(arreglo); // Imprime ["Inicio", 1, 2, 3, 4, "Hola", true, "Final"]
+```
+
+También podemos utilizar esto de agregar elementos para crear nuevos arreglos de la siguiente forma general:
+
+```javascript
+const nuevoArreglo = [ELEM_ADELANTE, ...ARRAY, ELEM_ATRAS];
+```
+
+Pero tengamos cuidado de que todos los elementos de `ARRAY` sean de `tipo primitivo`, ya que si contiene elementos de `tipo no primitivo` podemos tener errores de `aliasing` como hemos mencionado previamente.
+
+### Utilizando el operador Spread para concatenar arreglos.
+
+Podemos concatenar dos o más arreglos utilizando el operador `spread` de la siguiente forma general:
+
+```javascript
+const arregloConcatenado = [...ARRAY_1, ...ARRAY_2, /*...*/, ...ARRAY_n];
+```
+
+Esto funcionará a la perfección si es que `ARRAY_1, ARRAY_2, /*...*/, ARRAY_n` son arreglos compuestos de `tipos primitivos`. Si alguno tiene un `tipo no primitivo`, entonces tendremos problemas de `aliasing` como hemos mencionado previamente.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const arreglo1 = [1,2,3], arreglo2 = ["Hola", "soy", "Heber"];
+const arregloConcatenado = [...arreglo1, ...arreglo2];
+
+console.log(arregloConcatenado); // Imprime [ 1, 2, 3, 'Hola', 'soy', 'Heber' ]
+```
+
+## Destructuring Arreglo.
+
+### El operador rest.
+
+## Arreglos multidimensionales.
+
+## Arreglo de objetos.
+
+## Métodos avanzados sobre Arreglos
+
+### El método slice()
 
 El método slice va a obtener un `subArray` en base a un `array` y a un `índice inicial` y un `índice final` (este último es opcional). Esto funciona de la siguiente forma general:
 
@@ -402,7 +562,7 @@ const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
 console.log(arreglo.slice(1, 3)); // Imprime ["Banana", "Kiwi"]
 ```
 
-### Ejemplo visual de como funciona con índices positivos
+#### Ejemplo visual de como funciona con índices positivos
 
 Ahora voy a hacer un ejemplo visual de como funciona el `slice()` con `índices positivos`. Para ello, vamos a tener la siguiente expresión:
 
@@ -428,7 +588,7 @@ Notemos que en este caso el `índice inicial` es 1 y el `índice final` es 3. Y 
 
 Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
 
-### Trabajando con índices negativos.
+#### Trabajando con índices negativos.
 
 El método `slice()` también nos permite trabajar con `índices negativos`. A continuación veremos algunos ejemplos:
 
@@ -442,7 +602,7 @@ console.log(arreglo.slice(-2)); // Imprime [ 'Kiwi', 'Orange' ]
 console.log(arreglo.slice(-3, -2)); // Imprime [ 'Banana' ]
 ```
 
-### Ejemplo visual de como funciona con índices negativos
+#### Ejemplo visual de como funciona con índices negativos
 
 Ahora voy a hacer un ejemplo visual de como funciona el `slice()` con `índices negativos`. Para ello, vamos a tener la siguiente expresión:
 
@@ -467,36 +627,6 @@ Notemos que en este caso el `índice inicial` es -3 y el `índice final` es -1. 
 ```
 
 Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
-
-## Como concatenar dos arreglos.
-
-Para concatenar dos arreglos debemos utilizar el método `concat`, el cuál no modifica ningún arreglo, sino que devuevle un arreglo nuevo con ambos arreglos concatenados. Eso se utiliza de la siguiente forma general:
-
-```javascript
-const arregloResultante = ARRAY_1.concat(ARRAY_2);
-```
-
-Esto lo que hará será agregar todos los elementos de `ARRAY_2` al final del `ARRAY_1`.
-
-A continuación veremos un ejemplo de esto:
-
-```javascript
-const fruits = ["Apple", "Banana", "Kiwi"], names = ["Heber", "Nat"];
-const fruitsAndNames = fruits.concat(names);
-console.log(fruitsAndNames); // Imprime [ 'Apple', 'Banana', 'Kiwi', 'Heber', 'Nat' ]
-```
-
-## Operador Spread.
-
-### Utilizando el operador Spread para concatenar dos arreglos.
-
-## Destructuring Arreglo.
-
-## Arreglos multidimensionales.
-
-## Arreglo de objetos.
-
-## Métodos avanzados sobre Arreglos
 
 ### El método filter.
 
