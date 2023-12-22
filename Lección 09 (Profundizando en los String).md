@@ -8,7 +8,7 @@ En esta lección aprenderemos los métodos más utilizados sobre `String`.
 
 ## Aclaración muy importante:
 
-En JavaScript, el `String` además de ser un tipo también es un objeto, por lo tanto podríamos hacer lo siguiente para crear un string:
+En JavaScript, el `String` puede ser tratado como un `objeto`, por lo tanto podríamos hacer lo siguiente para crear un string:
 
 ```javascript
 const string = new String(10);

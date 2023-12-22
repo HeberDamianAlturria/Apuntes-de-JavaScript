@@ -8,7 +8,7 @@ En esta lección aprenderemos los métodos más utilizados sobre `Number`.
 
 ## Aclaración muy importante:
 
-En JavaScript, el `Number` además de ser un tipo también es un objeto, por lo tanto podríamos hacer lo siguiente para crear un número:
+En JavaScript, el `Number` puede ser tratado como un `objeto`, por lo tanto podríamos hacer lo siguiente para crear un número:
 
 ```javascript
 const numero = new Number(10);

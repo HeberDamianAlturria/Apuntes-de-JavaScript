@@ -743,7 +743,7 @@ const [CONST_1, CONST_2 /*...*/, , CONST_i] = ARRAY;
 let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_i] = ARRAY;
 ```
 
-Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), pero lo elementos del array que son `ELEM_(i+1), ..., ELEM_n` serán completamente ignorados.
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), pero los elementos del array que son `ELEM_(i+1), ..., ELEM_n` serán completamente ignorados.
 
 A continuación veremos un ejemplo sencillo:
 
@@ -994,6 +994,8 @@ const matriz = new Array(3).fill().map(() => new Array(2).fill(1));
 console.log(matriz); // Imprime [ [ 1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
 ```
 
+### El método flat.
+
 ## Arreglo de objetos.
 
 En la siguiente lección aprenderemos sobre los `objetos`. Pero por ahora vamos a aprender como trabajar con `arreglos de objetos`, ya que es lo más utilizado en proyectos reales. La forma general en la que se ve un arreglo de objetos es así:
@@ -1020,7 +1022,31 @@ Es importante aclarar que NO es necesario que `todos los objetos` del arreglo te
 
 Lo importante es saber que al ser un `arreglo`, podemos aplicarle todos los métodos que veremos a continuación y podremos aplicarle todo lo visto en esta lección.
 
-## Métodos avanzados sobre Arreglos
+## Métodos avanzados sobre Arreglos.
+
+### El método includes().
+
+Este método devolverá `true` si es que un valor está en un `array`, y si no está devolverá `false`. Se usa de la siguiente forma general:
+
+```javascript
+const valorbooleano = ARRAY.includes(VALOR_PRIMITIVO);
+```
+
+Este método lo que hará será iterar el `ARRAY` y verá si se cumple que algún elemento del arreglo es igual (mediante el operador `===`) al `VALOR_PRIMITIVO`.
+
+`IMPORTANTE`: solamente debemos utilizar este método para vert si el `ARRAY` contiene algún valor del `tipo primitivo`, ya que al hacer uso del `===` para la comparación entonces `NO` funcionará para `tipos complejos`.
+
+A continuación veremos un ejemplo de como se usa:
+
+```javascript
+const animes = ["Monster", "Death Note", "Steins;gate"];
+
+console.log(animes.includes("Monster")); // Imprime True.
+
+console.log(animes.includes("monster")); // Imprime False.
+
+console.log(animes.includes("Naruto")); // Imprime False.
+```
 
 ### El método slice()
 
@@ -1106,13 +1132,13 @@ Notemos que en este caso el `índice inicial` es -3 y el `índice final` es -1. 
 
 Notemos que el resultado son los elementos desde `indexStart` hasta `indexEnd - 1`.
 
-### El método forEach.
+### El método forEach().
 
 El método `forEach` va a recorrer el `arreglo` y va a ejecutar por cada elemento una `función callback`. Se utiliza de la siguiente forma general:
 
 ```javascript
 ARRAY.forEach((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 });
 ```
 
@@ -1141,13 +1167,13 @@ listOfInfo.forEach((info) => {
 });
 ```
 
-### El método filter.
+### El método filter().
 
 El método filter es utilizado para filtrar elementos de un array bajo cierto criterio. toma como argumento una `función de callback` y va a retornar un nuevo array con los elementos ya filtrado. Se utiliza de la siguiente forma general:
 
 ```javascript
 const nuevoArreglo = ARRAY.filter((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 
   return; // valor booleano que define si filtrar o no.
 });
@@ -1167,13 +1193,13 @@ const soloPares = arreglo.filter((numero) => numero % 2 == 0);
 console.log(soloPares);
 ```
 
-### El método find.
+### El método find().
 
 El método find es utilizado para encontrar `el primer elemento` de un array que `cumpla con cierta condición`. toma como argumento una `función de callback` y va a retornar `el primer elemento en cumplir la condición`. Se utiliza de la siguiente forma general:
 
 ```javascript
 const elementoSatisfaceCondicion = ARRAY.find((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 
   return; // valor booleano que define si el elemento satisface la condición.
 });
@@ -1191,13 +1217,13 @@ const mayorA3 = arreglo.find((numero) => numero > 3);
 console.log(mayorA3); // Imprime 5.
 ```
 
-### El método findIndex.
+### El método findIndex().
 
 El método `findIndex` funciona exactamente igual al `find`, pero en lugar de devolver el elemento que cumple la condición, va a devolver `el índice del elemento que cumple la condición`. Se utiliza de la siguiente forma general:
 
 ```javascript
 const indexElementoSatisfaceCondicion = ARRAY.findIndex((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 
   return; // valor booleano que define si el elemento satisface la condición.
 });
@@ -1215,13 +1241,13 @@ const indiceResultado = arreglo.findIndex((word) => word.length <= 3);
 console.log(indiceResultado); // Imprime 2.
 ```
 
-### El método some.
+### El método some().
 
 El método `some` funciona de una manera similar a los dos anteriores. Lo que hace es returnar `true` si `existe` elemento del `array` cumpla la condición. Se utiliza de la siguiente forma general:
 
 ```javascript
 const existeElementoSatisfaceCondicion = ARRAY.some((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 
   return; // valor booleano que define si el elemento satisface la condición.
 });
@@ -1239,13 +1265,13 @@ const existeNumeroGrande = arreglo.some((numero) => numero >= 1000);
 console.log(existeNumeroGrande); // Imprime true.
 ```
 
-### El método every.
+### El método every().
 
 El método `every` es similar al `some`, solamente que va a retornar `true` si `todos` los elementos del `arreglo` cumplen la condición. Se utiliza de la siguiente forma general
 
 ```javascript
 const todolementoSatisfaceCondicion = ARRAY.every((elemento, indice) => {
-  /* Cuerpo de la función */
+  /* Cuerpo de la función (opcional) */
 
   return; // valor booleano que define si el elemento satisface la condición.
 });
@@ -1263,8 +1289,331 @@ const existeNumeroPequeño = arreglo.every((numero) => numero <= 10);
 console.log(existeNumeroGrande); // Imprime true.
 ```
 
-### El método map.
+### El método map().
 
-### El método reduce.
+El método `map` sirve para transformar todos los elementos de un arreglo en otro valores retornados por una `función de callback`. Se utiliza de la siguiente forma general:
 
-### El método sort.
+```javascript
+const arregloCambiado = ARRAY.map((elemento, indice) => {
+  /* Cuerpo de la función (opcional) */
+
+  return; // nuevo valor que tendrá el elemento.
+});
+```
+
+Básicamente, el `map` toma como argumento una `función de callback` y lo que hará será iterar el `ARRAY` y por cada `elemento` vamos a modificar el valor de dicho elemento en su índice correspondiente por el `valor retornado en la función de callback`. Este método devolverá un `nuevo arreglo` con los valores ya modificados.
+
+A continuación veremos un ejemplo de uso:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const doubleNumbers = numbers.map((num) => num * 2);
+
+console.log(numbers); // Imprime [1,2,3,4,5]
+console.log(doubleNumbers); // Imprime [2,4,6,8,10]
+```
+
+En este ejemplo utilizamos el `map` para multiplicar todos los elementos de `numbers` por 2.
+
+#### Otro ejemplo interesante.
+
+A continuación veremos un ejemplo de como utilizar el `map` en un arreglo de objetos:
+
+```javascript
+const users = [
+  { firstName: "Susan", lastName: "Steward" },
+  { firstName: "Daniel", lastName: "Longbottom" },
+  { firstName: "Jacob", lastName: "Black" },
+];
+
+const userFullname = users.map(
+  (object) => `${object.firstName} ${object.lastName}`
+);
+
+console.log(userFullname); // Imprime ["Susan Steward", "Daniel Longbottom", "Jacob Black"]
+```
+
+### El método reduce().
+
+El método `reduce` es utilizado para iterar un arreglo y reducirlo a un único valor. Se utiliza de la siguiente forma general:
+
+```javascript
+const valorObtenido = ARRAY.reduce((valorAcumulado, elemento) => {
+  /* Cuerpo de la función (opcional) */
+
+  return; // nuevo valor que tendrá el valorAcumulado para la siguiente iteración.
+}, VALOR_INICIAL);
+```
+
+Básicamente, el método `reduce` va a tomar como argumento una `función de callback` y un `VALOR_INICIAL`. Y lo que hará será iterar sobre el `ARRAY` de ` izquierda a derecha` y llamará a la `función de callback` por cada elemento del arreglo. Para que se entienda como funciona voy a explicar los pasos como si fuesen un algoritmo:
+
+1. En la primera iteración vamos a tener que para la `función de callback` sus argumentos serán: para `valorAcumulado` será igual al `VALOR_INICIAL`, y el `elemento` será igual al primer elemento del `ARRAY` (es decir, `ARRAY[0]`). Luego se va a ejecutar el `cuerpo de la función` en caso de que tenga cuerpo. Y al finalizar, el `valor retornado por la función de callback` pasará a ser el nuevo valor del `valorAcumulado`.
+
+2. Sea `i = 1`, mientras se cumpla que `1 <= i < ARRAY.length` vamos a hacer lo siguiente:
+
+   la `función de callback` tendrá como argumentos: `valorAcumulado` tendrá el valor retornado en la función de calback en la iteración anterior y el `elemento` será el valor de `ARRAY[i]`. Luego se va a ejecutar el `cuerpo de la función de callback` en caso de que tenga cuerpo. Y al finalizar, el `valor retornado por la función de callback` pasará a ser el nuevo valor del `valorAcumulado`.
+
+   Para continuar la iteración, vamos a hacer `i++`.
+
+3. Al terminar de iterar el `ARRAY`, el valor retornado por el método `reduce` será el `último valor` con el que quedó el `valorAcumulado`.
+
+#### Primer ejemplo sencillo.
+
+Veamos el siguiente código:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const sumaTotal = numbers.reduce(
+  (valorAcumulado, numero) => valorAcumulado + numero,
+  0
+);
+
+console.log(sumaTotal); // Imprime 15.
+```
+
+Lo que hará este código es sumar todos los elementos del arreglo `numbers`.
+
+#### Otro ejemplo interesante.
+
+Veamos ahora el siguiente código:
+
+```javascript
+const personalInfo = [
+  {
+    name: "Heber Alturria",
+    age: 22,
+    favAnimes: ["Monster", "Death Note", "Steins;gate"],
+  },
+  {
+    name: "Natasha Ivancich",
+    age: 23,
+    favAnimes: ["Horimiya", "Steins;gate"],
+  },
+];
+
+const onlyAnimes = personalInfo.reduce((arrayAccumulate, info) => {
+  for (const animeTitle of info.favAnimes) {
+    // Evito agregar valores repetidos.
+    if (arrayAccumulate.includes(animeTitle)) continue;
+
+    // Si no está repetido, lo agrego.
+    arrayAccumulate.push(animeTitle);
+  }
+
+  return arrayAccumulate;
+}, []);
+
+console.log(onlyAnimes); // Imprime [ 'Monster', 'Death Note', 'Steins;gate', 'Horimiya' ]
+```
+
+En este ejemplo, lo interesante es que podemos ver que el `valor inicial` de `reduce` es un `[]`, lo que crea al inicio una posición en memoria para un arreglo vacío. Y a su vez, en cada llamada a la función de callback, devolveremos el `arrayAccumulate` para seguir referenciando a la misma posición en memoria del array creado al inicio. Al finalizar, el `onlyAnimes` referenciará a la ya mencionada posición en memoria creada al inicio.
+
+### El método reverse().
+
+Este método revertirá las posiciones de los elementos del `array`. Se utiliza de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+
+ARRAY.reverse();
+```
+
+Como se puede observar, este método va a modificarme el `ARRAY` para revertir las posiciones de sus elementos, resultando en que luego de ejecutar este método vamos a notar que `ARRAY = [ELEM_n, ..., ELEM_2, ELEM_1]`. Notese que este método `modifica el arreglo original`.
+
+A continuación veremos un ejemplo sencillos:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+console.log(numbers); // Imprime [1,2,3,4,5]
+
+numbers.reverse();
+
+console.log(numbers); // Imprime [5,4,3,2,1]
+```
+
+#### Aclaración importante.
+
+En las últimas versiones de `EcmaSCRIPT` se ha añadido el método `toReversed()` que nos permite retornar un `nuevo arreglo` con el orden de los elementos al revés. Por lo tanto, `NO va a modificar el arreglo original`. Se utiliza de la sigueiente manera:
+
+```javascript
+const reversedArray = ARRAY.toReversed();
+```
+
+Al momento de escribir este apunte, este método es muy nuevo y no es soportado por todos los navegadores pero si por las últimas versiones de `NodeJS`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const reversedNumbers = numbers.toReversed();
+
+console.log(numbers); // Imprime [1,2,3,4,5]
+console.log(reversedNumbers); // Imprime [5,4,3,2,1]
+```
+
+Como se puede observar, `NO` se modifica el arreglo `numbers`.
+
+### El método sort().
+
+Este método es utilizado para ordenar un arreglo. Se utiliza de la siguiente forma general:
+
+```javascript
+const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+
+ARRAY.sort((ELEM_I, ELEM_J) => {
+  /* Cuerpo de la función (opcional) */
+
+  return; // Un valor numérico.
+});
+```
+
+Como se puede observar, el método `sort` toma como argumento una `función de callback`. Lo que sucederá es que cuando se quieran comparar dos elementos `ELEM_I` y `ELEM_J` pertenecientes al `ARRAY`, entonces se le pasarán esos valores comoa argumento a la `función de callback` y dependiendo del valor numérico que retorne dicha función sabemos si queremos tener ordenado antes a `ELEM_I` o a `ELEM_J`. A continuación explicaré como funciona el retorno de la `función de callback`:
+
+- Si se cumple que la función de callback retorna un valor `igual a 0`, esto significa que `ELEM_I` y `ELEM_J` son iguales y por ende el orden no importa.
+
+- Si se cumple que la función de callback retorna un valor `> 0`, esto significa que quiero que `ELEM_J` esté ordenado antes que `ELEM_I` (es decir, el segundo elemento tomado como argumento en la función de callback debe estar antes que el primero).
+
+- Si se cumple que la función de callback retorna un valor `< 0`, esto significa que quiero que `ELEM_I` esté ordenado antes que `ELEM_J` (es decir, el primer elemento tomado como argumento en la función de callback debe estar antes que el segundo).
+
+`IMPORTANTE`: Notemos que este método me va a modificar el `ARRAY` para ordenarlo.
+
+#### Ordenar de manera creciente un arreglo de números.
+
+Hace esto es muy común, por consiguiente la forma general de hacerlo es:
+
+```javascript
+ARRAY_DE_NUMEROS.sort((a, b) => a - b);
+```
+
+A continuación veremos un ejemplo:
+
+```javascript
+const numbers = [8, 10, 1, 2];
+
+numbers.sort((a, b) => a - b);
+
+console.log(numbers); // Imprime [1, 2, 8, 10]
+```
+
+#### Ordenar de manera decreciente un arreglo de números.
+
+Hace esto es también muy común, por consiguiente la forma general de hacerlo es:
+
+```javascript
+ARRAY_DE_NUMEROS.sort((a, b) => b - a);
+```
+
+A continuación veremos un ejemplo:
+
+```javascript
+const numbers = [8, 10, 1, 2];
+
+numbers.sort((a, b) => b - a);
+
+console.log(numbers); // Imprime [10, 8, 2, 1]
+```
+
+#### Ejemplo interesante.
+
+En este ejemplo vamos a ordenar un arreglo de objetos en función de un campo llamado `age` de manera decreciente, pero si hay empate en el `age` entonces vamos a ordenarlo por el `name` de manera creciente:
+
+```javascript
+const personalInfo = [
+  {
+    name: "Natasha Ivancich",
+    age: 23,
+  },
+  {
+    name: "Ligth Yaghami",
+    age: 23,
+  },
+  {
+    name: "Heber Alturria",
+    age: 22,
+  },
+  {
+    name: "Mercedes Molina",
+    age: 54,
+  },
+  {
+    name: "L Lawliet",
+    age: 24,
+  },
+];
+
+personalInfo.sort((firstInfo, secondInfo) => {
+  // En este caso, debo manejar el empate en las edades.
+  if (firstInfo.age === secondInfo.age) {
+    // Selecciono el que tenga el menor valor de name.
+    return firstInfo.name <= secondInfo.age ? -1 : 1;
+  }
+
+  return secondInfo.age - firstInfo.age;
+});
+
+console.log(personalInfo);
+
+/*
+Imprime:
+
+[
+  { name: 'Mercedes Molina', age: 54 },
+  { name: 'L Lawliet', age: 24 },
+  { name: 'Ligth Yaghami', age: 23 },
+  { name: 'Natasha Ivancich', age: 23 },
+  { name: 'Heber Alturria', age: 22 }
+]
+
+*/
+```
+
+#### El método toSorted().
+
+Este método también es muy moderno al momento de escribir este apunte, por lo que muchos navegadores no le dan soporte, pero las últimas versiones de `NodeJS` si permiten utilizarlo. Se utiliza de la siguiente forma general:
+
+```javascript
+const sortedArray = ARRAY.toSorted((ELEM_I, ELEM_J) => {
+  /* Cuerpo de la función (opcional) */
+
+  return; // Un valor numérico.
+});
+```
+
+Y lo que hará será devolver un `nuevo arreglo` donde los elementos del `ARRAY` van a estar ya ordenados. La ventaja es que no me modifica el `arreglo original`.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const numbers = [8, 10, 1, 2];
+
+const arregloDecreciente = numbers.toSorted((a, b) => b - a);
+
+console.log(numbers); // Imprime [8, 10, 1, 2]
+
+console.log(arregloDecreciente); // Imprime [10, 8, 2, 1]
+```
+
+### El método join().
+
+Este método es utilizado para convertir todos los elementos de un arreglo en un string, los cuáles estarán separados por un `string`. Se utiliza de la siguiente forma general:
+
+```javascript
+const stringValue = ARRAY.join(SEPARATOR_STRING);
+```
+
+Recomiento utilizar este método si es que el `ARRAY` está compuesto solamente de elementos de `tipos primitivos`.
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const values = [1, 2, 4, "Hola", 20];
+
+console.log(values.join(" ")); // Imprime "1 2 4 Hola 20"
+
+console.log(values.join("-")); // Imprime "1-2-4-Hola-20"
+
+console.log(values.join(", ")); // Imprime "1, 2, 4, Hola, 20"
+```
