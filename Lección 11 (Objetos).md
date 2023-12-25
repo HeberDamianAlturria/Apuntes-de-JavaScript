@@ -2,6 +2,8 @@
 
 Los `objetos` en JavaScript son un tipo no primitivos que está compuesto por `claves` y `valores`.
 
+En esta lección nos enfocaremos en los `objetos literales`, ya que en futuras lecciones aprenderemos sobre `programación orientada a objetos` en JavaScript.
+
 ## Como definir un objeto.
 
 Los `objetos` se definen de la siguiente forma general:
@@ -79,7 +81,7 @@ const personalInfo = {
   animes,
 };
 
-console.log(personalInfo); 
+console.log(personalInfo);
 /* 
   Imprime
 
@@ -93,7 +95,7 @@ console.log(personalInfo);
 
 animes.push("Evangelion");
 
-console.log(personalInfo); 
+console.log(personalInfo);
 /* 
   Imprime
 
@@ -107,3 +109,119 @@ console.log(personalInfo);
 ```
 
 Como se puede observar, al agregar un elemento a `animes` entonces el cambio también se ve reflejado en el objeto `personalInfo`, ya que tiene asignada la referencia del arreglo.
+
+## Obtener valor en base a una clave.
+
+Podemos obtener el `valor` asociado a una `clave` de las siguientes dos maneras:
+
+1. `Utilizando el operador .`:
+
+   Podemos utilizar el `.` de la siguiente forma general:
+
+   ```javascript
+   const valorAsociado = OBJETO.NOMBRE_CLAVE;
+   ```
+
+   Esta manera de hacerlo es la más común, pero solamente funciona cuando `NOMBRE_CLAVE` NO contiene espacios. Lo que hará será devolver el valor asociado al `NOMBRE_CLAVE` que hay en el `OBJETO`. Si `NOMBRE_CLAVE` NO existe en el `OBJETO`, entonces devolverá `undefined`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const personalInfo = {
+     name: "Heber Alturria",
+     age: 22,
+     favAnimes: ["Death note", "Monster", "Steins;gate"],
+   };
+
+   console.log(personalInfo.name); // Imprime "Heber Alturria"
+
+   console.log(personalInfo.age); // Imprime 22
+
+   console.log(personalInfo.favAnimes); // Imprime ["Death note", "Monster", "Steins;gate"]
+
+   console.log(personalInfo.dni); // Imprime undefined
+   ```
+
+2. `Utilizando el operador []`:
+
+   Podemos utilizar el `[]` de la siguiente forma general:
+
+   ```javascript
+   const valorAsociado = OBJETO["NOMBRE_CLAVE"];
+   ```
+
+   En este caso, le pasamos la `clave` como un string entre los `[]`. Lo que hará será devolver el valor asociado al `"NOMBRE_CLAVE"` que hay en el `OBJETO`. Si `"NOMBRE_CLAVE"` NO existe en el `OBJETO`, entonces devolverá `undefined`.
+
+   Esta manera de hacerlo es la indicada si la `clave` tiene espacios.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const personalInfo = {
+     name: "Heber Alturria",
+     age: 22,
+     "favorite animes": ["Death note", "Monster", "Steins;gate"],
+   };
+
+   console.log(personalInfo["name"]); // Imprime "Heber Alturria"
+
+   console.log(personalInfo["age"]); // Imprime 22
+
+   console.log(personalInfo["favorite animes"]); // Imprime ["Death note", "Monster", "Steins;gate"]
+
+   console.log(personalInfo["dni"]); // Imprime undefined
+   ```
+
+## Actualizar valor de una clave.
+
+Podemos actualizar el valor de una clave de las siguientes dos maneras:
+
+1. `Utilizando el operador .`:
+
+   Podemos utilizar el `.` de la siguiente forma general:
+
+   ```javascript
+   OBJETO.NOMBRE_CLAVE = NUEVO_VALOR;
+   ```
+
+   Esta manera de hacerlo es la más común, pero solamente funciona cuando `NOMBRE_CLAVE` NO contiene espacios. Lo que hará será asignarle el valor `NUEVO_VALOR` al `NOMBRE_CLAVE` que hay en el `OBJETO`.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const personalInfo = {
+     name: "Heber Alturria",
+     age: 22,
+     favAnimes: ["Death note", "Monster", "Steins;gate"],
+   };
+
+   personalInfo.name = "Hebercito";
+
+   console.log(personalInfo.name); // Imprime "Hebercito"
+   ```
+
+2. `Utilizando el operador []`:
+
+   Podemos utilizar el `[]` de la siguiente forma general:
+
+   ```javascript
+   OBJETO["NOMBRE_CLAVE"] = NUEVO_VALOR;
+   ```
+
+   En este caso, le pasamos la `clave` como un string entre los `[]`. Lo que hará será asignarle el valor `NUEVO_VALOR` al `NOMBRE_CLAVE` que hay en el `OBJETO`.
+
+   Esta manera de hacerlo es la indicada si la `clave` tiene espacios.
+
+   A continuación veremos un ejemplo:
+
+   ```javascript
+   const personalInfo = {
+     name: "Heber Alturria",
+     age: 22,
+     "favorite animes": ["Death note", "Monster", "Steins;gate"],
+   };
+
+   personalInfo["name"] = "Hebercito";
+
+   console.log(personalInfo["name"]); // Imprime "Hebercito"
+   ```
