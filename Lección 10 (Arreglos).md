@@ -994,7 +994,31 @@ const matriz = new Array(3).fill().map(() => new Array(2).fill(1));
 console.log(matriz); // Imprime [ [ 1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
 ```
 
-### El método flat.
+### El método flat().
+
+Este método nos permite crear un `nuevo arreglo` a partir de un arreglo multidimensional, eliminando la cantidad de dimensiones pero dejando los elementos de los arreglo anidados. Se utiliza de la siguiente forma general:
+
+```javascript
+const arregloAplanado = ARRAY_MULTIDIMENSIONAL.flat(DIMENSIONES_A_ELIMINAR);
+```
+
+Donde notemos que `ARRAY_MULTIDIMENSIONAL` es un arreglo multidimensional, y `DIMENSIONES_A_ELIMINAR` es un número entero. Este método nos devolverá un nuevo arreglo donde contendrá los mismos elementos que el `ARRAY_MULTIDIMENSIONAL` pero eliminando la anidación en `DIMENSIONES_A_ELIMINAR`.
+
+Generalmente querremos que convertir un arreglo multidimensional en otro con una única dimensión. Esto se hace de la siguiente forma general:
+
+```javascript
+const arregloAplanado = ARRAY_MULTIDIMENSIONAL.flat(Infinity);
+```
+
+A continuación veremos un par de ejemplos:
+
+```javascript
+const arregloMultidimensional = [1, 2, 3, [20, 22, [220, 590], 10], 7, 9];
+
+console.log(arregloMultidimensional.flat(Infinity)); // Imprime [ 1, 2, 3, 20, 22, 220, 590, 10, 7, 9 ]
+
+console.log(arregloMultidimensional.flat(1)); // Imprime [ 1, 2, 3, 20, 22, [ 220, 590 ], 10, 7, 9 ]
+```
 
 ## Arreglo de objetos.
 
@@ -1616,4 +1640,20 @@ console.log(values.join(" ")); // Imprime "1 2 4 Hola 20"
 console.log(values.join("-")); // Imprime "1-2-4-Hola-20"
 
 console.log(values.join(", ")); // Imprime "1, 2, 4, Hola, 20"
+```
+
+### El método Array.isArray().
+
+Este es un método que va a devolver `true` solo si la variable o constante que se le pasa como argumentos es un `arreglo`, en caso contrario va a devolver `false`. 
+
+A continuación veremos ejemplos de como se utiliza:
+
+```javascript
+console.log(Array.isArray([1,2,3,4])); // Imprime true.
+
+console.log(Array.isArray(123)); // Imprime false.
+
+console.log(Array.isArray("asd")); // Imprime false.
+
+console.log(Array.isArray(["Hola", "mundo"])); // Imprime true.
 ```
