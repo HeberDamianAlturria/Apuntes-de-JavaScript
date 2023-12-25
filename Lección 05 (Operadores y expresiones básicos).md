@@ -179,3 +179,25 @@ console.log(typeof({name: "heber"})); // Imprime 'object'
 ## El operador spread.
 
 Este operador puede ser utilizado para `strings`, `arreglos`, `objetos` y también otro tipo de `objetos iterables`. Es un operador muy versatil que veremos a lo largo de las distintas lecciones como utilizarlo de manera correcta bajo distintas circunstancias. El operador se simboliza como `...`.
+
+## El operador nullish coalescing.
+
+Este operador es utilizado para devolver un `valor por defecto` cuando el valor de una variable o constante es `null` o `undefined`. Se utiliza de la siguiente forma general: 
+
+```javascript
+const valorResultante = VARIABLE_O_CONSTANTE ?? VALOR_POR_DEFECTO;
+```
+
+Básicamente, lo que hace el operador `??` es devolver el valor de la variable o constante llamada `VARIABLE_O_CONSTANTE` en caso de que NO sea `null` o `undefined`; en cambio, si se cumple que el `null` o `undefined`, entonces devolverá el valor de `VALOR_POR_DEFECTO`.
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+let name; // Será undefined.
+
+console.log(name ?? "Hola mundo"); // Imprime "Hola mundo", ya que name es undefined.
+
+name = "Heber";
+
+console.log(name ?? "Jaja"); // Imprime "Heber", ya que name NO es undefined.
+```
