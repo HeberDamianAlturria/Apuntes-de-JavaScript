@@ -467,6 +467,30 @@ console.log(_.isEqual(persona1, persona4)); // Imprime false
 
 Notemos que en en este ejemplo, al comparar `persona1` y `persona3` nos da `true`, lo que significa que son iguales ya que tienen los mismos `clave-valor` sin importar si están en distinto orden.
 
+## Verificar si un objeto es vacío.
+
+Podemos verificar si un objeto está vacío de la siguiente forma general:
+
+```javascript
+const isEmpty = JSON.stringify(OBJETO) === '{}';
+```
+
+Esta comparación será `true` solamente si `OBJETO` está vacío, en caso contrario devolverá `false`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const persona1 = {};
+
+const persona2 = {
+  name: "Heber",
+};
+
+console.log(JSON.stringify(persona1) === '{}'); // Imprime true
+
+console.log(JSON.stringify(persona2) === '{}'); // Imprime false
+```
+
 ## Eliminando una clave-valor de un objeto.
 
 La forma de eliminar un `clave-valor` de un objeto es hacerlo de la siguiente forma general:
@@ -1015,4 +1039,123 @@ function App() {
 
 No es necesario que se entienda lo que hace este código, sino que lo importante es ver que podemos utilizarlo a la hora de utilizar otros `frameworks`.
 
+## Métodos importantes sobre objetos.
 
+A continuación veremos un par de métodos interesantes que podemos utilizar cuando trabajemos con objetos.
+
+### El método Object.keys().
+
+Este método se utiliza de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyN: valueN,
+};
+
+const arrayOfKeys = Object.keys(OBJETO);
+/* 
+  Y vamos a tener que:
+
+  arrayOfKeys = ["key1", "key2", ..., "keyN"]
+*/
+```
+
+Este método lo que hará será devolver un `arreglo de claves del OBJETO`, por lo que será un arreglo de strings.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const movie = {
+  title: "The Matrix",
+  director: "Lana Wachowski",
+  releaseYear: 1999,
+};
+
+const movieKeys = Object.keys(movie);
+
+console.log(movieKeys); // Imprime ["title", "director", "releaseYear"]
+```
+
+### El método Object.values().
+
+Este método se utiliza de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyN: valueN,
+};
+
+const arrayOfValues = Object.values(OBJETO);
+/* 
+  Y vamos a tener que:
+
+  arrayOfValues = [value1, value2, ..., valueN]
+*/
+```
+
+Este método lo que hará será devolver un `arreglo de valores del OBJETO`, por lo que será un arreglo de diferentes tipos.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const student = {
+  name: "Heidi Kennedy",
+  age: 21,
+  grade: "A",
+  subjects: ["Math", "Science", "English"],
+};
+
+const studentValues = Object.values(student);
+
+console.log(studentValues);
+// Imprime [ "Heidi Kennedy", 21, "A", [ "Math", "Science", "English" ] ]
+```
+
+### El método Object.entries().
+
+Este método se utiliza de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyN: valueN,
+};
+
+const arrayOfEntries = Object.entries(OBJETO);
+
+/* 
+  Y vamos a tener que:
+
+  arrayOfEntries = [
+    [ "key1", value1 ],
+    [ "key2", value2 ],
+    ...
+    [ "keyN", valueN ]
+  ]
+*/
+```
+
+Este método lo que hará será devolver un `arreglo de clave-valor del OBJETO`, por lo que será un arreglo de arreglos de dos dimensiones (clave y valor).
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const movie = {
+  title: "The Matrix",
+  director: "Lana Wachowski",
+  releaseYear: 1999,
+};
+
+const movieEntries = Object.entries(movie);
+
+console.log(movieEntries);
+// Imprime: [ [ "title", "The Matrix" ], [ "director", "Lana Wachowski" ], [ "releaseYear", 1999 ] ]
+```
