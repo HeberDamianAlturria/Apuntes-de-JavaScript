@@ -498,7 +498,6 @@ console.log(personalInfo); // Imprime { name: "Heber" }
 
 Como se puede observar, en este ejemplo eliminamos el campo `age`.
 
-
 ## Operador spread para objetos.
 
 El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para objetos.
@@ -506,4 +505,514 @@ El `spread operator` puede ser utilizado para otros tipos de objetos. En este ca
 El operador `spread` es utilizado para expandir los elementos de un `objeto`. Supongamos que tenemos un objeto llamado `OBJETO` que es igual a `{KEY_1: VALUE_1, KEY_2: VALUE_2, ..., KEY_N: VALUE_N}` entonces el operador `spread` se escribe como `...OBJETO` y da como resultando `KEY_1: VALUE_1, KEY_2: VALUE_2, ..., KEY_N: VALUE_N`, por lo que podemos pensar que el operador `spread` le quita los `{}` al `OBJETO` para dejar solamente los `clave-valor` que lo conforman.
 
 A continuación veremos una serie de usos que podemos darle al operador `spread` para objetos:
+
+### Modificar el valor de una clave en un Objeto.
+
+Podemos utilizar el operador `spread` para modificar el valor de una clave en un objeto. Se hace de la siguiente forma general:
+
+```javascript
+/* Usar con precaución */
+
+let OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyN: valueN,
+};
+
+OBJETO = { ...OBJETO, keyI: NEW_VALUE };
+```
+
+Esto lo que hará será asignarle a `OBJETO` una nueva posición de la memoria donde estarán todos `clave-valor` del `OBJETO` pero donde la clave `keyI` tendrá el valor de `NEW_VALUE`.
+
+Hacer esto es muy costoso computacionalmente, por lo que recomiendo evitar hacerlo a toda costa. Lo expliqué por una cuestión de completitud.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+let personalInfo = {
+  name: "Heber Alturria",
+  age: 22,
+  favAnime: ["Death Note", "Monster", "Steins;gate"],
+};
+
+console.log(personalInfo);
+/*
+  Imprime:
+
+  {
+    name: "Heber Alturria",
+    age: 22,
+    favAnime: ["Death Note", "Monster", "Steins;gate"],
+  }
+*/
+
+personalInfo = { ...personalInfo, name: "Hebercito" };
+
+console.log(personalInfo);
+/*
+  Imprime:
+
+  {
+    name: "Hebercito",
+    age: 22,
+    favAnime: ["Death Note", "Monster", "Steins;gate"],
+  }
+*/
+```
+
+Como podemos observar en este ejemplo, utilizamos el operador `spread` para cambiar el valor de `name`.
+
+### Clonar un objeto con valores primitivos.
+
+Notemos que podemos hacer una copia de un objeto de la siguiente forma general:
+
+```javascript
+const copiaObjeto = { ...OBJETO_ORIGINAL };
+```
+
+Esto funcionará a la perfección si todos los `valores` del `OBJETO_ORIGINAL` son de `tipo primitivo`.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const personalInfo = {
+  name: "Heber",
+  age: 22,
+};
+
+const copiaObjeto = { ...personalInfo };
+
+console.log(personalInfo); // Imprime { name: "Heber", age: 22 }
+
+console.log(copiaObjeto); // Imprime { name: "Heber", age: 22 }
+```
+
+`IMPORTANTE`: ES importante notar que esto solamente funciona de manera correcta si todos los `valores` del `objeto` son de `tipo primitivo`. Sin embargo, como estamos haciendo una `copia superficial` del objeto, tendremos problemas de `aliasing` entre el objeto original y el objeto copiado cuando los valores sean de `tipo no primitivo`. A continuación veremos un ejemplo de este error:
+
+```javascript
+/* Código incorrecto ⛔ */
+const personalInfo = {
+  name: "Heber",
+  age: 22,
+  favAnime: ["Death Note", "Monster", "Steins;gate"],
+};
+
+const copiaObjeto = { ...personalInfo };
+
+personalInfo.favAnime.push("Evangelion");
+
+console.log(personalInfo);
+/*
+  Imprime:
+
+  {
+    name: "Heber Alturria",
+    age: 22,
+    favAnime: ["Death Note", "Monster", "Steins;gate", "Evangelion"],
+  }
+*/
+
+console.log(copiaObjeto);
+/*
+  Imprime:
+
+  {
+    name: "Heber Alturria",
+    age: 22,
+    favAnime: ["Death Note", "Monster", "Steins;gate", "Evangelion"],
+  }
+*/
+```
+
+Notemos que tenemos un `aliasing` en el arreglo asociado a la clave `favAnime`.
+
+### Concatenar dos o más objetos.
+
+También podemos concatenar dos o más objetos de la siguiente forma general:
+
+```javascript
+const objetoResultante = {...OBJETO_1, ...OBJETO_2, /*...*/, ...OBJETO_N};
+```
+
+Esto funcionará a la perfección si todos los `objetos` a concatenar tiene `valores de tipo primitivo`. En caso de que algún objeto tengo valores de tipo `no primitivo`, tendremos problemas de `aliasing` como hemos visto previamente.
+
+También si hay dos o más objetos que contienen la misma `clave`, entonces el `Objeto resultante` tendrá esa misma `clave` pero el `valor asociado` será el mismo valor asociado que tiene dicha clave en el último objeto en ser clonado (el objeto de más a la derecha).
+
+A continuación veremos un ejemplo:
+
+```javascript
+const birthdayInfo = {
+  day: 26,
+  month: "September",
+  year: 2001,
+};
+
+const nameAndAge = {
+  name: "Heber Alturria",
+  age: 22,
+};
+
+const personalInfo = { ...nameAndAge, ...birthdayInfo };
+
+console.log(personalInfo);
+/*
+  Imprime:
+
+  {
+    name: "Heber Alturria",
+    age: 22,
+    day: 26,
+    month: "September",
+    year: 2001,
+  }
+*/
+```
+
+## Destructuring assignment de Objetos.
+
+Podemos destructurar un objeto para asignarle sus valores a `variables o constantes` de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI: NOMBRE_CONSTANTE_I, keyJ: NOMBRE_VARIABLE_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const NOMBRE_CONSTANTE_I = OBJETO.keyI, NOMBRE_CONSTANTE_J = OBJETO.keyJ, /* Pueden haber más asignaciones */;
+
+
+
+// Destructuring assignment con variables.
+let {keyI: NOMBRE_VARIABLE_I, keyJ: NOMBRE_VARIABLE_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const NOMBRE_VARIABLE_I = OBJETO.keyI, NOMBRE_VARIABLE_J = OBJETO.keyJ, /* Pueden haber más asignaciones */;
+```
+
+Básicamente, lo que se estamos haciendo es crear variables o objetos que tendrán asignados los valores correspondientes a una clave del `OBJETO`, pero con una sintáxis mucho más cómoda.
+
+`IMPORETANTE`: Es importante notar que como son objetos y la asignación se hace por la `clave`, entonces el orden en que lo escribamos en la asignación no es importante.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const personalInfo = {
+  name: "Heber Alturria",
+  age: 22,
+  birthday: "26 de Septiembre del 2001",
+};
+
+const { name: myName, age: myAge } = personalInfo;
+
+console.log(myName); // Imprime "Heber Alturria"
+
+console.log(myAge); // Imprime 22
+```
+
+### Manera más utilizada de hacer Destructuring assignment de Objetos.
+
+Esta manera es mucho más utilizada que la anterior debido a que es más corta, y se hace de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI, keyJ, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const keyI = OBJETO.keyI, keyJ = OBJETO.keyJ, /* Pueden haber más asignaciones */;
+
+
+
+// Destructuring assignment con variables.
+let {keyI, keyJ, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const keyI = OBJETO.keyI, keyJ = OBJETO.keyJ, /* Pueden haber más asignaciones */;
+```
+
+Como se puede observar, lo que hacemos es crear una variable o constante (según necesitemos) que se va a llamar igual que la `clave`. Esta manera es la más usada, ya que requiere menos código.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const personalInfo = {
+  name: "Heber Alturria",
+  age: 22,
+  birthday: "26 de Septiembre del 2001",
+};
+
+const { name, age } = personalInfo;
+
+console.log(name); // Imprime "Heber Alturria"
+
+console.log(age); // Imprime 22
+```
+
+### Destructuring assignment de Objetos con valor por defecto.
+
+Si una `clave buscada` no está en un `objeto`, entonces la variable o constante a crear tendrá el valor `undefined`. Podemos asignarle un valor por defecto a la varible o constante creada en caso de que la `clave buscada` NO esté en el `objeto`. Esto se hace de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI: NOMBRE_CONSTANTE_I = VALOR_POR_DEFECTO_I, keyJ: NOMBRE_VARIABLE_J = VALOR_POR_DEFECTO_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const NOMBRE_CONSTANTE_I = OBJETO.keyI ?? VALOR_POR_DEFECTO_I, NOMBRE_CONSTANTE_J = OBJETO.keyJ ?? VALOR_POR_DEFECTO_J, /* Pueden haber más asignaciones */;
+
+
+
+// Destructuring assignment con variables.
+let {keyI: NOMBRE_VARIABLE_I = VALOR_POR_DEFECTO_I, keyJ: NOMBRE_VARIABLE_J = VALOR_POR_DEFECTO_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const NOMBRE_VARIABLE_I = OBJETO.keyI ?? VALOR_POR_DEFECTO_I, NOMBRE_VARIABLE_J = OBJETO.keyJ ?? VALOR_POR_DEFECTO_J, /* Pueden haber más asignaciones */;
+```
+
+O también si usamos la última sintáxis vista, esto se hace de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI = VALOR_POR_DEFECTO_I, keyJ = VALOR_POR_DEFECTO_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const keyI = OBJETO.keyI ?? VALOR_POR_DEFECTO_I, keyJ = OBJETO.keyJ ?? VALOR_POR_DEFECTO_J, /* Pueden haber más asignaciones */;
+
+
+// Destructuring assignment con variables.
+let {keyI = VALOR_POR_DEFECTO_I, keyJ = VALOR_POR_DEFECTO_J, /* Pueden haber más claves */} = OBJETO;
+
+// Y lo de arriba es equivalente a:
+const keyI = OBJETO.keyI ?? VALOR_POR_DEFECTO_I, keyJ = OBJETO.keyJ ?? VALOR_POR_DEFECTO_J, /* Pueden haber más asignaciones */;
+```
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const personalInfo = {
+  name: "Heber Alturria",
+  age: 22,
+  birthday: "26 de Septiembre del 2001",
+};
+
+const { name = "Hebercito", age = 100, dni = 43690658 } = personalInfo;
+
+console.log(name); // Imprime "Heber Alturria"
+
+console.log(age); // Imprime 22
+
+console.log(dni); // Imprime 43690658
+```
+
+### Usando el operador spread al hacer Destructuring assignment de Objetos.
+
+También podemos guardar el resto de `claves-valores` que no hayan matcheado con ninguna clave de la asignación destructurada. Esto se hace de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI: NOMBRE_CONSTANTE_I, keyJ: NOMBRE_VARIABLE_J , /* Pueden haber más claves */, ...RESTO_OBJETO} = OBJETO;
+
+
+// Destructuring assignment con variables.
+let {keyI: NOMBRE_VARIABLE_I, keyJ: NOMBRE_VARIABLE_J, /* Pueden haber más claves */, ...RESTO_OBJETO} = OBJETO;
+```
+
+O también si usamos la última sintáxis vista, esto se hace de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyI: valueI,
+  /*...*/
+  keyJ: valueJ,
+  /*...*/
+  keyN: valueN,
+};
+
+// Destructuring assignment con constantes.
+const {keyI, keyJ , /* Pueden haber más claves */, ...RESTO_OBJETO} = OBJETO;
+
+
+// Destructuring assignment con variables.
+let {keyI, keyJ, /* Pueden haber más claves */, ...RESTO_OBJETO} = OBJETO;
+```
+
+En cualquiera de los casos, lo que hará el operador `spread` es hacer que `RESTO_OBJETO` sea un objeto que contenga todos los `clave-valor` que no han sido utilizados para hacer la asignación. `siempre deber ir al final`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const personalInfo = {
+  name: "Heber Alturria",
+  age: 22,
+  birthday: "26 de Septiembre del 2001",
+};
+
+const { birthday, ...resto } = personalInfo;
+
+console.log(name); // Imprime "26 de Septiembre del 2001"
+
+console.log(resto); // Imprime {name: "Heber Alturria", age: 22}
+```
+
+### Destructuring assignment de Objetos en argumentos de una función.
+
+Podemos utilizar todas las técnicas antes vistas para destructurar un objeto si se le es pasado como argumento a una función. Esto se hace de la siguiente forma general:
+
+```javascript
+function nombreFuncion({keyI, /*...*/, keyJ}) {
+
+  /* Cuerpo de la función */
+
+  // Return de la función.
+}
+
+
+// Y lo de arriba es equivalente a escribir:
+function nombreFuncion(objeto) {
+  const {keyI, /*...*/, keyJ} = objeto;
+
+  /* Cuerpo de la función */
+
+  // Return de la función.
+}
+```
+
+Pero notemos que si alguna clave no existe en el `objeto` que luego le pasaremos como argumento, entonces se la asignará a la variable el valor de `undefined`. Podemos asignarle valores por defecto de la siguiente forma general:
+
+```javascript
+function nombreFuncion({keyI = VALOR_DEFECTO_I, /*...*/, keyJ = VALOR_DEFECTO_J}) {
+
+  /* Cuerpo de la función */
+
+  // Return de la función.
+}
+
+
+// Y lo de arriba es equivalente a escribir:
+function nombreFuncion(objeto) {
+  const {keyI = VALOR_DEFECTO_I, /*...*/, keyJ = VALOR_DEFECTO_J} = objeto;
+
+  /* Cuerpo de la función */
+
+  // Return de la función.
+}
+```
+
+A continuación veremos un ejemplo sencillo de como esto se utiliza:
+
+```javascript
+function sumar({ number1 = 0, number2 = 0, number3 = 0 }) {
+  return number1 + number2 + number3;
+}
+
+const objeto1 = {
+  number1: 20,
+  number2: 40,
+  number3: 100,
+};
+
+const objeto2 = {
+  number1: 20,
+  number3: 10,
+};
+
+const objeto3 = {
+  random: "jajaja",
+};
+
+console.log(sumar(objeto1)); // Imprime 160
+
+console.log(sumar(objeto2)); // Imprime 30
+
+console.log(sumar(objeto3)); // Imprime 0
+```
+
+#### Ejemplo un poco más complejo.
+
+Notemos que entender el concepto anterior es muy importante, ya que es una técnica muy utilizada en muchos frameworks como por ejemplo en `React`.
+
+A continuación veremos un ejemplo sencillo de `React` en donde podamos apreciar esta técnica en uso:
+
+```javascript
+// Uso el destructuring de objetos para destructurar el prop.
+const ShowPersonalInfo = ({name = "", age: -1}) => {
+  return (
+    <>
+      <h1>{name}</h1>
+      <p>{age}</p>
+    </>
+  );
+};
+
+// Renderiza todos los componentes.
+function App() {
+  return (
+    <>
+      <ShowPersonalInfo name="Heber Alturria" age={22} />
+      <ShowPersonalInfo name="Natasha Ivancich" age={23} />
+    </>
+  );
+}
+```
+
+No es necesario que se entienda lo que hace este código, sino que lo importante es ver que podemos utilizarlo a la hora de utilizar otros `frameworks`.
+
 

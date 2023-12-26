@@ -701,7 +701,7 @@ console.log(maximoNumero); // Imprime 3.
 console.log(minimoNumero); // Imprime 1.
 ```
 
-## Destructuring assignment Arreglo.
+## Destructuring assignment de Arreglos.
 
 Podemos destructurar un arreglo para asignarle sus valores a `variables o constantes` de la siguiente forma general:
 
@@ -715,7 +715,7 @@ const [CONST_1, CONST_2 /*...*/, , CONST_n] = ARRAY;
 let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_n] = ARRAY;
 ```
 
-Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_n = ELEM_n` (lo mismo pasa para las constantes).
+Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_n = ELEM_n` (lo mismo pasa para las constantes). Y notemos que la asignación se hace en función del orden de los elementos en el arreglo.
 
 A continuación veremos un ejemplo sencillo:
 
