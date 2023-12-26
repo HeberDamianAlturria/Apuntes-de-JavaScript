@@ -522,7 +522,7 @@ console.log(nestedArray); // Imprime [ 1, [ 2 ], 3, { hola: 'mundo' } ]
 
 `OTRO DATO IMPORTANTE:` recomiendo hacer un `deep clone` únicamente si necesitamos crear una copia de un arreglo para modificarla sin modificar el arreglo original. En otros casos, recomiendo utilizar otra alternativa como puede ser el `spread operator`, ya que hacer `JSON.parse(JSON.stringify(ARRAY))` es muy costoso computacionalmente.
 
-## Operador Spread.
+## Operador Spread para arreglos.
 
 El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para arreglos.
 

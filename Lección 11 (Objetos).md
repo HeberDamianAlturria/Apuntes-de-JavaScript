@@ -467,3 +467,43 @@ console.log(_.isEqual(persona1, persona4)); // Imprime false
 
 Notemos que en en este ejemplo, al comparar `persona1` y `persona3` nos da `true`, lo que significa que son iguales ya que tienen los mismos `clave-valor` sin importar si están en distinto orden.
 
+## Eliminando una clave-valor de un objeto.
+
+La forma de eliminar un `clave-valor` de un objeto es hacerlo de la siguiente forma general:
+
+```javascript
+// Usando el operador "."
+delete OBJETO.CLAVE_A_ELIMINAR;
+
+// Usando el operador [].
+delete OBJETO["CLAVE_A_ELIMINAR"];
+```
+
+Esto lo que hará será eliminar del `OBJETO` la clave llamada `CLAVE_A_ELIMINAR` y su valor asociado.
+
+A continuación veremos un ejemplo de como esto funciona.
+
+```javascript
+const personalInfo = {
+  name: "Heber",
+  age: 22,
+};
+
+console.log(personalInfo); // Imprime { name: "Heber", age: 22 }
+
+delete personalInfo.age;
+
+console.log(personalInfo); // Imprime { name: "Heber" }
+```
+
+Como se puede observar, en este ejemplo eliminamos el campo `age`.
+
+
+## Operador spread para objetos.
+
+El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para objetos.
+
+El operador `spread` es utilizado para expandir los elementos de un `objeto`. Supongamos que tenemos un objeto llamado `OBJETO` que es igual a `{KEY_1: VALUE_1, KEY_2: VALUE_2, ..., KEY_N: VALUE_N}` entonces el operador `spread` se escribe como `...OBJETO` y da como resultando `KEY_1: VALUE_1, KEY_2: VALUE_2, ..., KEY_N: VALUE_N`, por lo que podemos pensar que el operador `spread` le quita los `{}` al `OBJETO` para dejar solamente los `clave-valor` que lo conforman.
+
+A continuación veremos una serie de usos que podemos darle al operador `spread` para objetos:
+
