@@ -331,7 +331,7 @@ console.log(countCallFunction); // Imprime 2
 
 Todas las funciones que definamos en JavaScript serán del tipo `function`, el cuál es un objeto especial. La particularidad de este tipo es que le asocia al `nombre de la función` una `referencia de memoria` que permite su uso y llamado en diferentes partes del código.
 
-Las funciones en JavaScript son `first class citizens`, lo que significa que pueden ser tratadas como si fuesen objetos. Esto permite que las funciones pueden ser pasadas como argumentos a otras funciones o retornadas desde otras funciones, o también `asignadas a variables o constantes por referencia` (cuidado que esto puede general `aliasing`).
+Las funciones en JavaScript son `first class citizens`, lo que significa que pueden ser tratadas como si fuesen objetos. Esto permite que las funciones pueden ser pasadas como argumentos a otras funciones o retornadas desde otras funciones, o también `asignadas a variables o constantes por referencia` (cuidado que esto puede generar `aliasing`).
 
 A continuación veremos un ejemplo de como hacer `aliasing` de una función:
 
@@ -445,6 +445,8 @@ console.log(suma(1, 2)); // Imprime 3
 ```
 
 Como se puede observar, aquí la función va a tomar como argumento `number1` y `number2` y va a devolver `number1 + number2`.
+
+<br />
 
 `PROBLEMA IMPORTANTE`: En la forma general que hemos dado previamente tiene que cumplirse que `VALOR` NO es un `objeto litaral`, ya que los `{}` del `objeto literal` van a confundirse con el cuerpo de la función y por ende la función va a retornar siempre `undefined` o va a `tirar error`.
 
