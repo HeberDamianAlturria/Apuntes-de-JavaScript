@@ -461,7 +461,9 @@ console.log(retornaObjeto("Heber", 22)); // Imprime undefined
 
 Y el error es que JavaScript piensa que lo que está entre `{}` es el cuerpo de la función.
 
-`SOLUCIÓN`: La manera de resolver este problema es de la siguiente forma general:
+<br />
+
+`SOLUCIÓN A ESTE PROBLEMA`: La manera de resolver este problema es de la siguiente forma general:
 
 ```javascript
 // Función sin parámetros
@@ -484,6 +486,8 @@ const retornaObjeto = (name, age) => ({name, age});
 
 console.log(retornaObjeto("Heber", 22)); // Imprime { name: 'Heber', age: 22 }
 ```
+
+<br />
 
 `RETURN DE MÚLTIPLES LÍNEAS`: También podemos utilizar los `()` para escribir la expresión a retornar en más de una línea de la siguiente forma general:
 
