@@ -197,7 +197,7 @@ function sumarValoresArray(arrayOfNumbers) {
   return result;
 }
 
-console.log(sumarValoresArray([1,2,3,4])); // Imprime 10
+console.log(sumarValoresArray([1, 2, 3, 4])); // Imprime 10
 
 console.log(sumarValoresArray([10, 22, 1, 90])); // Imprime 123
 ```
@@ -208,11 +208,141 @@ Como se puede observar en estos ejemplos, las ventajas de crear funciones es que
 
 La principal diferencia entre funciones y procedimientos es que `las funciones siempre retornan un valor` en cambio, `los procedimientos nunca retornan nada`. Pero podemos pensar a los procedimientos como funciones que retornan `undefined`, ya que es lo que en definitiva sucede en JavaScript.
 
+De ahora en más vamos a pensar a los procedimientos como funciones que retornan `undefined`, de esa manera podemos utilizar la palabra `función` para referirnos indistintamente a `funciones` o `procedimientos`.
+
 ## Scope de una función.
 
-COMPLETAR.
+Aquí vamos a asumir que ya se entiende la definición de `scope`. Si es necesario un repaso, se recomienda leer la `lección 03 (variable, constantes y scope)` que he escrito.
 
-## El tipo de una función.
+Notemos que al definir una función, entonces el cuerpo de dicha función (al estar definida entre `{}`) va a crear un `scope interno` el cuál podrá acceder a las variables o constantes del `scope externo`. Esto se vería de la siguiente forma general:
+
+```javascript
+/* Scope externo */
+
+function nombreFuncion(parameter1, parameter2, /*...*/, parameterN) {
+  /* Define un Scope interno */
+
+  // Puede acceder a las variables o constantes del scope externo.
+
+  return VALOR; // Retorna algún valor.
+}
+```
+
+Así que tenemos que tener esto en cuenta para evitar modificar variables del `scope externo` por error o descuido.
+
+A continuación veremos un ejemplo de como podemos tener un error:
+
+```javascript
+let x = 10;
+
+function sumar(number1, number2) {
+  x = 2000;
+  return number1 + number2;
+}
+
+console.log(x); // Imprime 10
+
+console.log(sumar(1, 2)); // Imprime 3
+
+console.log(x); // Imprime 2000
+```
+
+Notemos que luego de ejecutar la función `sumar` entonces `x` va a valer `2000`.
+
+### Usando este conocimiento para disminuir la cantidad de parámetros.
+
+Podemos aprovechar el hecho de que el `scope interno` creado por una función tiene acceso al `scope externo` para disminuir la cantidad de parámetros que debe tomar dicha función. Esto va a ser seguro siempre y cuando las variables y constantes del `scope externo` sean tratadas como de `solo lectura` (es decir, que no se le asigne otro valor).
+
+A continuación veremos un ejemplo:
+
+```javascript
+const number = 100;
+
+function sumar(anotherNumber) {
+  return number + anotherNumber;
+}
+
+console.log(sumar(20)); // Imprime 120
+```
+
+### Usando este conocimiento para actualizar valores del scope externo.
+
+También, si lo hacemos de manera intensional y controlada, podemos crear `funciones` que cambien el valor de una `variable` del `scope externo`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+let countCallFunction = 0;
+
+function double(number) {
+  countCallFunction++; // Incremeto el contador en 1
+  return number * 2;
+}
+
+console.log(countCallFunction); // Imprime 0
+
+console.log(double(2)); // Imprime 4
+
+console.log(countCallFunction); // Imprime 1
+
+console.log(double(10)); // Imprime 20
+
+console.log(countCallFunction); // Imprime 2
+```
+
+## El tipo function.
+
+Todas las funciones que definamos en JavaScript serán del tipo `function`, el cuál es un objeto especial. La particularidad de este tipo es que le asocia al `nombre de la función` una `referencia de memoria` que permite su uso y llamado en diferentes partes del código.
+
+Las funciones en JavaScript son `first class citizens`, lo que significa que pueden ser tratadas como si fuesen objetos. Esto permite que las funciones pueden ser pasadas como argumentos a otras funciones o retornadas desde otras funciones, o también `asignadas a variables o constantes por referencia` (cuidado que esto puede general `aliasing`).
+
+A continuación veremos un ejemplo de como hacer `aliasing` de una función:
+
+```javascript
+function uselessFunction() {
+  return "Some text";
+}
+
+const reference = uselessFunction; // Hago el aliasing
+
+console.log(uselessFunction()); // Imprime "Some text"
+
+console.log(reference()); // Imprime "Some text"
+```
+
+## Expresión de función.
+
+Podemos definir funciones también como si fueran constantes de la siguiente forma general:
+
+```javascript
+// Funcion que no toma parámetros
+const nombreFuncion = function () {
+  /* Cuerpo de la función */
+
+  return VALOR; // Retorna algún valor.
+}
+
+// Funcion que toma parámetros
+const nombreFuncion = function (parameter1, parameter2, /*...*/, parameterN) {
+  /* Cuerpo de la función */
+
+  return VALOR; // Retorna algún valor.
+}
+```
+
+Estamos definiendo funciones de la misma manera que hacíamos antes, solamente que la sintáxis cambia.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const sumar = function (number1, number2) {
+  return number1 + number2;
+};
+
+console.log(sumar(1, 2)); // Imprime 3
+```
+
+## Arrow functions.
 
 COMPLETAR.
 
@@ -224,18 +354,12 @@ COMPLETAR.
 
 COMPLETAR.
 
+### Retornar objetos de funciones.
+
 ## Funciones recursivas.
 
 COMPLETAR.
 
 ## Operador rest para los parámetros.
-
-COMPLETAR.
-
-## Expresión de función.
-
-COMPLETAR.
-
-## Arrow functions.
 
 COMPLETAR.
