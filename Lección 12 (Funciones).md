@@ -144,6 +144,43 @@ function sumar(number1, number2) {
 }
 ```
 
+### Return de múltiples línes.
+
+También podemos escribir un return en múltiples líneas de la siguiente forma general:
+
+```javascript
+// función sin parámetros
+function nombreFuncion() {
+  /* Cuerpo de la función */
+
+  return (
+    // Expresión de múltiples líneas.
+  );
+}
+
+
+// función con parámetros
+function nombreFuncion(parameter1, parameter2, /*...*/, parameterN) {
+  /* Cuerpo de la función */
+
+  return (
+    // Expresión de múltiples líneas.
+  );
+}
+```
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+function calculoBooleano(number1, number2, number3) {
+  return (
+    (number1 > 1000 || number1 <= 0) &&
+    (number2 > 1000 || number2 <= 0) &&
+    (number3 > 1000 || number3 <= 0)
+  );
+}
+```
+
 ### Como invocar a una función.
 
 Podemos invocar a una función de la siguiente forma general:
@@ -320,14 +357,14 @@ const nombreFuncion = function () {
   /* Cuerpo de la función */
 
   return VALOR; // Retorna algún valor.
-}
+};
 
 // Funcion que toma parámetros
 const nombreFuncion = function (parameter1, parameter2, /*...*/, parameterN) {
   /* Cuerpo de la función */
 
   return VALOR; // Retorna algún valor.
-}
+};
 ```
 
 Estamos definiendo funciones de la misma manera que hacíamos antes, solamente que la sintáxis cambia.
@@ -344,22 +381,240 @@ console.log(sumar(1, 2)); // Imprime 3
 
 ## Arrow functions.
 
-COMPLETAR.
+También, otra manera de definir funciones como constantes es hacerlo utilizando `arrow functions`. Se hace de la siguiente forma general:
+
+```javascript
+// Funcion que no toma parámetros
+const nombreFuncion = () => {
+  /* Cuerpo de la función */
+
+  return VALOR; // Retorna algún valor.
+};
+
+// Funcion que toma parámetros
+const nombreFuncion = (parameter1, parameter2, /*...*/, parameterN) => {
+  /* Cuerpo de la función */
+
+  return VALOR; // Retorna algún valor.
+};
+```
+
+Estamos definiendo funciones de la misma manera que hacíamos antes, solamente que la sintáxis cambia. `Recomiendo utilizar esta sintáxis, ya que es más resumida y moderna`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const sumar = (number1, number2) => {
+  return number1 + number2;
+};
+
+console.log(sumar(1, 2)); // Imprime 3
+```
+
+### Sintáxis especial para las arrow functions que NO requieren cuerpo.
+
+También tenemos la siguiente sintáxis especial para poder escribir las funciones de una manera más acortada cuando dicha función NO requiere de cuerpo y solamente retorna un valor:
+
+```javascript
+// Funcion que no toma parámetros
+const nombreFuncion = () => VALOR;
+
+// Y lo de arriba es equivalente a escribir.
+const nombreFuncion = () => {
+  return VALOR; // Retorna algún valor.
+};
+
+
+// Funcion que toma parámetros
+const nombreFuncion = (parameter1, parameter2, /*...*/, parameterN) => VALOR;
+
+// Y lo de arriba es equivalente a escribir.
+const nombreFuncion = (parameter1, parameter2, /*...*/, parameterN) => {
+  return VALOR; // Retorna algún valor.
+};
+```
+
+Como se puede observar, esta sintáxis es aún más compacta, por lo que conviene usarla siempre que sea posible. Y notemos que `VALOR` puede estar dada por una expresión, pero `NO puede ser un objeto literal` (más adelante explicaré el motivo).
+
+A continuación veremos un ejemplo:
+
+```javascript
+const suma = (number1, number2) => number1 + number2;
+
+console.log(suma(1, 2)); // Imprime 3
+```
+
+Como se puede observar, aquí la función va a tomar como argumento `number1` y `number2` y va a devolver `number1 + number2`.
+
+`PROBLEMA IMPORTANTE`: En la forma general que hemos dado previamente tiene que cumplirse que `VALOR` NO es un `objeto litaral`, ya que los `{}` del `objeto literal` van a confundirse con el cuerpo de la función y por ende la función va a retornar siempre `undefined` o va a `tirar error`.
+
+A continuación veremos un ejemplo erróneo:
+
+```javascript
+// Esta definición es incorrecta. Devuelve siempre undefined.
+const retornaObjeto = (name, age) => {name, age};
+
+console.log(retornaObjeto("Heber", 22)); // Imprime undefined
+```
+
+Y el error es que JavaScript piensa que lo que está entre `{}` es el cuerpo de la función.
+
+`SOLUCIÓN`: La manera de resolver este problema es de la siguiente forma general:
+
+```javascript
+// Función sin parámetros
+const nombreFuncion = () => ({
+  /* Claves y valores del objeto literal retornado */
+});
+
+// Función con parámetros
+const nombreFuncion = (parameter1, parameter2, /*...*/, parameterN) => ({
+  /* Claves y valores del objeto literal retornado */
+});
+```
+
+Es decir, notemos que estamos poniendo entre `()` el `objeto literal` que va a retornar la función.
+
+A continuación veremos como resolver el ejemplo anterior:
+
+```javascript
+const retornaObjeto = (name, age) => ({name, age});
+
+console.log(retornaObjeto("Heber", 22)); // Imprime { name: 'Heber', age: 22 }
+```
+
+`RETURN DE MÚLTIPLES LÍNEAS`: También podemos utilizar los `()` para escribir la expresión a retornar en más de una línea de la siguiente forma general:
+
+```javascript
+// Función sin parámetros
+const nombreFuncion = () => (
+  // Expresión de múltiples líneas a retornar.
+);
+
+// Función con parámetros
+const nombreFuncion = (parameter1, parameter2, /*...*/, parameterN) => (
+  // Expresión de múltiples líneas a retornar.
+);
+```
+
+A continuación veremos un ejemplo:
+
+```javascript
+const calculoBooleano = (number1, number2, number3) => (
+  (number1 > 1000 || number1 <= 0) &&
+  (number2 > 1000 || number2 <= 0) &&
+  (number3 > 1000 || number3 <= 0)
+);
+```
+
+### Sintáxis especial para arrow functions con un único parámetro.
+
+Si tenemos una `arrow function` con un `único parámetro`, entonces podemos omitir el uso de `()` de la siguiente forma general:
+
+```javascript
+// Función sin cuerpo.
+const nombreFuncion = parameter => VALOR;
+
+// Lo de arriba es equivalente a:
+const nombreFuncion = (parameter) => VALOR;
+
+
+// Función con cuerpo.
+const nombreFuncion = parameter => {
+  /* Cuerpo de la función */
+
+  return VALOR;
+};
+
+// Lo de arriba es equivalente a:
+const nombreFuncion = (parameter) => {
+  /* Cuerpo de la función */
+
+  return VALOR;
+};
+```
+
+Como se puede observar, es que cuando tenemos un `único parámetro` podemos omitir los `()` al crear una `arrow function`.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const doubleNumber = number => number * 2;
+
+console.log(doubleNumber(10)); // Imprime 20
+```
+
+## Funciones lambda
+
+Las `funciones lambda` (también conocidas como `funciones anónimas`) son aquellas funciones que NO están asociadas a un nombre específico. Se pueden definir `funciones lambda` mediante `arrow functions` o mediante `expresiones de función`.
+
+Las `funciones lambda` son utilizadas para definir:
+
+- `Funciones de callback`.
+
+- `Funciones de retorno`.
+
+- `IIFE (Immediately Invoked Function Expressions)`.
+
+### Usando arrow functions para definir funciones lambda
+
+`Todas las arrow functions son anónimas`, solamente que nosotros las hemos estado `asignando a constantes` para poder `darles un nombre`. 
+
+A continuación veremos un ejemplo de como utilizr una `arrow function` para definir una `función de callback` de manera anónima:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5, 6];
+
+const doubleNumbers = numbers.map(num => num * 2);
+
+console.log(doubleNumbers); // Imprime [ 2, 4, 6, 8, 10, 12 ]
+```
+
+Como se puede observar, al método `map` le pasamos como función de callback la siguiente función lambda: `num => num * 2`.
+
+`IMPORTANTE`: Recomiendo utilizar siempre `arrow functions` para definir `funciones lambda`, ya que hace que el código sea más legible.
+
+### Usando expresiones de función para definir funciones lambda
+
+También, `todas las expresiones de función son anónimas`, solamente que nosotros las hemos estado `asignando a constantes` para poder `darles un nombre`. 
+
+A continuación veremos un ejemplo de como utilizr una `expresiones de función` para definir una `función de callback` de manera anónima:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5, 6];
+
+const doubleNumbers = numbers.map(function (num) {
+  return num * 2;
+});
+
+console.log(doubleNumbers); // Imprime [ 2, 4, 6, 8, 10, 12 ]
+```
+
+Como se puede observar, al método `map` le pasamos como función de callback la siguiente función lambda: `function (num) { return num * 2; }`.
 
 ## Pasaje de parametros por valor y por referencia.
 
 COMPLETAR.
 
-## High Order functions y funciones de callback.
+## Funciones de alto orden.
 
 COMPLETAR.
 
+### Funciones de callback.
+
+### Retornar funciones.
+
 ### Retornar objetos de funciones.
+
 
 ## Funciones recursivas.
 
 COMPLETAR.
 
 ## Operador rest para los parámetros.
+
+COMPLETAR.
+
+## IIFE (Immediately Invoked Function Expressions).
 
 COMPLETAR.
