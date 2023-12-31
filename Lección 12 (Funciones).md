@@ -600,7 +600,102 @@ Como se puede observar, al método `map` le pasamos como función de callback la
 
 ## Pasaje de parametros por valor y por referencia.
 
-COMPLETAR.
+Hemos visto en lecciones anteriores que los `tipos primitivos` se asignan `por valor` y los `tipos NO primitivos` se asignan `por referencia`. Bueno, a la hora de pasarle argumentos a una función, los valores se le son asignados a los parámetros tendremos que tener en cuenta si se pasan `por valor` o `por referencia` para evitar efectos secundarios. 
+
+A continuación veremos las diferencias entre `pasaje por valor` y `pasaje por referencia`.
+
+### Pasaje por valor.
+
+Al pasarle un valor de `tipo primitivo` como argumento a una función, se le `asigna` una copia exacta de ese valor al parámetro correspondiente. Esto significa que cualquier modificación realizada al parámetro dentro de la función no afectará al valor original fuera de ella. A esto se lo conoce como `pasaje por valor`. 
+
+A continuación veremos un ejemplo:
+
+```javascript
+const sumar = (num1, num2) => {
+  num1 = 1;
+  num2 = 2;
+  return num1 + num2;
+};
+
+const number1 = 10, number2 = 20;
+
+console.log(sumar(number1, number2)); // Imprime 3
+
+console.log(number1); // Imprime 10
+
+console.log(number2); // Imprime 20
+```
+
+Como se puede observar, le cambiamos los valores a los parámetros dentro de la función `sumar`, pero dicho cambio no afectó a los valores originales de `number1` y `number2` que fueron los argumentos.
+
+### Pasaje por referencia.
+
+Al pasarle un valor de `tipo NO primitivo` como argumento a una función, se le `asigna` la dirección de la memoria de dicho valor al parámetro correspondiente, lo que genera un `aliasing`. Esto significa que cualquier modificación realizada al parámetro dentro de la función afectará al valor original fuera de ella. A esto se lo conoce como `pasaje por referencia`.
+
+A continuación veremos un ejemplo:
+
+```javascript
+// Esta función presenta efectos secundarios.
+const sortArrayOfNumbers = (arrayOfNumbers) => {
+  arrayOfNumbers.sort((a, b) => a - b);
+  return arrayOfNumbers;
+};
+
+const numbers = [5, 2, 3, 1, 20];
+
+const sortedNumbers = sortArrayOfNumbers(numbers);
+
+console.log(sortedNumbers); // Imprime [ 1, 2, 3, 5, 20 ]
+
+console.log(numbers); // Imprime [ 1, 2, 3, 5, 20 ]
+
+// Es más, ahora apuntan a la misma posición de memoria.
+
+sortedNumbers.push(20202020);
+
+console.log(sortedNumbers); // Imprime [ 1, 2, 3, 5, 20, 20202020 ]
+
+console.log(numbers); // Imprime [ 1, 2, 3, 5, 20, 20202020 ]
+```
+
+### Consejo al usar pasaje por referencia.
+
+Al trabajar con `pasaje por referencia` hay que tener en cuenta que estamos trabajando con `referencias en memoria` y por ende podemos tener efectos secundarios si es que no somos cuidadosos, o generar un `aliasing` si es que retornamos esa referencia en la función.
+
+A continuación daré una serie de consejos para minimizar la posibilidad de errores al utilizar `pasaje por referencia`:
+
+1. Si un `parametro` recibe un valor `por referencia`, es recomendable tratarlo como si fuera de `solo lectura` y NO modificar su valor.
+
+2. Si un `parametro` recibe un valor `por referencia` y debemos modificarlo si o si, entonces lo mejor es crear una copia en nueva memoria de dicho valor y `modificar` esa copia.
+
+3. Si un `parametro` recibe un valor `por referencia` y debemos retornarlo si o si, entonces lo mejor es crear una copia en nueva memoria de dicho valor y `retornar` esa copia.
+
+A continuación veremos un ejemplo utilizando estos consejos:
+
+```javascript
+// Esta función NO tiene efectos secundarios.
+const sortArrayOfNumbers = (arrayOfNumbers) => {
+  const numbersCopy = [...arrayOfNumbers];
+  numbersCopy.sort((a, b) => a - b);
+  return numbersCopy;
+};
+
+const numbers = [5, 2, 3, 1, 20];
+
+const sortedNumbers = sortArrayOfNumbers(numbers);
+
+console.log(sortedNumbers); // Imprime [ 1, 2, 3, 5, 20 ]
+
+console.log(numbers); // Imprime [ 5, 2, 3, 1, 20 ]
+
+// Es más, ahora NO apuntan a la misma memoria.
+
+sortedNumbers.push(20202020);
+
+console.log(sortedNumbers); // Imprime [ 1, 2, 3, 5, 20, 20202020 ]
+
+console.log(numbers); // Imprime [ 5, 2, 3, 1, 20 ]
+```
 
 ## Funciones de alto orden.
 
