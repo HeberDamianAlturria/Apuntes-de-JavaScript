@@ -699,9 +699,110 @@ console.log(numbers); // Imprime [ 5, 2, 3, 1, 20 ]
 
 ## Funciones de alto orden.
 
-COMPLETAR.
+Las `funciones de alto orden` o también llamadas `high order functions`, son aquellas funciones que pueden tomar como argumento una o más funciones y/o pueden retornar una o más funciones como resultado.
 
-### Funciones de callback.
+A continuación veremos las distintas maneras de utilizar las `high order functions`:
+
+### Pasar funciones como argumento.
+
+Las `high order functions` pueden tomar como argumento una o más funciones. Esto se vería de la siguiente forma general:
+
+```javascript
+const highOrderFunction = (function_1, function_2, /*...*/, function_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con las funciones proporcionadas 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ }
+);
+```
+
+A las funciones que son pasadas como argumento a otra función se les llaman `funciones de callback`. Generalmente, las `funciones de callback` estarán definidas como `funciones anónimas`. Sin embargo, también puede ser que las `funciones de callback` provengan de otras funciones que hemos definido previamente.
+
+<br />
+
+También pueden tomar como argumentos una o más funciones y a su vez también tomar como argumento uno o más elementos que NO sean funciones. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+// Funciones primero y luego valores
+const highOrderFunction = (function_1, function_2, /*...*/, function_N, elem_1, elem_2, /*...*/, elem_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con los elementos y 
+   * funciones proporcionados 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ },
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N
+);
+
+
+// Valores primero y luego funciones
+const highOrderFunction = (elem_1, elem_2, /*...*/, elem_N, function_1, function_2, /*...*/, function_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con los elementos y 
+   * funciones proporcionados 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ }
+);
+```
+
+Como ejemplo de este tipo de `high order functions` tenemos los métodos de arreglos como `map`, `filter`, `reduce`, etc.
+
+A continuación haré un ejemplo de como se utilizan:
+
+```javascript
+const procesarElementos = (lista, funcionMap, funcionFiltro) => {
+  const elementosTransformados = lista.map(funcionMap);
+
+  const elementosFiltrados = elementosTransformados.filter(funcionFiltro);
+
+  return elementosFiltrados;
+};
+
+const listaNumeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const elementosProcesados = procesarElementos(
+  listaNumeros,
+  (num) => num * 2,
+  (num) => num > 10
+);
+
+console.log(elementosProcesados); // Imprime [ 12, 14, 16, 18, 20 ]
+```
+
+#### Casos de uso.
 
 ### Retornar funciones.
 
