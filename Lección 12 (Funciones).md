@@ -810,7 +810,141 @@ El pasar funciones como argumento nos permite reutilizar mejor el código, ya qu
 
 ### Retornar funciones.
 
+Las `high order functions` pueden retornar una función como resultado. Esto se vería de la siguiente forma general:
 
+```javascript
+const highOrderFunction = (parameter_1, parameter_2, /*...*/, parameter_N) => {
+  /* Cuerpo de la función externa */
+
+  // Retorno la función.
+  return (/* Puede tener parámetros o no */) => {
+    /* Cuerpo de la función interna */
+
+    return VALOR;
+  };
+};
+
+// Llamar a la highOrderFunction devuelve otra función.
+const funcionResultante = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+);
+```
+
+La particularida que tiene este tipo de `high order functions` es que la `función interna` (que es la función retornada) tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`. Esto permite a la `función interna` utilizar y manipular estos valores externos.
+
+A continuación veremos un ejemplo sencillo de uso:
+
+```javascript
+const createCounter = () => {
+  let count = 0;
+
+  return () => {
+    count++;
+
+    console.log(`This function have been called ${count} times`);
+  };
+};
+
+const counter = createCounter();
+
+counter(); // Imprime: This function have been called 1 times
+
+counter(); // Imprime: This function have been called 2 times
+
+counter(); // Imprime: This function have been called 3 times
+```
+
+<br />
+
+#### Currificación.
+
+Es importante mencionar que esta técnica nos permite hacer `currificación`, lo que significa que a una función que toma muchos argumentos (a la que le llamaré `función original`) la transformamos en dos o más `funciones parciales` que toman menos argumentos de forma individual que la `función original`, pero que en conjunto hacen la misma tarea y toman la misma cantidad de argumentos que la `función original`. Esto se ve de la siguiente forma general:
+
+```javascript
+// Función original que toma varios argumentos.
+const originalFunction = (arg1, arg2, /*...*/, argN) => {
+  // Cuerpo de la función original
+};
+
+const originalResult = originalFunction(VALUE_1, VALUE_2, /*...*/, VALUE_N);
+
+// Función currificada
+const curriedFunction = (arg1) => (arg2) => /*...*/ (argN) => {
+  // Cuerpo de la función currificada que hace lo mismo que el cuerpo de la función original.
+};
+
+const result = curriedFunction(VALUE_1)(VALUE_2)/*...*/(VALUE_N);
+
+// Y va a cumplirse que originalResult es igual a result.
+```
+
+Pero lo importante de la currificación es que podemos hacer `Partial Function Application`, lo que significa que podemos crear nuevas funciones pasandole como argumentos algunos valores y dejando el resto de argumentos para pasarselos en el futuro. Esto se vería de la siguiente forma general:
+
+```javascript
+// Función currificada
+const curriedFunction = (arg1) => (arg2) => /*...*/ (argI) => (argJ) => /*...*/ (argN) => {
+  // Cuerpo de la función currificada que hace lo mismo que el cuerpo de la función original.
+};
+
+const partialFunction = curriedFunction(VALUE_1)(VALUE_2)/*...*/(VALUE_I); 
+
+const result = partialFunction(VALUE_J)/*...*/(VALUE_N);
+
+/*
+  Es equivalente a haber hecho:
+
+ const result = curriedFunction(VALUE_1)(VALUE_2)...(VALUE_I)(VALUE_J)...(VALUE_N);
+*/
+```
+
+Esto nos da la flexibilidad de crear nuevas funciones en base a pasarle solamente una cierta cantidad de argumentos a la función currificada.
+
+A continuación veremos un ejemplo de uso de la currificación:
+
+```javascript
+const taxCalculatorOriginal = (taxPercentage, amount) => {
+  const taxAmount = amount * (taxPercentage / 100);
+  return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+};
+
+const curriedTaxCalculator = (taxPercentage) => (amount) => {
+  const taxAmount = amount * (taxPercentage / 100);
+  return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+};
+
+const calculateIVA = curriedTaxCalculator(16); // IVA del 16%
+/* Y como taxPercentage es igual a 16, entonces esto es equivalente a tener:
+
+  const calculateIVA = (amount) => {
+    const taxAmount = amount * (16 / 100);
+    return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+  };
+*/
+
+const calculateSalesTax = curriedTaxCalculator(10); // Impuesto de venta del 10%
+/* Y como taxPercentage es igual a 10, entonces esto es equivalente a tener:
+
+  const calculateIVA = (amount) => {
+    const taxAmount = amount * (10 / 100);
+    return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+  };
+*/
+
+// Y estos tres llamados son equivalentes:
+console.log(calculateIVA(1000)); // Imprime: Impuestos a pagar: $160.00
+console.log(curriedTaxCalculator(16)(1000)); // Imprime: Impuestos a pagar: $160.00
+console.log(taxCalculatorOriginal(16, 1000)); // Imprime: Impuestos a pagar: $160.00
+
+// Y estos tres llamados son equivalentes:
+console.log(calculateSalesTax(500)); // Imprime: Impuestos a pagar: $50.00
+console.log(curriedTaxCalculator(10)(500)); // Imprime: Impuestos a pagar: $50.00
+console.log(taxCalculatorOriginal(10, 500)); // Imprime: Impuestos a pagar: $50.00
+```
+
+Lo interesante de este ejemplo es que utilizamos la `Partial Function Application` para crear nuevas funciones.
 
 ### Retornar objetos de funciones.
 
