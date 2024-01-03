@@ -948,6 +948,91 @@ Lo interesante de este ejemplo es que utilizamos la `Partial Function Applicatio
 
 ### Retornar objetos de funciones.
 
+Podemos también utilizar las `high order functions` para retornar objetos de funciones, lo cuál sería una manera de retornar múltiples funciones pero con una idea similar a lo visto previamente. De forma general esto se vería como:
+
+```javascript
+const highOrderFunction = (parameter_1, parameter_2, /*...*/, parameter_N) => {
+  /* Cuerpo de la función externa */
+
+  const funcionInterna_1 = (/* Puede tener parámetros o no */) => {
+    /* Cuerpo de la función interna 1 */
+
+    return ALGUN_VALOR_1;
+  };
+
+  const funcionInterna_2 = (/* Puede tener parámetros o no */) => {
+    /* Cuerpo de la función interna 2 */
+
+    return ALGUN_VALOR_2;
+  };
+
+  /*...*/
+
+  const funcionInterna_N = (/* Puede tener parámetros o no */) => {
+    /* Cuerpo de la función interna N */
+
+    return ALGUN_VALOR_N;
+  };
+
+  return {
+    funcionInterna_1,
+    funcionInterna_2,
+    /*...*/,
+    funcionInterna_N,
+  }
+};
+
+// Llamar a la highOrderFunction devuelve un objeto de funciones.
+const objetoDeFuncionesResultante = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+);
+
+// También podemos utilizar el destructuring para acceder a las funciones que necesitemos.
+
+const {funcionInterna_I, /*...*/, funcionInterna_J} = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+);
+```
+
+La particularida que tiene este tipo de `high order functions` es que `todas` las `funciones internas` tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`. Esto permite a las `funciones internas` utilizar y manipular estos valores externos.
+
+A continuación veremos un ejemplo de esta técnica:
+
+```javascript
+const createCounter = (initialValue) => {
+  let counter = initialValue;
+
+  const getCounter = () => counter;
+
+  const incrementCounter = () => {
+    counter++;
+  };
+
+  const decrementCounter = () => {
+    counter--;
+  };
+
+  return { getCounter, incrementCounter, decrementCounter };
+};
+
+const myCounter = createCounter(10);
+
+console.log(myCounter.getCounter()); // Imprime: 10
+
+myCounter.incrementCounter(); // Incremento en 1
+
+console.log(myCounter.getCounter()); // Imprime: 11
+
+myCounter.decrementCounter(); // Decremento en 1
+
+console.log(myCounter.getCounter()); // Imprime: 10
+```
 
 ## Funciones recursivas.
 
