@@ -778,6 +778,8 @@ const resultado = highOrderFunction(
 );
 ```
 
+En estas formas generales hemos estado utilizando `arrow functions`, pero podemos utilizar también `expresión de función` o también el nombre de funciones que hayamos definido a lo largo del código.
+
 Como ejemplo de este tipo de `high order functions` tenemos los métodos de arreglos como `map`, `filter`, `reduce`, etc.
 
 A continuación haré un ejemplo de como se utilizan:
@@ -804,7 +806,11 @@ console.log(elementosProcesados); // Imprime [ 12, 14, 16, 18, 20 ]
 
 #### Casos de uso.
 
+El pasar funciones como argumento nos permite reutilizar mejor el código, ya que para una misma base de código le estamos agregando la flexibilidad de poder definir partes de su comportamiento mediante las `callback`.
+
 ### Retornar funciones.
+
+
 
 ### Retornar objetos de funciones.
 
