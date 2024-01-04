@@ -1034,14 +1034,252 @@ myCounter.decrementCounter(); // Decremento en 1
 console.log(myCounter.getCounter()); // Imprime: 10
 ```
 
-## Funciones recursivas.
-
-COMPLETAR.
-
 ## Operador rest para los parámetros.
 
-COMPLETAR.
+El operador rest se simboliza como `...` y nos permite pasarle como argumento a una función una cantidad indefinida de valores. Esto se hace de la siguiente forma general:
+
+```javascript
+// Función que toma infinitos argumentos.
+const nameFunction = (...args) => {
+  /* Cuerpo de la función */
+
+  return VALOR;
+};
+
+const resultado = nameFunction(VALUE_1, VALUE_2, /*...*/, VALUE_N);
+```
+
+En esta forma general `args` será un `array` que contendrá los valores que le pasamos como argumento. Notemos que para `nameFunction(VALUE_1, VALUE_2, /*...*/, VALUE_N)`, entonces se cumple que `args = [VALUE_1, VALUE_2, ..., VALUE_N]`.
+
+También puede que la función tenga unos parámetros nombrados y al final el arreglo de argumento usando el operador rest. Esto se hace de la siguiente forma general:
+
+```javascript
+// Función que toma infinitos argumentos.
+const nameFunction = (parameter1, parameter2, /*...*/, parameterI, ...args) => {
+  /* Cuerpo de la función */
+
+  return VALOR;
+};
+
+const resultado = nameFunction(VALUE_1, VALUE_2, /*...*/, VALUE_I, VALUE_J, /*...*/, VALUE_N);
+```
+
+En esta forma general tenemos que para `nameFunction(VALUE_1, VALUE_2, /*...*/, VALUE_I, VALUE_J, /*...*/, VALUE_N)` se va a cumplir que `parameter1 = VALUE_1, parameter2 = VALUE_2, ..., parameterI = VALUE_I` y finalmente `args = [VALUE_J, ..., VALUE_N]`. 
+
+Es importante mencionar que al usar el `operador rest` siempre debe ir al final en caso de tener otros parámetros nombrados.
+
+A continuación veremos un ejemplo de como se usa:
+
+```javascript
+const addNumbers = (...numbers) => {
+  let result = 0;
+  for (const num of numbers) {
+    result += num;
+  }
+  return result;
+};
+
+console.log(addNumbers(1, 2)); // Imprime 3
+
+console.log(addNumbers(1, 2, 3, 4, 5)); // Imprime 15
+```
+
+Como se puede apreciar, `addNumbers` puede tomar una cantidad indefinida de argumentos gracias a que los guarda en el arreglo `numbers`.
+
+## Funciones recursivas.
+
+Las funciones recursivas son funciones que se llaman a sí mismas en su propio cuerpo. Se ven de la siguiente forma general:
+
+```javascript
+const recursiveFunction = (arg1, arg2, /*...*/, argN) => {
+  // Caso base.
+  if (condicionCasoBase) {
+    /* Cuerpo del caso base */
+
+    return VALOR_CASO_BASE;
+  }
+
+  // Caso recursivo.
+
+  /* Cuerpo de la función del caso recursivo */
+
+  // Llamada recursiva.
+  const recursiveResult = recursiveFunction(newArg1, newArg2, /*...*/, newArgN);
+
+
+  return VALOR_CASO_RECURSIVO;
+};
+
+// Llamada a la función recursiva.
+
+const resultado = recursiveFunction(VALOR_1, VALOR_2, /*...*/, VALOR_N);
+```
+
+Como se puede observar, las `funciones recursivas` consisten de:
+
+1. Un `caso base`: Este caso procura que nuestra función recursiva en algún momento acabará; lo que significa que el caso base `NO debe hacer llamadas recursivas`. Cabe mencionar que pueden haber muchos casos base. También es importante saber que `condicionCasoBase` será expresión booleana sobre los `parámetros de la función`.
+
+2. Un `caso recursivo`: Este caso tendrá que hacer una o más `llamadas recursivas`. Cabe mencionar que cada llamada recursiva deberá se llamada pasándole `nuevos valores como argumento` (NO necesario a todos los parámetros tienen que tomar un valor nuevo, pero al menos uno si debe cumplir esto), y debemos hacerlo de tal manera que en algún punto se llegue a un `caso base`.
+
+A continuación veremos un par de ejemplos sencillos:
+
+#### Ejemplo de factorial recursivo:
+
+```javascript
+const factorial = (n) => {
+  // Caso base.
+  if (n === 0) return 1;
+
+  // Caso recursivo.
+  return n * factorial(n - 1);
+};
+
+console.log(factorial(5)); // Imprime 120
+
+/*
+  Y notemos que factorial(5) se calcula como:
+
+  factorial(5);                         // paso 1: caso recursivo
+  5 * factorial(4);                     // paso 2: caso recursivo
+  5 * 4 * factorial(3);                 // paso 3: caso recursivo
+  5 * 4 * 3 * factorial(2);             // paso 4: caso recursivo
+  5 * 4 * 3 * 2 * factorial(1);         // paso 5: caso recursivo
+  5 * 4 * 3 * 2 * 1 * factorial(0);     // paso 6: caso recursivo
+  5 * 4 * 3 * 2 * 1 * 1;                // paso 7: caso base
+*/
+```
+
+#### Ejemplo de secuencia fibonacci:
+
+```javascript
+const fibonacci = (n) => {
+  // Caso base 1.
+  if (n === 0) return 0;
+
+  // Caso base 2.
+  if (n === 1) return 1;
+
+  return fibonacci(n-1) + fibonacci(n-2);
+};
+
+console.log(fibonacci(10)); // Imprime: 55
+```
+
+#### Ejemplo de iteración recursiva de objetos:
+
+Los objetos en JavaScript tienen una naturaleza recursiva, por ende podemos utilizar funciones recursivar para iterar sobre ellos. A continuación veremos un ejemplo:
+
+```javascript
+const sumSalary = (objectCompany) => {
+  // Base case.
+  if (Array.isArray(objectCompany)) {
+    return objectCompany.reduce(
+      (accumulateSum, { salary }) => accumulateSum + salary,
+      0
+    );
+  }
+  
+  // Recursive case.
+  let sum = 0;
+
+  for (const key in objectCompany) {
+    sum += sumSalary(objectCompany[key]);
+  }
+
+  return sum;
+};
+
+const company = {
+  sales: [
+    { name: "John", salary: 1000 },
+    { name: "Alice", salary: 1600 },
+  ],
+  development: {
+    sites: [
+      { name: "Peter", salary: 2000 },
+      { name: "Alex", salary: 1800 },
+    ],
+    internals: [{ name: "Jack", salary: 1300 }],
+  },
+};
+
+console.log(sumSalary(company)); // Imprime: 7700
+```
+
+La función `sumSalary` lo que hará será recorrer un objeto de la forma `company` e irá sumando todos los valores de `salary` que hay en los arreglos.
+
+### Recursión vs iteración.
+
+La recursión tiene una particularidad y es que va apilando `activantion records` en el `stack de memoria` de memoria. El problema es que el `stack de memoria` tiene un límite y es posible que lo superemos usando funciones recursivas, generando un error conocido como `stack overflow`. 
+
+Por otro lado, las funciones recursivas podemos convertirlas siempre a `funciones iterativas` para evitar el error de `stack overflow`.
+
+Así que es recomendable siempre que sea posible utilizar la `iteración` en lugar de la `recursión`. Solamente recomendaría utilizar la `recursión` para recorrer estructuras de datos que por su naturaleza son recursivas, pero siempre y cuando NO sean necesarias muchas llamadas recursivas.
 
 ## IIFE (Immediately Invoked Function Expressions).
 
-COMPLETAR.
+Las `IIFE` son funciones que se ejecutan inmediatamente después de su creación. Se escriben de la siguiente forma general:
+
+```javascript
+(function () {
+  /* Cuerpo de la función */
+})();
+```
+Este tipo de funciones actuarán generalmente como un procedimiento, el cuál tendrá su propio `scope privado` (siempre y cuando usemos `let` y `const` en el cuerpo de la IIFE), pero si podrán acceder al `scope externo` de donde estén definidas.
+
+También podemos utilizar las `IIFE` para retornar valores de la siguiente forma general:
+
+```javascript
+const valueFromIIFE = (function () {
+  /* Cuerpo de la función */
+
+  return VALOR;
+})();
+```
+
+Lo interesante de esto es que utilizamos el `IIFE` para poder asignarle un valor al `valueFromIIFE`, pero utilizando una función anónima que NO vamos a tener que llamar en ningún otro lugar del código y que no dejará rastros de su existencia.
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const Counter = (function () {
+  let count = 0; // Variable privada.
+
+  const getCount = () => count;
+
+  const incrementCount = () => {
+    count++;
+  };
+
+  const decrementCount = () => {
+    count++;
+  };
+
+  return {
+    getCount,
+    incrementCount,
+    decrementCount,
+  };
+})();
+
+console.log(Counter.getCount()); // Imprime: 0
+
+Counter.incrementCount();
+Counter.incrementCount();
+
+console.log(Counter.getCount()); // Imprime: 2
+
+Counter.decrementCount();
+
+console.log(Counter.getCount()); // Imprime: 1
+```
+
+### Casos de uso de las IIFE.
+
+Podemos utilizar las `IIFE` para:
+
+1. Reducir la cantidad de variables y constantes que hay en el script.
+
+2. Manegar la inicialización y configuración necesaria para el script.
+
+3. Crear variables privadas.
