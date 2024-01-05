@@ -197,7 +197,7 @@ console.log(esEntero3); // Output: false
 
 ## El método isFinite()
 
-ste método nos va a retornar `true` se el número es finito o `false` en caso contrario. Se utiliza de la siguiente forma general:
+ste método nos va a retornar `true` si el número es finito o `false` en caso contrario. Se utiliza de la siguiente forma general:
 
 ```javascript
 const esFinito = Number.isFinite(ALGUN_VALOR);
@@ -227,4 +227,38 @@ console.log(esFinito3); // Output: false
 let valor4 = Infinity;
 let esFinito4 = Number.isFinite(valor4);
 console.log(esFinito4); // Output: false
+```
+
+## El método isNaN()
+
+ste método nos va a retornar `true` si el número `NaN` o `false` en caso contrario. Se utiliza de la siguiente forma general:
+
+```javascript
+const esNaN = Number.isNaN(ALGUN_VALOR);
+```
+
+Notemos que estamos utilizando un método proveniente de la clase `Number`, al cuál hay que pasarle un valor `ALGUN_VALOR` que puede ser de cualquier tipo. Obviamente, si el valor de `ALGUN_VALOR` no es `Number`, entonces dará automáticamente `false`. En cambio, si el valor de `ALGUN_VALOR` es de tipo `Number`, entonces comprobará si dicho valor es igual a `NaN` para devolver `true` o `false`.
+
+A continuación, veremos ejemplo de como funciona:
+
+```javascript
+//Example 1
+let valor1 = 1001923012931209301239;
+let esFinito1 = Number.isNaN(valor1);
+console.log(esFinito1); // Output: false
+
+//Example 2
+let valor2 = -10.9912312;
+let esFinito2 = Number.isNaN(valor2);
+console.log(esFinito2); // Output: false
+
+//Example 3
+let valor3 = "10";
+let esFinito3 = Number.isNaN(valor3);
+console.log(esFinito3); // Output: false
+
+//Example 4
+let valor4 = "Hola" * 200; // Da NaN
+let esFinito4 = Number.isNaN(valor4);
+console.log(esFinito4); // Output: true
 ```
