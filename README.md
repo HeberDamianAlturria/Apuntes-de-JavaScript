@@ -10,5 +10,4 @@ Este apunte habla sobre el lenguaje de programación JavaScript y busca brindar 
 6. Agregar una lección sobre algunas estructuras de datos definidas por defecto como el `Map` o el `Set`.
 7. Agregar una lección sobre programación funcional.
 8. En la `Lección 12 (Funciones)` hablar sobre la `recursión a la cola`.
-
-
+9. Hablar en algún lugar sobre el operados `?.` para acceder a métodos y funciones de objetos.
