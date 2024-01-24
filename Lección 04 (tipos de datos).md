@@ -223,7 +223,7 @@ Para solucionar el problema del `aliasing` al trabajar con tipos de datos no pri
 
 #### <i>Otro error muy común:</i>
 
-Otro error muy común al trabajar con valores por referencia se da al intentar compararlos, ya que mucha gente intenta hacerlo de la siguient manera:
+Otro error muy común al trabajar con valores por referencia se da al intentar compararlos, ya que mucha gente intenta hacerlo de la siguiente manera:
 
 ```javascript
 let a = [1, 2, 3]; // Los arreglo se asignan por referencia.
