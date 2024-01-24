@@ -8,7 +8,7 @@ Sea `x una variable` y sea `z una variable o constante`, entonces tenemos los si
 
 | Nombre                       | Operador    | Significado    |
 | ---------------------------- | ----------- | -------------- |
-| Asignaciín simple            | `x = z`     | `x = z`        |
+| Asignación simple            | `x = z`     | `x = z`        |
 | Asignación de adición        | `x += z`    | `x = x + z`    |
 | Asignación de resta          | `x -= z`    | `x = x - z`    |
 | Asignación de multiplicación | `x *= z`    | `x = x * z`    |
