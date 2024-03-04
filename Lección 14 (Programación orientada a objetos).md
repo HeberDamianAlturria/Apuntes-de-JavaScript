@@ -1150,6 +1150,12 @@ class NombreDeLaClaseHija extends NombreDeLaClasePadre {
 
 ### El problema de utilizar atributos privados.
 
+Ya habíamos mencionado previamente que los `atributos privados` son tan restrictivos que impiden su acceso y modificación ni siquiera a sus `clases hijas`. Para que entendamos mejor este problema veamos el siguiente ejemplo:
+
+```javascript
+
+```
+
 ### Particularidad del instanceof.
 
 ## Static methods.
