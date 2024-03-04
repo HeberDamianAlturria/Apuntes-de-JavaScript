@@ -376,6 +376,8 @@ El problema que tienen los `atributos privados` es que son demasiado restrictivo
 
 Para solventar este problema existen los `atributos protegidos`, de los cuáles hablaremos a continuación.
 
+Para finalizar, recomiendo utilizar los `atributos privados` cuando sepamos que NO vamos a `heredar` de una clase. 
+
 ### Atributos protegidos.
 
 De manera nativa JavaScript NO tiene soporte para `atributos protegidos`, por lo que en realidad son una convención entre programadores.
@@ -397,15 +399,327 @@ class NombreDeLaClase {
 }
 ```
 
-Notemos que todos los nombres de los `atributos protegidos` tienen como prefijo el símbolo `_` (guión bajo). Como ya he mencionado, los `atributos protegidos` NO 
+Notemos que todos los nombres de los `atributos protegidos` tienen como prefijo el símbolo `_` (guión bajo). Como ya he mencionado, los `atributos protegidos` NO son una característica propia de JavaScript, sino que son más bien una convención de código, lo que significa que el `_` (guón bajo) en realidad no hace nada, solamente especifica que los atributos son protegidos.
 
-### Getters.
 
-### Setters.
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear atributos privados:
+
+```javascript
+/* Este código es incorrecto, lo muestro para ejemplificar. */
+
+class Person {
+  constructor(name, age, dni) {
+    this._name = name;
+    this._age = age;
+    this._dni = dni;
+  }
+
+  toString() {
+    return `Me llamo ${this._name}, tengo ${this._age} años y mi DNI es ${this._dni}`;
+  }
+}
+
+const person1 = new Person("Heber", 22, "43.690.658");
+
+console.log(person1.toString()); // Imprime: Me llamo Heber, tengo 22 años y mi DNI es 43.690.658
+```
+
+<b>El problema que tienen los atributos protegidos:</b>
+
+Al ser una convención y NO una característica propia de JavaScript, entonces los `atributos protegidos` en realidad si pueden ser accedidos desde fuera de la clase, ya que en la práctica son `atributos públicos` cuyo nombre tiene el prefijo `_`. Así que como es posible accederlos y modificarlos fuera de la clase, esto significa que el interprete NO nos informará de que esta situación sucede. Sin embargo, la convención dicta que solamente debemos acceder y modificar a los atributos protegidos `dentro de la clase` o `dentro de una clase hija` al hacer `herencia`; esto significa que por más que podamos modificar o acceder a un `atributo protegido` fuera de la clase, NUNCA debemos hacerlo.
+
+A continuación veremos un ejemplo de uso incorrecto de los `atributos protegidos`:
+
+```javascript
+/* Este código es incorrecto, lo muestro para ejemplificar. */
+
+class Person {
+  constructor(name, age, dni) {
+    this._name = name;
+    this._age = age;
+    this._dni = dni;
+  }
+
+  // Esto es un método.
+  // Notese que aquí utilizamos los atributos protegidos.
+  toString() {
+    return `Me llamo ${this._name}, tengo ${this._age} años y mi DNI es ${this._dni}`;
+  }
+}
+
+const person1 = new Person("Heber", 22, "43.690.658");
+
+console.log(person1.toString()); // Imprime: Me llamo Heber, tengo 22 años y mi DNI es 43.690.658
+
+// Acceder al atributo protegido ROMPE la convención, sin embargo es posible hacerlo.
+console.log(person1._name);
+
+// Modificar al atributo protegido ROMPE la convención, sin embargo es posible hacerlo.
+person1._name = "Naty";
+```
+
+El código anterior funcionaría sin NINGÚN problema, por más que rompa nuestra convención. Esto nos demuestra lo que hemos mencionado antes de que JavaScript no tendrá un trato especial con este tipo de atributos.
+
+<b>La importancia de utilizar getters y setters para atributos protegidos:</b>
+
+Hay situaciones en las que querremos que un `atributo protegido` pueda ser `modificado` o `accedido` desde fuera de la clase, sin embargo hemos visto que esto NO es posible ya que rompe la convención. La única manera de lograrlo es creando unos `métodos` especiales los cuáles se llaman `getter` y `setter`, los cuáles proporcionan una interfaz controlada para que los `atributos protegidos` puedan ser accedidos o modificados. Veremos como se utilizan más adelante.
+
 
 ### Constantes públicas y privadas.
 
 ## Métodos de clases.
+
+Los métodos son `funciones` que generalmente `acceden o modifican los atributos` de alguna manera. Se definen de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+
+  nombreDelMetodo(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+  }
+
+  /* Otros métodos de la clase. */
+
+}
+```
+
+Al igual que como sucede con la funciones convencionales, los `métodos` pueden tener o NO parámetros y también pueden retornar o NO algún valor.
+
+Y notemos que luego podríamos utilizar el método de la siguiente forma general:
+
+```javascript
+const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+// En caso de que el método NO retorne ningún valor.
+instanciaDeClase.nombreDelMetodo(/* Valores */);
+
+// En caso de que el método SI retorne un valor.
+const valorRetornado = instanciaDeClase.nombreDelMetodo(/* Valores */);
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear algunos métodos y como usarlos:
+
+```javascript
+class Rectangle {
+  constructor(height, width) {
+    this._height = height;
+    this._width = width;
+  }
+
+  area() {
+    return this._height * this._width;
+  }
+
+  toString() {
+    return `Height: ${this._height}, Width: ${this._width}`;
+  }
+
+  changeHeight(height) {
+    this._height = height;
+  }
+}
+
+const rectangle = new Rectangle(10, 20);
+
+console.log(rectangle.area()); // Imprime: 200
+
+console.log(rectangle.toString()); // Imprime: Height: 10, Width: 20
+
+rectangle.changeHeight(30); // Cambia el valor de height a 30.
+
+console.log(rectangle.area()); // Imprime: 600
+```
+
+### Getters.
+
+El método `getter` es un método especial utilizado para crear una interfaz controlada con la cuál se pueda `acceder` al valor de un atributo `protegido` o `privado`. Se define y utiliza de la siguiente forma general:
+
+1. Para los `atributos protegidos` la forma general de definir el método `get` es:
+
+   ```javascript
+   class NombreDeLaClase {
+     constructor(atributo1 /* ...otros parámetros */) {
+       this._nombreAtributo1 = atributo1;
+       // Otros atributos.
+     }
+
+     get nombreAtributo1() {
+       /* Cuerpo del método (opcional) */
+
+       return this._nombreAtributo1;
+     }
+
+     /* Otros métodos de la clase */
+   }
+   ```
+
+   Notese que los `métodos get` NO toman ningún parámetro y retornan un valor.
+
+   Y luego podríamos utilizarlo fuera de la clase de la siguiente forma general:
+
+   ```javascript
+   const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+   console.log(instanciaDeClase.nombreAtributo1);
+   ```
+
+   Notemos que al definir un método `get`, luego podemos accederlo como si estuvieramos accediendo un `atributo` convencional, pero lo que está haciendo es ejecutar el cuerpo del `método get`.
+
+2. Para los `atributos privados` la forma general de definir el método `get` es muy similar a la vista previamente solamente que teniendo en cuenta que estamos trabajando con atributos privados:
+
+   ```javascript
+   class NombreDeLaClase {
+     #nombreAtribPrivado1;
+
+     constructor(atributo1 /* ...otros parámetros */) {
+       this.#nombreAtribPrivado1 = atributo1;
+       // Otros atributos.
+     }
+
+     get nombreAtribPrivado1() {
+       /* Cuerpo del método (opcional) */
+
+       return this.#nombreAtribPrivado1;
+     }
+
+     /* Otros métodos de la clase */
+   }
+   ```
+
+   Notese que los `métodos get` NO toman ningún parámetro y retornan un valor.
+
+   Y luego podríamos utilizarlo fuera de la clase de la siguiente forma general:
+
+   ```javascript
+   const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+   console.log(instanciaDeClase.nombreAtribPrivado1);
+   ```
+
+   Notemos que al definir un método `get`, luego podemos accederlo como si estuvieramos accediendo un `atributo` convencional, pero lo que está haciendo es ejecutar el cuerpo del `método get`.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear un utilizar un método `get`:
+
+```javascript
+class Rectangle {
+  #height;
+  #width;
+
+  constructor(height, width) {
+    this.#height = height;
+    this.#width = width;
+  }
+
+  get height() {
+    console.log("Ejecuto método get height.");
+
+    return this.#height;
+  }
+
+  get width() {
+    console.log("Ejecuto método get width.");
+
+    return this.#width;
+  }
+}
+
+const rectangle = new Rectangle(10, 20);
+
+console.log(rectangle.height);
+/*
+  Esta línea imprime lo siguiente:
+
+  Ejecuto método get height.
+  10
+*/
+
+console.log(rectangle.width);
+/*
+  Esta línea imprime lo siguiente:
+
+  Ejecuto método get width.
+  20
+*/
+```
+
+En este ejemplo se puede observar claramente que se ejecuta el cuerpo de los `métodos get`.
+
+<b>Uso especial de los métodos get:</b>
+
+También podemos utilizar los `métodos get` para realizar operaciones personalizadas pero que fuera de la clase parezcan que se acceden a simples `atributos`. En otras palabras, podemos utilizar también los `métodos get` para retornar valores `derivados` de los `atributos`. Esto se hace de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+
+  get nombrePropiedad() {
+
+    /* Cuerpo del método */
+
+    return valor; // El valor será derivado de los atributos.
+  }
+
+  /* Otros métodos de la clase. */
+
+}
+```
+
+Y se podrá utilizar de la siguiente forma general:
+
+```javascript
+const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+console.log(instanciaDeClase.nombrePropiedad);
+```
+
+Este uso especial de los `métodos get` generalmente se utiliza para hace cierto calculos útiles que se podrán acceder fuera de la clase. También es utilizado para representar cierta información que contengan los atributos de manera organizada.
+
+A continuación veremos un ejemplo de como utilizarlo de esta manera:
+
+```javascript
+class Rectangle {
+  #height;
+  #width;
+
+  constructor(height, width) {
+    this.#height = height;
+    this.#width = width;
+  }
+
+  get height() {
+    return this.#height;
+  }
+
+  get width() {
+    return this.#width;
+  }
+
+  get area() {
+    return this.#height * this.#width; // se calcula en base a los atributos privados
+  }
+}
+
+const rectangle = new Rectangle(10, 20);
+
+console.log(rectangle.height); // 10
+
+console.log(rectangle.width); // 20
+
+console.log(rectangle.area); // 200
+```
+
+Como se puede observar en este ejemplo, el método `area` se crea como un `método get`. De esa manera, podemos accederlo fácilmente fuera de la clase. Notese que el resultado de `area` se deriva en base a los dos atributos privados.
+
+### Setters
 
 ### Sobrecarga de métodos.
 
