@@ -539,7 +539,7 @@ console.log(rectangle.area()); // Imprime: 600
 
 ### Getters.
 
-El método `getter` es un método especial utilizado para crear una interfaz controlada con la cuál se pueda `acceder` al valor de un atributo `protegido` o `privado`. Se define y utiliza de la siguiente forma general:
+El método `get` es un método especial utilizado para crear una interfaz controlada con la cuál se pueda `acceder` al valor de un atributo `protegido` o `privado`. Se define y utiliza de la siguiente forma general:
 
 1. Para los `atributos protegidos` la forma general de definir el método `get` es:
 
@@ -607,7 +607,7 @@ El método `getter` es un método especial utilizado para crear una interfaz con
 
 <b>Ejemplo:</b>
 
-A continuación veremos un ejemplo de como crear un utilizar un método `get`:
+A continuación veremos un ejemplo de como crear y utilizar un método `get`:
 
 ```javascript
 class Rectangle {
@@ -719,7 +719,191 @@ console.log(rectangle.area); // 200
 
 Como se puede observar en este ejemplo, el método `area` se crea como un `método get`. De esa manera, podemos accederlo fácilmente fuera de la clase. Notese que el resultado de `area` se deriva en base a los dos atributos privados.
 
-### Setters
+### Setters.
+
+El método `set` es un método especial utilizado para crear una interfaz controlada con la cuál se pueda `modificar` al valor de un atributo `protegido` o `privado`. Se define y utiliza de la siguiente forma general:
+
+1. Para los `atributos protegidos` la forma general de definir el método `set` es:
+
+   ```javascript
+   class NombreDeLaClase {
+     constructor(atributo1 /* ...otros parámetros */) {
+       this._nombreAtributo1 = atributo1;
+       // Otros atributos.
+     }
+
+     set nombreAtributo1(nuevoValorAtributo1) {
+       /* Cuerpo del método (opcional) */
+
+       this._nombreAtributo1 = nuevoValorAtributo1;
+     }
+
+     /* Otros métodos de la clase */
+   }
+   ```
+
+   Notese que los `métodos set` tienen un único parámetro que será `el nuevo valor para el atributo protegido` y NO retornan nada.
+
+   Y luego podríamos utilizarlo fuera de la clase de la siguiente forma general:
+
+   ```javascript
+   const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+   instanciaDeClase.nombreAtributo1 = nuevoValor;
+   ```
+
+   Notemos que al definir un método `set`, luego podemos modificar el atributo como si estuvieramos modificando un `atributo` convencional, pero lo que está haciendo es ejecutar el cuerpo del `método set`. Notese que el valor de `nuevoValor` se le pasará como argumento al método set.
+
+2. Para los `atributos privados` la forma general de definir el método `set` es muy similar a la vista previamente pero teniendo en cuenta que estamos usando atributos privados:
+
+   ```javascript
+   class NombreDeLaClase {
+     #nombreAtribPrivado1;
+
+     constructor(atributo1 /* ...otros parámetros */) {
+       this.#nombreAtribPrivado1 = atributo1;
+       // Otros atributos.
+     }
+
+     get nombreAtribPrivado1() {
+       /* Cuerpo del método (opcional) */
+
+       return this.#nombreAtribPrivado1;
+     }
+
+     /* Otros métodos de la clase */
+   }
+   ```
+
+   Notese que los `métodos set` tienen un único parámetro que será `el nuevo valor para el atributo privados` y NO retornan nada.
+
+   Y luego podríamos utilizarlo fuera de la clase de la siguiente forma general:
+
+   ```javascript
+   const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+   instanciaDeClase.nombreAtribPrivado1 = nuevoValor;
+   ```
+
+   Notemos que al definir un método `set`, luego podemos modificar el atributo como si estuvieramos modificando un `atributo` convencional, pero lo que está haciendo es ejecutar el cuerpo del `método set`. Notese que el valor de `nuevoValor` se le pasará como argumento al método set.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear y utilizar un método `set`:
+
+```javascript
+class Rectangle {
+  #height;
+  #width;
+
+  constructor(height, width) {
+    this.#height = height;
+    this.#width = width;
+  }
+
+  get height() {
+    return this.#height;
+  }
+
+  set height(newHeight) {
+    console.log("Cuerpo del método set height");
+
+    this.#height = newHeight;
+  }
+
+  get width() {
+    return this.#width;
+  }
+
+  set width(newWidth) {
+    console.log("Cuerpo del método set width");
+
+    this.#width = newWidth;
+  }
+}
+
+const rectangle = new Rectangle(10, 20);
+
+console.log(rectangle.height); // 10
+
+console.log(rectangle.width); // 20
+
+rectangle.height = 30000; // Imprime: Cuerpo del método set height
+
+rectangle.width = 909090; // Imprime: Cuerpo del método set width
+
+console.log(rectangle.height); // 30000
+
+console.log(rectangle.width); // 909090
+```
+
+En este ejemplo se puede observar claramente que se ejecuta el cuerpo de los `métodos set` cuando queremos `modificar` el valor de un atributo.
+
+<b>La importancia de utilizar métodos set</b>
+
+El cuerpo del `método set` nos permite realizar comprobaciones sobre el `nuevo valor` que se le asignará al `atributo`. Esto resulta especialmente útil cuando necesitamos aplicar ciertas `especificaciones o reglas de validación`. En caso de que el nuevo valor no cumpla con estas especificaciones, podemos lanzar `excepciones` para manejar adecuadamente tales situaciones. Esta capacidad es especialmente valiosa en lenguajes de programación interpretados, como JavaScript, donde el control sobre los datos puede ser crucial para mantener la integridad y la consistencia en nuestras aplicaciones.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+class Rectangle {
+  #height;
+  #width;
+
+  constructor(height, width) {
+    this.#height = height;
+    this.#width = width;
+  }
+
+  get height() {
+    return this.#height;
+  }
+
+  set height(newHeight) {
+    // Chequeamos que el nuevo valor NO sea negativo.
+    if (newHeight < 0) {
+      throw new Error("La altura no puede ser negativa");
+    }
+
+    this.#height = newHeight;
+  }
+
+  get width() {
+    return this.#width;
+  }
+
+  set width(newWidth) {
+    // Chequeamos que el nuevo valor NO sea negativo.
+    if (newWidth < 0) {
+      throw new Error("El ancho no puede ser negativo");
+    }
+
+    this.#width = newWidth;
+  }
+}
+
+const rectangle = new Rectangle(10, 20);
+
+console.log(rectangle.height); // 10
+
+console.log(rectangle.width); // 20
+
+
+/* Ejemplos que si cumplen la propiedad */
+
+rectangle.height = 30000; // Imprime: Cuerpo del método set height
+
+rectangle.width = 909090; // Imprime: Cuerpo del método set width
+
+console.log(rectangle.height); // 30000
+
+console.log(rectangle.width); // 909090
+
+
+/* Ejemplos que NO cumplen la propiedad */
+
+rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
+```
 
 ### Sobrecarga de métodos.
 
