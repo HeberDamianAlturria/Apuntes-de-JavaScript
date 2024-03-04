@@ -905,10 +905,6 @@ console.log(rectangle.width); // 909090
 rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
 ```
 
-### Sobrecarga de métodos.
-
-## Sobrecarga de constructores.
-
 ## Herencia de clases.
 
 ### El operador super.
