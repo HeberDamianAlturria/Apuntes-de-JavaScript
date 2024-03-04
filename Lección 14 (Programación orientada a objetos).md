@@ -197,7 +197,7 @@ class NombreDeLaClase {
 }
 ```
 
-Estos atributos serán `públicos`. Esto quiere decir que dichos `atributos` pueden ser accedidos y modificados desde cualquier parte del código que tenga una referencia a una instancia de la clase. De forma general, esto significa que:
+Estos atributos serán `públicos`. Esto quiere decir que dichos `atributos` pueden ser `accedidos` y `modificados` desde cualquier parte del código que tenga una referencia a una instancia de la clase. De forma general, esto significa que:
 
 ```javascript
 const nuevaInstancia = new NombreDeLaClase(valorAtributo1, valorAtributo2, /*...*/);
@@ -253,7 +253,9 @@ console.log(person1.toString()); // Imprime: Me llamo Natasha, tengo 23 años y 
 
 Una clave fundamental de la programación orientada a objeto es la `encapsulación`, la cuál consiste en ocultar los detalles internos de un objeto y exponer solo una interfaz pública. Esto se hace de esta manera para mejorar la consistencia del código, ya que si los `atributos` son públicos, cualquier otro programador puede modificar los valores y generar múltiples bugs.
 
-Debido a que JavaScript es un lenguaje de programación débilmente tipado, notemos que el hecho de utilizar `atributos` públicos puede generar muchos problemas de tipos. Por ejemplo:
+Debido a que JavaScript es un lenguaje de programación débilmente tipado e interpretado, notemos que el hecho de utilizar `atributos` públicos puede generar si no se tiene especial cuidado a la hora de programar.
+
+A continuación veremos un ejemplo del problema de tipos que podemos generar:
 
 ```javascript
 class Person {
@@ -278,9 +280,124 @@ person1.dni = 43142142; // Le cambio el tipo del atributo dni de un String a un 
 console.log(person1.toString()); // Imprime: Me llamo Natasha, tengo 23 años y mi DNI es 43142142
 ```
 
-Como se puede observar en este ejemplo, al atributo `dni` le cambiamos su tipo. Esto podría generar que sucedan situaciones inesperada  en el código.
+Como se puede observar en este ejemplo, al atributo `dni` le cambiamos su tipo. Esto podría generar que sucedan situaciones inesperada en el código, pero dichas situaciones no se presentarán hasta el momento de ser interpretadas. Esto genera que podamos tener bugs que no sabemos que existían.
 
 ### Atributos privados.
+
+Para lidiar con los problemas de los `atributos públicos`, podemos utilizar `atributos privados`. Dichos atributos privados, NO permiten su `acceso` ni `modificación` fuera de la clase. De esa manera, se respeta uno de los pilares de la programación orientada a objetos, la cuál es la `encapsulación`.
+
+Podemos definir `atributos privados` de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Definimos los atributos privados. */
+  #atributoPriv1;
+  #atributoPriv2;
+  // Otros atributos privados.
+
+  constructor(atributo1, atributo2, /* ...otros parámetros */) {
+    this.#atributoPriv1 = atributo1;
+    this.#atributoPriv2 = atributo2;
+    // Otros atributos.
+  }
+
+  /* Otros métodos de la clase */
+
+}
+```
+
+Notese que los `atributos privados` deben declararse mediante el símbolo `#` como prefijo del nombre que tendrá el atributo.
+
+Entonces, como los atributos privados NO pueden ser `acedidos` ni `modificados` fuera de la clase, esto significa que de forma general lo siguiente sería incorrecto:
+
+```javascript
+/* Este código es incorrecto, solo se muestra como ejemplo de error. */
+
+const nuevaInstancia = new NombreDeLaClase(valorAtributo1, valorAtributo2, /*...*/);
+
+// Ya que sus atributos son privados, NO podemos accederlos:
+console.log(nuevaInstancia.#atributoPriv1);
+/*
+  Este línea daría un error similar al siguiente:
+
+  SyntaxError: Private field '#atributoPriv1' must be declared in an enclosing class
+
+  Y no se ejecutaría.
+*/
+
+// Ya que sus atributos son privados, NO podemos modificarlos:
+nuevaInstancia.#atributoPriv1 = nuevoValorAtributo1;
+/*
+  Este línea daría un error similar al siguiente:
+
+  SyntaxError: Private field '#atributoPriv1' must be declared in an enclosing class
+
+  Y no se ejecutaría.
+*/
+```
+
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear atributos privados:
+
+```javascript
+class Person {
+  #name;
+  #age;
+  #dni;
+
+  constructor(name, age, dni) {
+    this.#name = name;
+    this.#age = age;
+    this.#dni = dni;
+  }
+
+  // Esto es un método.
+  toString() {
+    return `Me llamo ${this.#name}, tengo ${this.#age} años y mi DNI es ${this.#dni}`;
+  }
+}
+
+const person1 = new Person("Heber", 22, "43.690.658");
+
+console.log(person1.toString()); // Imprime: Me llamo Heber, tengo 22 años y mi DNI es 43.690.658
+```
+
+<b>La importancia de utilizar getters y setters para atributos privados:</b>
+
+Hay situaciones en las que querremos que un `atributo privado` pueda ser `modificado` o `accedido` desde fuera de la clase, sin embargo hemos visto que esto NO es posible. La única manera de lograrlo es creando unos `métodos` especiales los cuáles se llaman `getter` y `setter`, los cuáles proporcionan una interfaz controlada para que los `atributos privados` puedan ser accedidos o modificados. Veremos como se utilizan más adelante.
+
+<b>El problema de los atributos privados:</b>
+
+Este tema es un poco más avanzado y lo veremos a profundidad cuando trabajemos con `herencia`, pero vamos a intentar introducirlo aquí por una cuestión de completitud. 
+
+El problema que tienen los `atributos privados` es que son demasiado restrictivos, por lo que si una `clase padre` tiene atributos privados, entonces las `clases hija` NO podrán acceder de manera directa a dichos atributos, sino que solamente a sus `getters` y `setters` (en caso de estar implementados). Esto es un problema, ya que estamos dificultad el hecho de `heredar` atributos.
+
+Para solventar este problema existen los `atributos protegidos`, de los cuáles hablaremos a continuación.
+
+### Atributos protegidos.
+
+De manera nativa JavaScript NO tiene soporte para `atributos protegidos`, por lo que en realidad son una convención entre programadores.
+
+Los `atributos protegidos` buscan ser una alternativa menos restrictiva de los `atributos privados`. Básicamente, los `atributos protegidos` buscan impedir que se puedan utilizar de manera directa fuera de la clase (es decir que solamente se puedan utilizar dichos atributos mediante sus `getters` y `setters`), pero que para las `clases hijas` que la `hereden` puedan utilizar los atributos de manera directa sin necesidad de recurrir a los `getters` y `setters`.
+
+Los `atributos protegidos` se crean de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  constructor(atributo1, atributo2, /* ...otros parámetros */) {
+    this._atributoProtegido1 = atributo1;
+    this._atributoProtegido2 = atributo2;
+    // Otros atributos.
+  }
+
+  /* Otros métodos de la clase */
+
+}
+```
+
+Notemos que todos los nombres de los `atributos protegidos` tienen como prefijo el símbolo `_` (guión bajo). Como ya he mencionado, los `atributos protegidos` NO 
 
 ### Getters.
 
@@ -297,6 +414,8 @@ Como se puede observar en este ejemplo, al atributo `dni` le cambiamos su tipo. 
 ## Herencia de clases.
 
 ### El operador super.
+
+### El problema de utilizar atributos privados.
 
 ## Static methods.
 
