@@ -2,6 +2,8 @@
 
 En esta lección veremos sobre la programación orientada a objetos en JavaScript. Para hacerlo, vamos a utilizar la sintáxis más moderna que ofrece JavaScript que es la utilización de `class` en lugar de utilizar cosas viejas como `function classes`.
 
+Cabe mencionar que JavaScript NO proporciona todas las características de la programación orientada a objetos propiamente dicha, sin embargo si ofrece lo básico para que trabajemos con ella.
+
 ## Creando clases.
 
 Las clases son `una plantilla o modelo` para la creación de objetos. Una clase define un conjunto de `atributos` y `métodos` que los objetos pueden tener. Los `atributos` de una clase son los datos que los objetos de esa clase tienen. Los `métodos` son las acciones que los objetos pueden realizar, más precisamente, son funciones que pueden manipular los `atributos`.
@@ -907,9 +909,248 @@ rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
 
 ## Herencia de clases.
 
+La `herencia` consiste en que una `clase hija` obtenga los métodos y atributos que contine la `clase padre`, pero que a su vez pueda contener sus propios atributos y métodos. Se puede pensar como que la `clase hija` es una extensión de la `clase padre`, ya que tiene los métodos y atributos de la clase padre más los suyos propios. 
+
+Para hacer `herencia` debemos usar la palabra `extends` de la siguiente forma general:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+
+  /* Cuerpo de la clase padre */
+
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+
+  /* Cuerpo de la clase hija */
+
+}
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo que demuestra que la `clase hija` puede usar los métodos y atributos de la `clase padre`:
+
+```javascript
+class Persona {  
+  constructor(nombre, edad) {
+    this.nombre = nombre;
+    this.edad = edad;
+  }
+
+  saludar() {
+    console.log(`Hola, soy ${this.nombre} y tengo ${this.edad} años`);
+  }
+}
+
+class Empleado extends Persona {
+  constructor(nombre, edad, sueldo) {
+    super(nombre, edad);
+    this.sueldo = sueldo;
+  }
+
+  aumentarSueldo(porcentaje) {
+    this.sueldo += this.sueldo * porcentaje / 100;
+  }
+}
+
+const empleado1 = new Empleado('Juan', 35, 30000);
+
+empleado1.saludar(); // Hola, soy Juan y tengo 35 años
+
+empleado1.aumentarSueldo(10);
+
+console.log(empleado1.sueldo); // 33000
+```
+
+Como se puede observar en el ejemplo, el objeto `empleado1` que es una instancia de `Empleado` puede acceder al método `saludar` que está definido en la clase `Persona`.
+
 ### El operador super.
 
+El operador `super` se utiliza en una `clase hija` para hacer referencia a una `clase padre`. Se utiliza de una manera similar al operador `this`. A continuación veremos los distintos usos que podemos darle:
+
+<b>El método especial super()</b>
+
+El método especial `super()` se encarga de llamar al `constructor` de la `clase padre`. Generalmente lo utilizaremos en el `constructor` de la `clase hija` de la siguiente forma general:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+  constructor(/* Parámetros (opcional) */) {
+
+    /* Cuerpo del constructor de la clase padre */
+
+  }
+
+  /* Pueden haber otro métodos en la clase padre */
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+  constructor(/* Parámetros (opcional) */) {
+    // LLamamos al constructor de la clase padre.
+    super(/* Le pasamos valores a los parámetros en caso de necesitarlos */);
+
+    /* Cuerpo del constructor de la clase hija */
+
+  }
+
+  /* Pueden haber otro métodos en la clase hija */
+}
+```
+
+Esto lo haremos de esta manera para `inicializar` tanto los atributos de la `clase padre` como los atributos de la `clase hija`.
+
+A continuación veremos un ejemplo de como se utiliza el método `super()`:
+
+```javascript
+class Persona {  
+  constructor(nombre, edad) {
+    this.nombre = nombre;
+    this.edad = edad;
+  }
+}
+
+class Empleado extends Persona {
+  constructor(nombre, edad, sueldo) {
+    super(nombre, edad);
+    this.sueldo = sueldo;
+  }
+}
+
+const empleado1 = new Empleado('Juan', 35, 30000);
+
+console.log(empleado1.nombre); // Juan
+
+console.log(empleado1.edad); // 35
+
+console.log(empleado1.sueldo); // 30000
+```
+
+<b>Usando el operador super para acceder a los métodos de la clase padre:</b>
+
+También podemos utilizar el operador `super` para utilizar los métodos de la `clase padre` dentro de la `clase hija`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+  /* Constructor de la clase padre */
+
+  // Este método retorna un valor
+  nombreDelMetodoPadre1(/* Parámetros (opcional) */) {
+    /* Cuerpo del método */
+
+    return valor;
+  }
+
+  // Este método NO retorna ningún valor.
+  nombreDelMetodoPadre2(/* Parámetros (opcional) */) {
+    
+    /* Cuerpo del método */
+
+  }
+
+  /* Pueden haber otro métodos en la clase padre */
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+  /* Constructor de la clase padre */
+
+  nombreDelMetodo(/* Parámetros (opcional) */) {
+    // Si el método del padre retorna algún valor.
+    const valorRetornado = super.nombreDelMetodoPadre1(/* Valores necesarios */);
+
+    // Si el método del padre NO retorna ningún valor.
+    super.nombreDelMetodoPadre2(/* Valores necesarios */);
+
+    /* Resto del cuerpo del método. */
+  }
+
+  /* Pueden haber otro métodos en la clase hija */
+}
+```
+
+A continuación haremos un ejemplo de como utilizar un método de una `clase padre` en una `clase hija`:
+
+```javascript
+class Persona {  
+  constructor(nombre, edad) {
+    this.nombre = nombre;
+    this.edad = edad;
+  }
+
+  showPersonInfo() {
+    return `Nombre: ${this.nombre}, Edad: ${this.edad}`;
+  }
+}
+
+class Empleado extends Persona {
+  constructor(nombre, edad, sueldo) {
+    super(nombre, edad);
+    this.sueldo = sueldo;
+  }
+
+  showEmployeeInfo() {
+    return `${super.showPersonInfo()}, Sueldo: ${this.sueldo}`;
+  }
+}
+
+const empleado1 = new Empleado('Juan', 35, 30000);
+
+console.log(empleado1.showEmployeeInfo()); // Nombre: Juan, Edad: 35, Sueldo: 30000
+
+console.log(empleado1.showPersonInfo()); // Nombre: Juan, Edad: 35
+```
+
+<b>¿Qué pasa con los atributos del padre?</b>
+
+Podemos `acceder` y `modificar` los `atributos de la clase padre` dentro de la `clase hija` utilizando simplemente el operador `this`, ya que el operador `super` se utiliza solamente para los métodos y el constructor.
+
+Esto se hace de la siguiente forma general:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+  constructor(atributo1, /* Puede haber más parámetros */) {
+    this.atributoPadre1 = atributo1;
+
+    /* Resto del cuerpo del constructor. */
+
+  }
+
+  /* Pueden haber otro métodos en la clase padre */
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+  constructor(atributo1, /* Puede haber más parámetros */) {
+
+    super(atributo1, /* Puedo pasarle más argumentos */);
+
+    /* Cuerpo del constructor de la clase hija */
+
+  }
+
+  nombreDelMetodo(/* Parámetros (opcional) */) {
+    // Podemos acceder al atributo de la clase padre.
+    console.log(this.atributoPadre1);
+
+    // Podemos modificar el atributo de la clase padre.
+    this.atributoPadre1 = nuevoValor;
+
+    /* Resto del cuerpo del método. */
+  }
+
+  /* Pueden haber otro métodos en la clase hija */
+}
+```
+
 ### El problema de utilizar atributos privados.
+
+### Particularidad del instanceof.
 
 ## Static methods.
 
