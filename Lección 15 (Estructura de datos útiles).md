@@ -354,3 +354,244 @@ console.log(anotherNames.isSubsetOf(coolNames)); // Imprime: false
 ```
 
 ## Maps.
+
+La estructura de datos `Map` es una colección de pares `clave-valor`, es decir que contiene `claves` y a cada clave se le asocia `un valor`, y tanto las `claves` como los `valores` pueden ser de `cualquier tipo`. Cabe mencionar que las `claves` deben ser `únicas`.
+
+### Diferencias entre Maps y los objetos.
+
+Por la definición dada previamente sobre los `Maps` se parece mucho a la definición de los `Objetos`, sin embargo a nivel práctico son muy diferentes. A continuación daré las principales diferencias
+
+1. Las `claves` de los `Maps` pueden ser de `cualquier tipo`, a diferencia de lo que sucede con los `Objetos` cuyas claves deben ser `strings`.
+
+2. Los `Objetos` no garantizan un orden específico para las `claves`, mientras que los `Map` mantienen el orden de inserción de los elementos.
+
+3. A diferencia de los `Objetos`, el `Map` contiene varios métodos para simplificar la iteración.
+
+4. A diferencia de los `Objetos`, el `Map` contiene un método para simplificar la `eliminación` de pares `clave-valor`.
+
+### Creando una instancia de Map vacía.
+
+Podemos crear una instancia de `Map` de la siguiente forma general:
+
+```javascript
+const nombreMap = new Map();
+```
+
+### Creando una instancia de Map con pares clave-valor.
+
+También podemos crear un `Map` que ya contenga pares `clave-valor` de la siguiente forma general:
+
+```javascript
+const nombreMap = new Map([
+  [clave1, valor1],
+  [clave2, valor2],
+  /*...*/
+  [claveN, valorN]
+]);
+```
+
+Es decir que debemos pasarle como argumentos un arreglo de `arreglos de dos elementos` los cuales representan la `clave` y su `valor` asociado
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo sencillo de como esto se hace:
+
+```javascript
+const map = new Map([
+  ['1',  'str1'],
+  [1,    'num1'],
+  [true, 'bool1']
+]);
+
+console.log(map); // Imprime: Map { '1' => 'str1', 1 => 'num1', true => 'bool1' }
+```
+
+### El método set.
+
+El método `set()` toma como argumento `una clave y un valor` y los agregará a la instancia del `Map`. Esto se hace de la siguiente forma general:
+
+```javascript
+nombreMap.set(clave, valor);
+```
+
+De esa manera, guardamos la `clave` y su `valor` asociado.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como funciona:
+
+```javascript
+const map = new Map();
+
+map.set("Hola", 1);
+
+map.set("Mundo", 2);
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 1, 'Mundo' => 2 }
+```
+
+<b>Como cambiar el valor asociado a una clave:</b>
+
+También podemos utilizar el método `set()` para cambiar el `valor` asociado a una `clave`. Para lograrlo, debemos saber que la `clave` ya está en el `Map` y luego podemos hacer lo siguiente:
+
+```javascript
+nombreMap.set(claveQueYaEsta, nuevoValor);
+```
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+const map = new Map();
+
+map.set("Hola", 1);
+
+map.set("Mundo", 2);
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 1, 'Mundo' => 2 }
+
+map.set("Hola", "Soy un string"); // Cambio el valor de la clave "Hola".
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 'Soy un string', 'Mundo' => 2 }
+```
+
+### El atributo size.
+
+El `atributo size` nos indica el tamaño que tiene el `Map`. Dicho tamaño es la cantidad de pares `clave-valor` que hay en el `Map`. Se usa de la siguiente forma general:
+
+```javascript
+const sizeDelMap = nombreMap.size;
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo sencillo de como se utiliza:
+
+```javascript
+const map = new Map();
+
+map.set("Hola", 1);
+
+map.set("Mundo", 10);
+
+console.log(map.size); // Imprime: 2
+```
+
+### El método get.
+
+El método `get()` toma como argumento una `clave` y devuelve el `valor` asociado en caso de que la `clave` SI esté en el `Map` o devuelve `undefined` si la `clave` NO está en el `Map`. A continuación veremos la forma general de como usarlo:
+
+```javascript
+const valorAsociado = nombreMap.get(clave);
+```
+
+Y como ya hemos dicho, `valorAsociado` será el valor asociado de la `clave` en caso de que dicha clave esté en el `nombreMap`, o `valorAsociado` será `undefined` en caso de que la `clave` NO esté en `nombreMap`.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como usarlo:
+
+```javascript
+const map = new Map([
+  ["Hola", 1],
+  ["Mundo", 2]
+]);
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 1, 'Mundo' => 2 }
+
+// Acceder a los valores del map.
+console.log(map.get("Hola")); // Imprime: 1
+console.log(map.get("Mundo")); // Imprime: 2
+
+// Intentamos acceder a un valor que no está en map.
+console.log(map.get("Adiós")); // Imprime: undefined
+```
+
+### El método has.
+
+El método `has()` toma como argumento una `clave` y devuelve `true` si dicha clave está en el `Map` o `false` en caso contrario. A continuación veremos como se utiliza:
+
+```javascript
+const existeClaveEnMap = nombreMap.has(clave);
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const map = new Map([
+  ["Hola", 1],
+  ["Mundo", 2]
+]);
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 1, 'Mundo' => 2 }
+
+// Estas claves sabemos que están en el map.
+console.log(map.has("Hola")); // Imprime: true
+console.log(map.has("Mundo")); // Imprime: true
+
+// Esta clave sabemos que NO están en el map.
+console.log(map.has("Adiós")); // Imprime: false
+```
+
+### El método delete.
+
+El método `delete()` toma como argumento una `clave` y lo que hará será borrar el par `clave-valor` del `Map`. Se utiliza de la siguiente forma general:
+
+```javascript
+nombreMap.delete(clave);
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como utilizarlo:
+
+```javascript
+const map = new Map([
+  ["Hola", 1],
+  ["Mundo", 2]
+]);
+
+console.log(map); // Imprime: Map(2) { 'Hola' => 1, 'Mundo' => 2 }
+
+map.delete("Hola"); // Elimo la clave "Hola" y su valor asociado.
+
+console.log(map); // Imprime: Map(1) { 'Mundo' => 2 }
+```
+
+### Iterar un Map.
+
+Hay distintas maneras de iterar un `Map`, pero personalmente la mejor es utilizar el `for...of` de la siguiente forma general:
+
+```javascript
+for (const [clave, valor] of nombreMap) {
+  
+  /* Cuerpo del for. */
+
+}
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como iterar un `Map`:
+
+```javascript
+const map = new Map([
+  ["Hola", 1],
+  ["Mundo", 2],
+  ["Adios", 3],
+  [90, 4],
+]);
+
+for (const [key, value] of map) {
+  console.log(`La clave es ${key} y el valor es ${value}`);
+}
+/*
+  Esto imprimirá:
+
+  La clave es Hola y el valor es 1
+  La clave es Mundo y el valor es 2
+  La clave es Adios y el valor es 3
+  La clave es 90 y el valor es 4
+*/
+```

@@ -1283,3 +1283,7 @@ Podemos utilizar las `IIFE` para:
 2. Manegar la inicialización y configuración necesaria para el script.
 
 3. Crear variables privadas.
+
+## Funciones generadoras.
+
+COMPLETAR.
