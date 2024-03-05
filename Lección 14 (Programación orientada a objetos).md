@@ -1150,14 +1150,306 @@ class NombreDeLaClaseHija extends NombreDeLaClasePadre {
 
 ### El problema de utilizar atributos privados.
 
-Ya habíamos mencionado previamente que los `atributos privados` son tan restrictivos que impiden su acceso y modificación ni siquiera a sus `clases hijas`. Para que entendamos mejor este problema veamos el siguiente ejemplo:
+Ya habíamos mencionado previamente que los `atributos privados` son tan restrictivos que impiden su acceso y modificación de los atributos de `la clase padre` ni siquiera a sus `clases hijas`. Para que entendamos mejor este problema veamos el siguiente ejemplo:
 
 ```javascript
+/* Este código es érroneo, pero lo muestro a modo de ejemplo. */
 
+class Person {
+  #name;
+  #age;
+
+  constructor(name, age) {
+    this.#name = name;
+    this.#age = age;
+  }
+}
+
+class Employee extends Person {
+  #salary;
+
+  constructor(name, age, salary) {
+    super(name, age);
+    this.#salary = salary;
+  }
+
+  showInfo() {
+    console.log(
+      `Name: ${this.#name}, Age: ${this.#age}, Salary: ${this.#salary}`
+    );
+    /* Esta línea de código daría error, ya que this.#name y this.#age NO pueden ser accedidos por una clase hija */
+  }
+}
+```
+
+<b>La solución a este problema:</b>
+
+También hemos mencionado que la solución a este problema es utilizar `atributos protegidos` en lugar de utilizar `atributos privados` siempre que vayamos a utilizar `herencia`. De esa manera, para resolver el problema anterior deberíamos hacer lo siguiente:
+
+```javascript
+class Person {
+  constructor(name, age) {
+    this._name = name;
+    this._age = age;
+  }
+}
+
+class Employee extends Person {
+  #salary;
+
+  constructor(name, age, salary) {
+    super(name, age);
+    this.#salary = salary;
+  }
+
+  showInfo() {
+    console.log(
+      `Name: ${this._name}, Age: ${this._age}, Salary: ${this.#salary}`
+    );
+  }
+}
 ```
 
 ### Particularidad del instanceof.
 
+Al utilizar `herencia`, una `intancia` de una `clase hija` será al mismo tiempo también una `instancia` de la `clase padre`. De forma general, esto se vería así:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+
+  /* Cuerpo de la clase padre */
+
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+
+  /* Cuerpo de la clase hija */
+
+}
+
+
+const instanciaClaseHija = new NombreDeLaClaseHija(/* Valores necesarios */);
+
+console.log(instanciaClaseHija instanceof NombreDeLaClaseHija); // true
+
+console.log(instanciaClaseHija instanceof NombreDeLaClasePadre); // true
+```
+
+## Sobrescritura de métodos.
+
+En la programación orientada a objetos, una de las características esenciales es la capacidad de heredar comportamientos y atributos de una clase padre a una clase hija. Sin embargo, en ocasiones, es necesario personalizar el comportamiento de ciertos métodos en las clases hijas para adaptarse a requisitos específicos. Esto se logra mediante un proceso llamado `sobrescritura de métodos`.
+
+En JavaScipt, toda `clase hija` puede sobreescribir un método heredado por la `clase padre`. Esto se hace de la siguiente forma general:
+
+```javascript
+// Clase padre.
+class NombreDeLaClasePadre {
+
+  metodoASobreescribir(/* Parámetros (opcional) */) {
+
+    /* Cuerpo del método en la clase padre. */
+
+  }
+
+  /* Cuerpo de la clase padre */
+
+}
+
+// Clase hija.
+class NombreDeLaClaseHija extends NombreDeLaClasePadre {
+
+  // Sobreescribo el método del padre.
+  metodoASobreescribir(/* Parámetros (opcional) */) {
+
+    /* Cuerpo del método en la clase hija. */
+
+  }
+
+  /* Cuerpo de la clase hija */
+
+}
+```
+
+Como se puede observar en esta forma general, sobreescribir un método consiste en que en la `clase hija` cambiamos el `cuerpo del método` que definimos en la `clase padre` para ajustarlo a nuestras necesidades especificas. También puede suceder que la `clase hija` requiera más parámetros que el método original de la `clase padre`.
+
+Para llevar a cabo la sobrescritura de un método, es fundamental que el `nombre` del método en la `clase hija` coincida exactamente con el `nombre` del `método original` que está definido en la `clase padre`.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo para la sobreescritura de métodos:
+
+```javascript
+class Vehiculo {
+  sonido() {
+    return "Este vehículo hace un sonido genérico.";
+  }
+}
+
+class Auto extends Vehiculo {
+  // Sobrescritura del método sonido en la clase hija
+  sonido() {
+    return "¡Vroom Vroom! ¡Este auto hace el sonido de un motor acelerado!";
+  }
+}
+
+class Bicicleta extends Vehiculo {
+  // Sobrescritura del método sonido en la clase hija
+  sonido(tieneCampana = true) {
+    return tieneCampana
+      ? "¡Ring ring! ¡Esta bicicleta suena con su campana!"
+      : "¡Esta bicicleta no tiene campana, por ende no hace ruido!";
+  }
+}
+
+// Crear instancias de las clases padre
+const miVehiculo = new Vehiculo();
+
+// Llamar al método sonido de las instancias de las clases padre
+console.log(miVehiculo.sonido()); // Este vehículo hace un sonido genérico.
+
+// Crear instancias de las clases hijas
+const miAuto = new Auto();
+const miBicicleta = new Bicicleta();
+
+// Llamar al método sonido de las instancias de las clases hijas
+console.log(miAuto.sonido()); // ¡Vroom Vroom! ¡Este auto hace el sonido de un motor acelerado!
+
+console.log(miBicicleta.sonido()); // ¡Ring ring! ¡Esta bicicleta suena con su campana!
+console.log(miBicicleta.sonido(false)); // ¡Esta bicicleta no tiene campana, por ende no hace ruido!
+```
+
+## Atributos estáticos.
+
+Los `atributos estáticos` en JavaScript son atributos que se asocian `directamente con la clase en sí misma` en lugar de con instancias individuales de esa clase. Esto significa que los atributos estáticos son `compartidos entre todas las instancias de la clase` y son accesibles directamente desde la clase sin necesidad de crear una instancia. Es más, `NO es posible acceder a un atributo estático desde sus instancias, solamente puede ser accedido mediante la clase`.
+
+Los `atributos estáticos` se definen de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  static atributoEstatico;
+
+  /* Resto del cuerpo de la clase */
+}
+```
+
+Y notemos que dicho `atributo estático` podrán ser accedido o modificado tanto dentro de la clase como fuera de la clase de la siguiente forma general:
+
+```javascript
+// Accediendo al atributo estático.
+NombreDeLaClase.atributoEstatico;
+
+// Modificando el valor del atributo estático.
+NombreDeLaClase.atributoEstatico = nuevoValor;
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como utilizar un `atributo estático`:
+
+```javascript
+class Person {
+  static countPerson = 0;
+
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+    Person.countPerson++; // Incremento el valor del método estático.
+  }
+}
+
+const person1 = new Person("John", 30);
+
+console.log(Person.countPerson); // 1
+
+const person2 = new Person("Jane", 25);
+
+console.log(Person.countPerson); // 2
+
+/* NO se puede acceder al atributo estático desde una instancia. */
+console.log(person1.countPerson); // undefined
+```
+
 ## Static methods.
 
-## Static class.
+Al igual que sucede con los atributos estáticos, los `métodos estáticos` en JavaScript son funciones asociadas directamente con la clase en sí misma en lugar de con instancias individuales de esa clase. Esto significa que los `métodos estáticos` son invocados directamente desde la clase sin necesidad de crear una instancia, y NO tienen acceso a las propiedades de instancia, por lo que NO se puede usar el `this` dentro del cuerpo de un `método estático`; solamente tienen acceso a los `atributos estáticos` y a los parámetros del propio método. 
+
+Los `métodos estáticos` se definen de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  static nombreMetodoEstatico(/* Parámetros (opcional) */) {
+    
+    /* Cuerpo de este método estático. */
+
+  }
+
+  /* Resto del cuerpo de la clase */
+}
+```
+
+Y notemos que dicho `métodos estático` podrán ser llamados tanto dentro de la clase como fuera de la clase de la siguiente forma general:
+
+```javascript
+// Si el método estático retorna algún valor.
+const valorRetornado = NombreDeLaClase.nombreMetodoEstatico(/* Valores necesarios */);
+
+// Si el método estático NO retorna ningún valor.
+NombreDeLaClase.nombreMetodoEstatico(/* Valores necesarios */);
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como definir y utilizar un `método estático`:
+
+```javascript
+class Logger {
+  static log = [];
+
+  constructor(username) {
+    this.username = username;
+  }
+
+  logMessage(message) {
+    Logger.log.push({
+      username: this.username,
+      message,
+      timestamp: Date.now(),
+    });
+  }
+
+  static getLog() {
+    return Logger.log;
+  }
+}
+
+const logger1 = new Logger('user1');
+const logger2 = new Logger('user2');
+
+logger1.logMessage(`Hello`);
+logger2.logMessage('Goodbye');
+
+console.log(Logger.getLog()); 
+/*
+  Imprime:
+
+  [
+    { username: 'user1', message: 'Hello', timestamp: 1709598861883 },
+    { username: 'user2', message: 'Goodbye', timestamp: 1709598861883 }
+  ]
+
+*/
+```
+
+Notemos que en este ejemplo, el `atributo estático` llamado `log` lleva un registro de todos los mensajes que se han agregado, independientemente de la instancia en la que fueron creado. Y notemos que el `método estático` llamado `getLog` nos permite acceder a todos los mensajes que se agregaron en la clase.
+
+### Importancia de los métodos y atributos estáticos
+
+Los métodos y atributos estáticos son herramientas poderosas en la programación orientada a objetos en JavaScript. Nos permiten definir funcionalidades y propiedades que son compartidas por todas las instancias de una clase, en lugar de estar asociadas específicamente con cada instancia.
+
+Notemos que podemos utilizar los métodos y atributos estáticos para llevar un registro de todo lo que suceda en una clase, independientemente de la instancia en la que ocurra. Por ejemplo, en un sistema de registro de información, como el `Logger` que hemos creado, el atributo estático `log` nos permite almacenar todos los registros de información en una sola ubicación, accesible desde cualquier parte de nuestro código sin necesidad de crear una instancia del logger.
+
+Esto es útil cuando queremos realizar un seguimiento de datos o acciones a nivel de clase, en lugar de a nivel de instancia. Además, los métodos estáticos proporcionan utilidades y funcionalidades que no dependen del estado de una instancia particular, sino que son relevantes para la clase en su conjunto.
+
+En resumen, los métodos y atributos estáticos son una parte esencial de la programación orientada a objetos en JavaScript y nos permiten diseñar clases más flexibles, modulares y fáciles de mantener.
