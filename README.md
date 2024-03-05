@@ -8,3 +8,5 @@ Este apunte habla sobre el lenguaje de programación JavaScript y busca brindar 
 4. En la `Lección 12 (Funciones)` hablar sobre la `recursión a la cola`.
 5. Hablar en algún lugar sobre el operados `?.` para acceder a métodos y funciones de objetos.
 6. Agregar en la `Lección 12 (Funciones)` hablar sobre la `funciones generadoras`.
+7. Agregar en la `Lección 15` hablar sobre las `Inner Class`.
+

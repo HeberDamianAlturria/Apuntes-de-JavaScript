@@ -1453,3 +1453,7 @@ Notemos que podemos utilizar los métodos y atributos estáticos para llevar un 
 Esto es útil cuando queremos realizar un seguimiento de datos o acciones a nivel de clase, en lugar de a nivel de instancia. Además, los métodos estáticos proporcionan utilidades y funcionalidades que no dependen del estado de una instancia particular, sino que son relevantes para la clase en su conjunto.
 
 En resumen, los métodos y atributos estáticos son una parte esencial de la programación orientada a objetos en JavaScript y nos permiten diseñar clases más flexibles, modulares y fáciles de mantener.
+
+## Inner Class.
+
+COMPLETAR

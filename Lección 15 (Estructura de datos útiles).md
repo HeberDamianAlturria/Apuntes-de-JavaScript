@@ -595,3 +595,189 @@ for (const [key, value] of map) {
   La clave es 90 y el valor es 4
 */
 ```
+
+## Stacks.
+
+Los `stacks` (pilas) son una estructura de datos que siguen el principio `LIFO` (`last in, first out`), lo que quiere decir que cumplen la condición de que el último elemento en ser agregado al `stack` será el primero en ser sacado.
+
+Puedes pensar en un stack como una pila de platos, donde solo puedes agregar (`push`) un plato en la parte superior de la pila y solo puedes quitar (`pop`) el plato que está en la parte superior de la pila.
+
+JavaScript no ofrece una clase para los `Stacks`, por lo que debemos crear uno nosotros mismos. Lo bueno es que podemos simular un `stack` mediante `arrays`. Los `arrays` en JavaScript ya tienen métodos incorporados para agregar elementos al final de la lista (push) y eliminar el último elemento de la lista (pop), lo que los hace ideales para simular un stack.
+
+### Creando nuestro propio Stack mediante un Array.
+
+Existen varias maneras de que creemos nuestro propio `stack`, pero yo voy a hacerlo mediante una `clase` para utilizar lo aprendido sobre `POO`. Cabe mencionar que NO es necesario crearlo mediante una `clase`, solamente debemos utilizar el `arreglo` y sus operaciones de `push` y `pop` de la manera adecuada.
+
+Yo implementaré el `stack` usando `clases` de la siguiente forma:
+
+```javascript
+class Stack {
+  #items;
+
+  constructor() {
+    this.#items = [];
+  }
+
+  // Método para saber el tamaño del stack.
+  get size() {
+    return this.#items.length;
+  }
+
+  // Método para agregar elementos al stack.
+  push(element) {
+    this.#items.push(element);
+  }
+
+  // Método para eliminar el último elemento del stack.
+  pop() {
+    return this.#items.pop();
+  }
+
+  // Método para ver el último elemento del stack, pero sin eliminarlo.
+  peek() {
+    return this.#items.at(-1);
+  }
+
+  // Método para saber si el stack está vacío.
+  isEmpty() {
+    return this.size === 0;
+  }
+
+  // Método para limpiar el stack.
+  clear() {
+    this.#items = [];
+  }
+
+  // Método para imprimir el stack.
+  print() {
+    console.log(`Stack(${this.size}) [${this.#items.join(', ')}]`);
+  }
+}
+```
+
+A esta manera de crearlo se le podrían agregar también algunas propiedades interesantes, como por ejemplo el hecho de que podamos crear un `stack` pasándole argumentos para que tenga datos al ser creado. Sin embargo, vamos a quedarnos con esta implementación simple, ya que extenderla es muy sencillo.
+
+<b>Ejemplo de uso:</b>
+
+A continuación veremos un ejemplo utilizando el `Stack` que he implementado:
+
+```javascript
+const stack = new Stack();
+
+console.log(stack.isEmpty()); // true
+
+stack.push(1);
+stack.push(2);
+stack.push(30);
+
+console.log(stack.isEmpty()); // false
+
+console.log(stack.size); // 3
+
+console.log(stack.peek()); // 30
+
+stack.print(); // Stack(3) [1, 2, 30]
+
+stack.pop();
+
+stack.print(); // Stack(2) [1, 2]
+
+console.log(stack.size); // 2
+
+stack.clear();
+
+stack.print(); // Stack(0) []
+```
+
+Notemos que, al menos para este ejemplo, nuesto `Stack` parece funcionar bien.
+
+## Queues.
+
+Los `queue` (colas) son una estructura de datos que siguen el principio `FIFO` (`first in, first out`), lo que quiere decir que cumplen la condición de que el primer elemento en ser agregado al `stack` será el primero en ser sacado.
+
+Puedes pensar en un `queue` como una cola para entrar a un evento. Quienes estén al principio de la cola serán los primeros en salir (`dequeue`) y todo aquél que se agregue a la cola (`enqueue`) será puesto al final.
+
+JavaScript no ofrece una clase para los `Queue`, por lo que debemos crear uno nosotros mismos. Lo bueno es que podemos simular un `Queue` mediante `arrays`. Los `arrays` en JavaScript ya tienen métodos incorporados para agregar elementos al final de la lista (`push`) y eliminar el primer elemento de la lista (`shift`), lo que los hace ideales para simular un queue.
+
+### Creando nuestro propio Queue mediante un Array.
+
+Existen varias maneras de que creemos nuestro propio `queue`, pero yo voy a hacerlo mediante una `clase` para utilizar lo aprendido sobre `POO`. Cabe mencionar que NO es necesario crearlo mediante una `clase`, solamente debemos utilizar el `arreglo` y sus operaciones de `push` y `shift` de la manera adecuada.
+
+Yo implementaré el `queue` usando `clases` de la siguiente forma:
+
+```javascript
+class Queue {
+  #queue;
+
+  constructor() {
+    this.#queue = [];
+  }
+
+  // Obtiene el tamaño de la cola.
+  get size() {
+    return this.#queue.length;
+  }
+
+  // El método agrega un elemento al final de la cola.
+  enqueue(element) {
+    this.#queue.push(element);
+  }
+
+  // El método elimina el primer elemento de la cola y lo devuelve.
+  dequeue() {
+    return this.#queue.shift();
+  }
+
+  // El método devuelve el primer elemento de la cola.
+  front() {
+    return this.#queue[0];
+  }
+
+  // El método verifica si la cola está vacía.
+  isEmpty() {
+    return this.size === 0;
+  }
+
+  // El método elimina todos los elementos de la cola.
+  clear() {
+    this.#queue = [];
+  }
+
+  // El método imprime la cola.
+  print() {
+    console.log(`Queue(${this.size}) [${this.#queue.join(', ')}]`);
+  }
+}
+```
+
+A esta manera de crearlo se le podrían agregar también algunas propiedades interesantes, como por ejemplo el hecho de que podamos crear una `queue` pasándole argumentos para que tenga datos al ser creado. Sin embargo, vamos a quedarnos con esta implementación simple, ya que extenderla es muy sencillo.
+
+<b>Ejemplo de uso:</b>
+
+A continuación veremos un ejemplo utilizando el `Queue` que he implementado:
+
+```javascript
+const queue = new Queue();
+
+console.log(queue.isEmpty()); // true
+
+queue.enqueue(1);
+queue.enqueue(2);
+queue.enqueue(3);
+
+console.log(queue.isEmpty()); // false
+
+queue.print(); // Queue(3) [1, 2, 3]
+
+console.log(queue.front()); // 1
+
+queue.dequeue();
+
+queue.print(); // Queue(2) [2, 3]
+
+console.log(queue.size); // 2
+
+queue.clear();
+
+queue.print(); // Queue(0) []
+```
