@@ -32,6 +32,8 @@ Por defecto, los ficheros no van a `exportar` nada. Para poder exportar uno o m�
 
 Existen varias maneras de exportar datos mediante la palabra clave `export`. A continuación veremos algunas de las maneras más utilizadas:
 
+<br>
+
 <b>Declarar y exportar:</b>
 
 Podemos simplemente añadir la palabra clave `export` a la `izquierda de la declaración del elemento Javascript que deseamos exportar`, ya sea una variable, una constante, una función o una clase. Esto se hace de la siguiente forma general:
@@ -82,6 +84,8 @@ nombreVariable = OTRO_VALOR;
 ```
 
 Entonces, al `importar` el `nombreVariable` en otra fichero, el valor que tendrá será el de `OTRO_VALOR`. Por lo tanto, este compartamiento puede causar errores innesperados.
+
+<br>
 
 <b>Exportación post-declaración:</b>
 
@@ -179,6 +183,7 @@ No es necesario usar `as` con todos los elementos a exportar, puede que lo usemo
 
 Personalmente, preferiría evitar el uso de `as`, pero lo menciono por una cuestión de completitud.
 
+<br>
 
 <b>Exportación por defecto:</b>
 
@@ -256,6 +261,225 @@ Mi recomendación sería siempre poner el `export default` al `final` del `fiche
 Cabe mencionar que luego tendremos una `sintáxis especial` para `importar` a el elemento que fue `exportado por defecto` y otra sintáxis para `importar` los elementos que fueron `exportados de manera normal`.
 
 ### Import estático.
+
+La `importación estática` es la manera de `importar` elementos más común, por que será la que generalmente utilicemos. Para poder `importar` elementos de manera estática debemos utilizar la palabra clave `import`.
+
+Cabe mencionar que para `importar` elementos de un fichero, dichos elementos deben haber sido `exportados` dentro de ese fichero. Así que notemos que `NO` existe una manera de `importar` elementos si éstos no han sido `exportados`, por lo que el `import` necesita del `export`.
+
+Hay distintas formas de `importar` elementos. A continuación veremos las maneras más utilizadas:
+
+<br>
+
+<b>Importación con nombre:</b>
+
+La forma más habitual de importar elementos es a través de la denominada `importación nombrada`. La forma general de utilizarlo es la siguiente:
+
+* Supongamos que tenemos un fichero llamado `modulo.js` que está definido de la siguiente forma general:
+
+  ```javascript
+  // Fichero modulo.js
+
+  /* Definimos constantes: */
+  const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+  /* Definimos variables: */
+  let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+
+  /* Definimos funciones: */
+
+  // Usando arrow functions:
+  const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+    
+    /* Cuerpo de la función */
+
+  };
+
+  // Usando la palabra function:
+  function nombreFuncion(/* Parámetros (opcional) */) {
+
+    /* Cuerpo de la función */
+
+  }
+
+
+  /* Definimos clases: */
+  class NombreDeLaClase {
+
+    /* Cuerpo de la clase. */
+
+  }
+
+  /* Exportamos lo que necesitamos al final del fichero */
+  export {
+    nombreConstante,
+    nombreVariable,
+    nombreArrowFunction,
+    nombreFuncion,
+    NombreDeLaClase,
+  };
+  ```
+
+* Entonces, supongamos que ahora tenemos otro archivo llamado `ficheroNormal.js` y querémos `importar` los elementos de fichero `modulo.js`. Entonces, tendremos que hacerlo de la siguiente forma general:
+
+   ```javascript
+   // Fichero ficheroNormal.js
+
+   import {
+    nombreConstante,
+    nombreVariable,
+    nombreArrowFunction,
+    nombreFuncion,
+    NombreDeLaClase,
+   } from "./modulo.js";
+
+   /* Resto del fichero */
+   ```
+
+   Cabe mencionar que `NO` es necesario `importar` todos los elementos que un `módulo` ofrece. Generalmente, vamos a `importar` solamente los elementos de un `módulo` que nos sirvan para el problema a resolver.
+
+
+#### Ejemplo:
+
+A continuación veremos un ejemplo de como utilizar la `importación nombrada`:
+
+* Tenemos un fichero llamado `math.js` definido de la siguiente forma:
+
+  ```javascript
+  const sum = (a, b) => a + b;
+
+  const sub = (a, b) => a - b;
+
+  const multiply = (a, b) => a * b;
+
+  const divide = (a, b) => a / b;
+
+  export { sum, sub, multiply, divide };
+  ```
+
+* Y tenemos un fichero llamado `main.js` definido de la siguiente manera:
+
+  ```javascript
+  import {sum, sub, multiply} from './math.js';
+
+  console.log(sum(3, 4)); // 7
+
+  console.log(sub(3, 4)); // -1
+
+  console.log(multiply(3, 4)); // 12
+  ```
+
+  Notemos que pudimos `importar` las funciones `sum, sub y multiply` que nos ofecía el fichero `math.js`. Sin embargo, como no usamos la función `divide`, entonces decidimos no importarla.
+
+ #### Renombrando un elemento al importarlo.
+
+ También podemos utilizar la palabra clave `as` para cambiarle el nombre a un elementos que estemos `importando`. Esto se hace de la siguiente forma general:
+
+ * Supongamos que tenemos un fichero llamado `modulo.js` que está definido de la siguiente forma general:
+
+    ```javascript
+    // Fichero modulo.js
+
+    /* Definimos constantes: */
+    const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+    /* Definimos variables: */
+    let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+
+    /* Definimos funciones: */
+
+    // Usando arrow functions:
+    const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+      
+      /* Cuerpo de la función */
+
+    };
+
+    // Usando la palabra function:
+    function nombreFuncion(/* Parámetros (opcional) */) {
+
+      /* Cuerpo de la función */
+
+    }
+
+
+    /* Definimos clases: */
+    class NombreDeLaClase {
+
+      /* Cuerpo de la clase. */
+
+    }
+
+    /* Exportamos lo que necesitamos al final del fichero */
+    export {
+      nombreConstante,
+      nombreVariable,
+      nombreArrowFunction,
+      nombreFuncion,
+      NombreDeLaClase,
+    };
+    ```
+
+* Entonces, supongamos que ahora tenemos otro archivo llamado `ficheroNormal.js` y querémos `importar` los elementos de fichero `modulo.js`. Entonces, tendremos que hacerlo de la siguiente forma general:
+
+   ```javascript
+   // Fichero ficheroNormal.js
+
+   import {
+    nombreConstante as otroNombreConstante,
+    nombreVariable as otroNombreVariable,
+    nombreArrowFunction as otroNombreArrowFunction,
+    nombreFuncion as otroNombreFuncion,
+    NombreDeLaClase as OtroNombreDeLaClase,
+   } from "./modulo.js";
+
+   /* Resto del fichero */
+   ```
+
+   Cabe mencionar que `NO` es necesario renombrar todos los elementos que importemos.
+
+#### Ejemplo renombrando un elemento al importarlo:
+
+A continuación veremos un ejemplo de como utilizar el `as` para renombrar un elemento a importar:
+
+* Tenemos un fichero llamado `math.js` definido de la siguiente forma:
+
+  ```javascript
+  const sum = (a, b) => a + b;
+
+  const sub = (a, b) => a - b;
+
+  const multiply = (a, b) => a * b;
+
+  const divide = (a, b) => a / b;
+
+  export { sum, sub, multiply, divide };
+  ```
+
+* Y tenemos un fichero llamado `main.js` definido de la siguiente manera:
+
+  ```javascript
+  import { sum as addition, sub, multiply } from "./math.js";
+
+  console.log(addition(3, 4)); // 7
+
+  console.log(sub(3, 4)); // -1
+
+  console.log(multiply(3, 4)); // 12
+
+  console.log(sum(3, 4)); // Uncaught ReferenceError: sum is not defined
+  ```
+
+  Notemos que renombramos a la función `sum` como `addition` al importarla. Es por eso que al final `NO` está definida, pues se llamará para nuestro fichero `addition` y no `sum`.
+
+<br>
+
+<b>Importación por defecto:</b>
+
+Ya habíamos hablado sobre la `exportación por defecto`. Ahora hablaremos de como hacer `importación por defecto` para importar aquellos elementos que fueron exportados por defecto.
+
+
 
 ### Import dinámico.
 
