@@ -47,7 +47,7 @@ export let nombreVariable = VALOR_DE_LA_VARIABLE;
 /* Forma general para funciones: */
 
 // Usando arrow functions:
-export const nombreFuncion = (/* Parámetros (opcional) */) => {
+export const nombreArrowFunction = (/* Parámetros (opcional) */) => {
   
   /* Cuerpo de la función */
 
@@ -69,9 +69,207 @@ export class NombreDeLaClase {
 }
 ```
 
+Y lo que hará el `export` será agregar lo datos que deseamos exportar al `módulo de exportación`.
+
+`Dato importante:` Hay que tener cuidado al exportar datos `mutables`, ya que al exportar un dato `mutable` y luego modificarlo, el valor `importado` será el valor que tenga dicho dato en `el momento de la importación`, NO el valor que tenía en el momento de la exportación. Esto significa que si hago algo como:
+
+```javascript
+export let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+/*...*/
+
+nombreVariable = OTRO_VALOR;
+```
+
+Entonces, al `importar` el `nombreVariable` en otra fichero, el valor que tendrá será el de `OTRO_VALOR`. Por lo tanto, este compartamiento puede causar errores innesperados.
+
+<b>Exportación post-declaración:</b>
+
+También podemos exportar las `variables`, las `constantes`, las `funciones` y/o las `clases` al final del fichero de la siguiente forma general:
+
+```javascript
+/* Definimos constantes: */
+const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+/* Definimos variables: */
+let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+
+/* Definimos funciones: */
+
+// Usando arrow functions:
+const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+  
+  /* Cuerpo de la función */
+
+};
+
+// Usando la palabra function:
+function nombreFuncion(/* Parámetros (opcional) */) {
+
+  /* Cuerpo de la función */
+
+}
+
+
+/* Definimos clases: */
+class NombreDeLaClase {
+
+  /* Cuerpo de la clase. */
+
+}
+
+/* Exportamos lo que necesitamos al final del fichero */
+export {
+  nombreConstante,
+  nombreVariable,
+  nombreArrowFunction,
+  nombreFuncion,
+  NombreDeLaClase,
+};
+```
+
+Y lo que hará el `export` será agregar lo datos que deseamos exportar al `módulo de exportación`.
+
+`Renombrando un elemento exportado:` También podemos utilizar el operador `as` para renombrar un elementos que estamos exportando. Esto se hace de la siguiente forma general:
+
+```javascript
+/* Definimos constantes: */
+const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+/* Definimos variables: */
+let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+
+/* Definimos funciones: */
+
+// Usando arrow functions:
+const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+  
+  /* Cuerpo de la función */
+
+};
+
+// Usando la palabra function:
+function nombreFuncion(/* Parámetros (opcional) */) {
+
+  /* Cuerpo de la función */
+
+}
+
+
+/* Definimos clases: */
+class NombreDeLaClase {
+
+  /* Cuerpo de la clase. */
+
+}
+
+/* Exportamos lo que necesitamos al final del fichero */
+export {
+  nombreConstante as otroNombreConstante,
+  nombreVariable as otroNombreVariable,
+  nombreArrowFunction as otroNombreArrowFunction,
+  nombreFuncion as otroNombreFuncion,
+  NombreDeLaClase as OtroNombreDeLaClase,
+};
+```
+
+No es necesario usar `as` con todos los elementos a exportar, puede que lo usemos solamente en algunos de los elementos a exportar.
+
+Personalmente, preferiría evitar el uso de `as`, pero lo menciono por una cuestión de completitud.
+
+
+<b>Exportación por defecto:</b>
+
+Al `exportar` elementos, se crea un `módulo de exportación`, el cuál es un `objeto` donde las `propiedades` son los nombres de los elementos que exportamos (`constantes`, `variables`, `funciones` y/o `clases`). Existe una modalidad de exportación diferente a las que hemos vista previamente que es conocida como `exportación por defecto`.
+
+Para realizarla, sólo tenemos que añadir la palabra clave `default` después del `export`, creando entonces el `export default`. Es `IMPORTANTE` mencionar que `en un mismo fichero` pueden haber múltiples `export`, pero solamente puede haber `un único export default`.
+
+Los `export default` se pueden utilizar de una manera similar a las vistas previamentes. A continuación veremos las formas generales:
+
+1. Para exportar por defecto `constantes`:
+
+   ```javascript
+   const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+   /*...*/
+
+   export default nombreConstante;
+   ```
+  
+2. Para exportar por defecto `variables`:
+
+   ```javascript
+   let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+   /*...*/
+
+   export default nombreVariable;
+   ```
+
+3. Para exportar por defecto `arrow functions`:
+
+   ```javascript
+   function nombreFuncion(/* Parámetros (opcional) */) {
+
+    /* Cuerpo de la función */
+
+   }
+
+   /*...*/
+
+   export default nombreFuncion;
+   ```
+
+4. Para exportar por defecto `funciones` que usen el `function`:
+
+   ```javascript
+   const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+  
+    /* Cuerpo de la función */
+
+   };
+
+   /*...*/
+
+   export default nombreArrowFunction;
+   ```
+
+5. Para exportar por defecto `clases`:
+
+   ```javascript
+   class NombreDeLaClase {
+
+    /* Cuerpo de la clase. */
+
+   }
+
+   /*...*/
+
+   export default NombreDeLaClase;
+   ```
+
+
+Mi recomendación sería siempre poner el `export default` al `final` del `fichero`.
+
+Cabe mencionar que luego tendremos una `sintáxis especial` para `importar` a el elemento que fue `exportado por defecto` y otra sintáxis para `importar` los elementos que fueron `exportados de manera normal`.
+
 ### Import estático.
 
 ### Import dinámico.
+
+### Inmutabilidad vs mutabilidad.
+
+En JavaScript, cuando utilizamos `export` para `exportar` un `dato`, el valor `importado` será el valor que tenga dicho dato en `el momento de la importación`, NO el valor que tenía en el momento de la exportación. Esto significa que podemos enfrentar problemas al exportar datos que sean `mutables`, como los `objetos`, las `instancias de clases` o las `variables`. Si estos datos `mutables` son modificados en algún punto de nuestro código, entonces esos cambios se verán reflejados en todas las importaciones del mismo, ya que todas las importaciones apuntan a la misma referencia del dato mutable. Esto puede generar comportamientos inesperados y errores difíciles de depurar, ya que los cambios se podrían propagar por toda la aplicación.
+
+Para manejar este problema y evitar comportamientos inesperados, puedes seguir algunas prácticas recomendadas:
+
+1. `Evitar la mutabilidad siempre que sea posible`: En general, es una buena práctica evitar la mutabilidad cuando sea posible. Si puedes diseñar tu código de manera que los datos sean inmutables, será más fácil razonar sobre su comportamiento y prevenir errores.
+
+2. `Crear copias de datos mutables antes de exportarlos`: Si necesitas exportar datos mutables, considera crear copias de esos datos antes de exportarlos. De esta manera, cada módulo que importe esos datos obtendrá su propia copia y no compartirá la referencia con otros módulos.
+
+3. `Documentación clara`: Documenta claramente cualquier dato exportado que pueda ser mutable y proporciona instrucciones claras sobre cómo deben tratarse y manipularse para evitar comportamientos inesperados.
 
 ## El estándar Commonjs.
 
