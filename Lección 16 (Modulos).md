@@ -479,6 +479,165 @@ A continuación veremos un ejemplo de como utilizar el `as` para renombrar un el
 
 Ya habíamos hablado sobre la `exportación por defecto`. Ahora hablaremos de como hacer `importación por defecto` para importar aquellos elementos que fueron exportados por defecto.
 
+* Supongamos que tenemos un fichero llamado `modulo.js` que `exporta por defecto` un valor llamado `nombreValorPorDefecto` (el cuál puede ser una `constante` o una `variable` o una `función` o una `clase` o un `objeto`, etc.). Esto se vería de la siguiente forma general:
+
+    ```javascript
+    // Fichero module.js
+    
+    /* Código del fichero */
+
+
+    /*
+      nombreValorPorDefecto debe haber sido declarado previamente
+      y puede ser una constante o una variable o una función o una clase o un objeto, etc.
+    */
+    export default nombreValorPorDefecto;
+    ```
+
+* Entonces podemos `importar por defecto` ese valor en otro fichero llamado `ficheroNormal.js` de la siguiente forma general:
+
+    ```javascript
+    // Fichero ficheroNormal.js
+
+    import nombreValorPorDefecto from "./module.js";
+
+    /* Resto del código del fichero */
+    ```
+
+    De esa manera importamos por defecto el valor llamado `nombreValorPorDefecto` que fue `exportado por defecto` en el fichero `modulo.js`.
+
+    `Importante`: Cabe mencionar que podemos renombrarlo a la hora de importarlo. Esto se haría de la siguiente forma general:
+
+    ```javascript
+    // Fichero ficheroNormal.js
+
+    import otroNombre from "./module.js";
+
+    /* Resto del código del fichero */
+    ```
+
+    Y en este caso se sigue importando por defecto el valor llamado `nombreValorPorDefecto` que fue `exportado por defecto` en el fichero `modulo.js`, pero lo hemos importado con el nombre `otroNombre` para usarlo en el `ficheroNormal.js`. Esto nos demuestra que al importar valores por defecto, podemos renombrarlos tambien, aunque hacerlo no es lo más típico.
+
+
+#### Ejemplo de esto:
+
+A continuación veremos un ejemplo de como exportar e importar valores por defecto:
+
+* Tenemos el fichero llamado `Logger.js` el cuál contiene el siguiente código:
+
+  ```javascript
+  class Logger {
+    static log = [];
+
+    constructor(username) {
+      this.username = username;
+    }
+
+    logMessage(message) {
+      Logger.log.push({
+        username: this.username,
+        message,
+        timestamp: Date.now(),
+      });
+    }
+
+    static getLog() {
+      return Logger.log;
+    }
+  }
+
+  export default Logger;
+  ```
+
+* Entonces podemos importar por defecto esta clase de la siguiente manera en un fichero llamado `main.js`:
+
+    ```javascript
+    import Logger from "./Logger.js";
+
+    const loggerHeber = new Logger('Heber');
+
+    loggerHeber.logMessage("I'm Heber");
+
+    console.log(Logger.getLog());
+    ```
+
+<br>
+
+<b>Importación por defecto y nombrada:</b>
+
+También hay ocasiones en las que debemosm combinar tanto la `importación por defecto` como la `importación nombrada`. Esto se hace de la siguiente forma general:
+
+* Supongamos que tenemos un fichero llamado `modulo.js` que `exporta por defecto` un valor llamado `nombreValorPorDefecto` (el cuál puede ser una `constante` o una `variable` o una `función` o una `clase` o un `objeto`, etc.) y que exporta otros valores de manera normal. Esto se vería de la siguiente forma general:
+
+    ```javascript
+    // Fichero modulo.js
+
+    /* Definimos constantes: */
+    const nombreConstante = VALOR_DE_LA_CONSTANTE;
+
+    /* Definimos variables: */
+    let nombreVariable = VALOR_DE_LA_VARIABLE;
+
+
+    /* Definimos funciones: */
+
+    // Usando arrow functions:
+    const nombreArrowFunction = (/* Parámetros (opcional) */) => {
+      
+      /* Cuerpo de la función */
+
+    };
+
+    // Usando la palabra function:
+    function nombreFuncion(/* Parámetros (opcional) */) {
+
+      /* Cuerpo de la función */
+
+    }
+
+
+    /* Definimos clases: */
+    class NombreDeLaClase {
+
+      /* Cuerpo de la clase. */
+
+    }
+
+    /* Exportamos lo que necesitamos al final del fichero */
+    export {
+      nombreConstante,
+      nombreVariable,
+      nombreArrowFunction,
+      nombreFuncion,
+      NombreDeLaClase,
+    };
+
+
+    /*
+      nombreValorPorDefecto debe haber sido declarado previamente
+      y puede ser una constante o una variable o una función o una clase o un objeto, etc.
+    */
+    export default nombreValorPorDefecto;
+    ```
+
+* Entonces podemos `importar por defecto` ese valor en otro fichero llamado `ficheroNormal.js` de la siguiente forma general:
+
+    ```javascript
+    // Fichero ficheroNormal.js
+
+    import nombreValorPorDefecto, {
+      nombreConstante, 
+      nombreVariable,
+      nombreArrowFunction, 
+      nombreFuncion,
+      NombreDeLaClase
+    } from "./module.js";
+
+    /* Resto del código del fichero */
+    ```
+
+    De esa manera importamos por defecto el valor llamado `nombreValorPorDefecto` que fue `exportado por defecto` en el fichero `modulo.js`, y también importamos por nombre los demás elementos.
+
 
 
 ### Import dinámico.
