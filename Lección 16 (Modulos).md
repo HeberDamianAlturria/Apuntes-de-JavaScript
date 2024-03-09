@@ -494,6 +494,8 @@ Ya habíamos hablado sobre la `exportación por defecto`. Ahora hablaremos de co
     export default nombreValorPorDefecto;
     ```
 
+  Notese que también podría exportar de manera normal otros elementos.
+
 * Entonces podemos `importar por defecto` ese valor en otro fichero llamado `ficheroNormal.js` de la siguiente forma general:
 
     ```javascript
@@ -638,7 +640,51 @@ También hay ocasiones en las que debemosm combinar tanto la `importación por d
 
     De esa manera importamos por defecto el valor llamado `nombreValorPorDefecto` que fue `exportado por defecto` en el fichero `modulo.js`, y también importamos por nombre los demás elementos.
 
+#### Ejemplo de uso:
 
+A continuación veremos un ejemplo de como se usa esta característica:
+
+* Tenemos un fichero llamado `Logger.js` de la siguiente forma:
+
+  ```javascript
+  class Logger {
+    static log = [];
+
+    constructor(username) {
+      this.username = username;
+    }
+
+    logMessage(message) {
+      Logger.log.push({
+        username: this.username,
+        message,
+        timestamp: Date.now(),
+      });
+    }
+
+    static getLog() {
+      return Logger.log;
+    }
+  }
+
+  export const commonNames = ["Heber", "Naty", "Gokú"];
+
+  export default Logger;
+  ```
+
+* Podemos importar estos datos en un fichero llamado `main.js` de la siguiente manera:
+
+   ```javascript
+   import Logger, { commonNames } from "./Logger.js";
+
+   const loggerHeber = new Logger(commonNames[0]);
+
+   loggerHeber.logMessage("I'm Heber");
+
+   console.log(Logger.getLog());
+
+   console.log(commonNames);
+   ```
 
 ### Import dinámico.
 

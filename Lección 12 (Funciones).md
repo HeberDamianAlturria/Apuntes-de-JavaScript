@@ -833,9 +833,11 @@ const funcionResultante = highOrderFunction(
 );
 ```
 
-La particularida que tiene este tipo de `high order functions` es que la `función interna` (que es la función retornada) tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`. Esto permite a la `función interna` utilizar y manipular estos valores externos.
+La particularida que tiene este tipo de `high order functions` es que la `función interna` (que es la función retornada) tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`, por más que dicha `función externa` se haya terminado de ejecutar. Esto permite a la `función interna` utilizar y manipular los `valores y parámetros` que fueron `definidos en el ámbito` de la `función externa`. Este comportamiento se debe al `closure`.
 
-A continuación veremos un ejemplo sencillo de uso:
+Básicamente se le conoce como `closure` al comportamiendo del ámbito léxico de JavaScript, que permite a las funciones acceder a las variables/constantes definidas en sus ámbitos superiores, incluso después de que esas funciones de ámbito superior hayan terminado de ejecutarse.
+
+Este es un concepto muy abstracto que se entiende mucho mejor con ejemplos. A continuación veremos un ejemplo sencillo de uso:
 
 ```javascript
 const createCounter = () => {
@@ -856,6 +858,8 @@ counter(); // Imprime: This function have been called 2 times
 
 counter(); // Imprime: This function have been called 3 times
 ```
+
+Como se puede observar en este ejemplo, al hacer `const counter = createCounter();` lo que hacemos es que `counter` sea ahora la función retornada por la función `createCounter`. Y notemos que debido a esto, `counter` puede acceder a la variable `count` que define el `creteCounter`, por más que dicha función haya terminado de ejecutarse. 
 
 <br />
 
@@ -1000,7 +1004,7 @@ const {funcionInterna_I, /*...*/, funcionInterna_J} = highOrderFunction(
 );
 ```
 
-La particularida que tiene este tipo de `high order functions` es que `todas` las `funciones internas` tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`. Esto permite a las `funciones internas` utilizar y manipular estos valores externos.
+La particularida que tiene este tipo de `high order functions` es que `todas` las `funciones internas` tendrá acceso a los parámetros de la `función externa` (la `highOrderFunction` en nuestra forma general) y a las variables/constantes definidas en el `cuerpo de la función externa`, gracias al ya mencionado `closure`. Esto permite a las `funciones internas` utilizar y manipular estos valores externos.
 
 A continuación veremos un ejemplo de esta técnica:
 
@@ -1033,6 +1037,135 @@ myCounter.decrementCounter(); // Decremento en 1
 
 console.log(myCounter.getCounter()); // Imprime: 10
 ```
+
+#### Dato importante.
+
+Como hemos visto en el ejemplo anterior, cuando querramos acceder a un `valor` definido en el cuerpo de la `función externa`, el cual se irá actualizando gracias a otras funciones; para ver las actualizaciones debemos utilizar el concepto de `closure`. Esto significa que debemos retornar el `valor` en una `función` para asegurarnos de obtener siempre la versión más reciente del valor, gracias al comportamiento del `closure`.
+
+De forma general, la manera correcta de hacerlo es:
+
+```javascript
+/* Este código es correcto ✔️ */
+
+const highOrderFunction = (/* Parametros (opcional) */) => {
+
+  let nombreDeLaVariable = VALOR_INICIAL;
+
+  /* Resto del cuerpo de la función externa */
+
+  // Esta función devuelve el valor actual de nombreDeLaVariable.
+  const funcionAccedeVariable = () => nombreDeLaVariable;
+
+  // Esta función modifica el valor de nombreDeLaVariable.
+  const funcionModificaVariable_1 = (/* Parametros (opcional) */) => {
+
+    /* Cuerpo de la funcionModificaVariable_1 */
+
+  };
+
+  /*...*/
+
+  // Esta función modifica el valor de nombreDeLaVariable.
+  const funcionModificaVariable_N = (/* Parametros (opcional) */) => {
+
+    /* Cuerpo de la funcionModificaVariable_N */
+
+  };
+
+  /* Puede haber otras funciones */
+
+  return {
+    funcionAccedeVariable,
+    funcionModificaVariable_1,
+    /*...*/,
+    funcionModificaVariable_N,
+    /* Puede retornar otras funciones */
+  }
+};
+```
+
+De esa manera, será posible acceder al valor actualizado de `nombreDeLaVariable`, solamente llamando a la función `funcionAccedeVariable` y obteniendo el valor retornado.
+
+
+En cambio, la siguiente forma general es `totalmente incorrecta`:
+
+```javascript
+/* Este código es incorrecto ⛔. Se muestra con fines de ejemplo */
+
+const highOrderFunction = (/* Parametros (opcional) */) => {
+
+  let nombreDeLaVariable = VALOR_INICIAL;
+
+  /* Resto del cuerpo de la función externa */
+
+  // Esta función modifica el valor de nombreDeLaVariable.
+  const funcionModificaVariable_1 = (/* Parametros (opcional) */) => {
+
+    /* Cuerpo de la funcionModificaVariable_1 */
+
+  };
+
+  /*...*/
+
+  // Esta función modifica el valor de nombreDeLaVariable.
+  const funcionModificaVariable_N = (/* Parametros (opcional) */) => {
+
+    /* Cuerpo de la funcionModificaVariable_N */
+
+  };
+
+  /* Puede haber otras funciones */
+
+  return {
+    nombreDeLaVariable, // El error está en devolver el valor ⛔.
+    funcionModificaVariable_1,
+    /*...*/,
+    funcionModificaVariable_N,
+    /* Puede retornar otras funciones */
+  }
+};
+```
+
+En esta forma general, el error está en devolver el `valor` de `nombreDeLaVariable`, pues tendrá el mismo valor que tiene al momento de retornar el objeto. Esto significa que el valor de `nombreDeLaVariable` nunca cambiará.
+
+<b>Ejemplo de manera incorrecta:</b>
+
+El siguiente ejemplo de código es una copia del ejemplo anterior, pero `es incorrecto`:
+
+```javascript
+/* Este código es incorrecto ⛔. Se muestra con fines de ejemplo */
+
+const createCounter = (initialValue) => {
+  let counter = initialValue;
+
+  const incrementCounter = () => {
+    counter++;
+  };
+
+  const decrementCounter = () => {
+    counter--;
+  };
+
+  // El error está en devolver el counter ⛔.
+  return { counter, incrementCounter, decrementCounter };
+};
+
+const myCounter = createCounter(10);
+
+console.log(myCounter.counter); // Imprime: 10
+
+myCounter.incrementCounter(); // Incremento en 1
+
+/* No se actualiza el valor ⛔ */
+console.log(myCounter.counter); // Imprime: 10. 
+
+myCounter.incrementCounter(); // Incremento en 1
+
+/* No se actualiza el valor ⛔ */
+console.log(myCounter.counter); // Imprime: 10
+```
+
+El error viene de que estamos devolviendo directamente la variable `counter`, en lugar de devolver `una función que acceda y retorne el valor de counter`. Al devolver directamente `counter`, se devuelve el valor de `counter` en el momento de la creación del objeto, y no se actualiza cuando llamamos a incrementCounter o decrementCounter.
 
 ## Operador rest para los parámetros.
 
