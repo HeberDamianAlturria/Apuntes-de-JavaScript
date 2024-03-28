@@ -67,11 +67,7 @@ Notemos que en esta forma general, se puede apreciar que el `constructor` del `P
 
 <b>Dato importante sobre el resolve y el reject:</b>
 
-ESTO ESTÁ MAL Y NO ES CIERTO. MEJORAR LUEGO
-
-Cabe mencionar que hay que pensar al `resolve` y al `reject` como si fueran el `return` típico de las funciones, ya que una vez que se llama a una de esas dos funciones, el resto del código de abajo será ignorado. Sin embargo, hay que tener bien presente que el `resolve` se usará para retornar un valor en un caso de éxito y el `reject` se utilizará para retornar el `error` en caso de rechazar la promesa.
-
-Así que notemos que cuando llamemos al `resolve` o al `reject` dentro del `executor`, el código del `executor` terminará de ejecutarse, al igual que sucede con el `return` en una función convencional. 
+Cabe mencionar que una vez que se llama al `resolve o al reject`, todas las llamadas a `resolve o reject` que `estén por debajo` serán ignoradas, pero el código normal que `esté por debajo` si se ejecutará. Para evitar complicaciones, `conviene` pensar al `resolve y al reject` como un `return` típico de una función, sin embargo, hay que tener bien presente que el `resolve` se usará para retornar un valor en un caso de éxito y el `reject` se utilizará para retornar el `error` en caso de rechazar la promesa.
 
 Esto funciona de esta manera, ya que la `Promesa` puede haber sido `aceptada` o `rechada`, pero nunca puede ser ambas al mismo tiempo.
 
@@ -103,19 +99,269 @@ Soy el executor y me ejecuto de manera síncrona.
 Después de haber creado la promesa
 ```
 
-Lo que significa que se está l
+Lo que significa que el `executor` se ejecuta de manera `síncrona`.
+
+### El método then.
+
+Las `promises` poseen un método crucial llamado `then`, el cuál se ejecutará cuando la promesa sea `resolved` (es decir, cuando la promesa se resuelva de manera exitosa). El método `then` tomará como argumento una `función callback`, y a su vez dicha función callback podrá tomar como argumento el `valor resultante de la resolución de la promesa`. 
+
+Se utiliza de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el then.
+  resolve(ALGUN_VALOR);
+
+});
+
+nuevaPromesa.then((resultadoResolved) => {
+
+  // Cuerpo del then.
+
+});
+```
+
+Notese que el cuerpo del `executor` puede ser más complejo, pero lo simplificamos para explicar como funciona el `then`. En esta forma general, el valor de `resultadoResolved` será el de `ALGUN_VALOR`, ya que se resolvió con ese valor la promesa al hacer `resolve(ALGUN_VALOR);`.
+
+Otra forma `equivalente` de escribir lo mismo es:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el then.
+  resolve(ALGUN_VALOR);
+
+}).then((resultadoResolved) => {
+
+  // Cuerpo del then.
+
+});
+```
+
+<b>Dato importantísimo:</b>
+
+El `then` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `then` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+
+Básicamente, lo que sucede es lo siguiente:
+
+1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+
+2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+
+Todavía nos faltaría saber que pasa cuando una promesa es `rejected`, pero pronto lo averiguaremos.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como funciona el `then`:
+
+```javascript
+console.log("Antes de crear la promesa.");
+
+const miPromesa = new Promise((resolve, reject) => {
+  resolve("Todo sale bien");
+}).then((value) => console.log(value));
+
+console.log("Después de haber creado la promesa.");
+```
+
+Este código imprimirá por pantalla lo siguiente:
+
+```
+Antes de crear la promesa.
+Después de haber creado la promesa.
+Todo sale bien
+```
+
+Y como se puede observar, valor de `value` ha sido `Todo sale bien`, ya que la promesa se resuelve como `resolve("Todo sale bien")`. Además, también podemos notar que el `then` se ejecuta de manera `asíncrona`, ya que es el último mensaje en ser mostrado en pantalla.
+
+### El método catch.
+
+Las `promises` poseen otro método crucial llamado `catch`, el cuál se ejecutará cuando la promesa sea `rejected` (es decir, cuando la promesa sea rechazada). El método `catch` tomará como argumento una `función callback`, y a su vez dicha función callback podrá tomar como argumento el `valor de error resultante de haber rechazado la promesa`. 
+
+Se utiliza de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el catch.
+  reject(ALGUN_VALOR_DE_ERROR);
+
+});
+
+nuevaPromesa.catch((error) => {
+
+  // Cuerpo del catch.
+
+});
+```
+
+Notese que el cuerpo del `executor` puede ser más complejo, pero lo simplificamos para explicar como funciona el `catch`. En esta forma general, el valor de `error` será el de `ALGUN_VALOR_DE_ERROR`, ya que se rechazó con ese valor la promesa al hacer `reject(ALGUN_VALOR_DE_ERROR)`.
+
+Otra forma `equivalente` de escribir lo mismo es:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el catch.
+  reject(ALGUN_VALOR_DE_ERROR);
+
+}).catch((error) => {
+
+  // Cuerpo del catch.
+
+});
+```
+
+<br/>
+
+<b>Dato útil:</b>
+
+Es evidente que el método `catch` solo no tiene mucho sentido, por lo que siempre lo utilizaremos en conjunto del método `then` de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+}).then((valorResolved) => {
+
+  // Cuerpo del then.
+
+}).catch((error) => {
+
+  // Cuerpo del catch.
+
+});
+```
+
+Es decir, notese que estamos encadenando el método `catch` luego del método `then`. 
+
+Obviamente, si la promesa ha sido `resolved`, entonces se ejecutará el `then` y NO el `catch`. En cambio, si la promesa ha sido `rejected`, entonces se ejecutará el `catch` y NO el `then`.
+
+<b>Dato importantísimo:</b>
+
+El `catch` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `catch` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+
+Básicamente, lo que sucede es lo siguiente:
+
+1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+
+2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+
+3. Si la promesa es `rejected`, entonces en el `thread secundario` se ejecutará el `catch`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `catch` de la promesa.
+
+<b>Ejemplo de uso del catch:</b>
+
+A continuación veremos un ejemplo de como utilizar el método `catch`:
+
+```javascript
+console.log("Antes de crear la promesa.");
+
+const miPromesa = new Promise((resolve, reject) => {
+  reject(new Error("Error en la promesa"));
+})
+  .then((value) => console.log("El valor de la promesa es:", value))
+  .catch((error) => console.error(error.message));
+
+console.log("Después de haber creado la promesa.");
+```
+
+Y este código va a imprimir lo siguiente por pantalla:
+
+```
+Antes de crear la promesa.
+Después de haber creado la promesa.
+Error en la promesa
+```
+
+Notese que el `then` no se ha ejecutado, ya que la promesa ha sido `rejected`. Y podemos observar que el `catch` se ha ejecutado de manera asíncrona.
+
+<b>Capturando errores del then en el catch:</b>
+
+También podemos utilizar el `throw` para hacer saltar una excepción en un método `then` y luego capturar el error en un `catch`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+}).then((valorResolved) => {
+
+  // Cuerpo del then.
+
+  // Esta línea muestra como salta un error en un then.
+  throw ALGUN_VALOR_DE_ERROR;
+
+}).catch((error) => {
+
+  // Cuerpo del catch.
+
+});
+```
+
+El cuerpo del `then` puede ser más complejo, pero lo hemos generalizado y simplificado para la explicación.
+
+En esta forma general, cuando se esté ejecutando el `then` y se llegue al `throw ALGUN_VALOR_DE_ERROR`, lo que pasará es que saltará una excepción que será capturada por el método `catch`, por lo que su valor de `error` será el `ALGUN_VALOR_DE_ERROR`.
+
+Esto puede ser muy útil cuando procesamos en el `then` un valor y notamos que no cumple alguna condición necesaria.
+
+<br>
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+console.log("Antes de crear la promesa.");
+
+const miPromesa = new Promise((resolve, reject) => {
+  resolve("Promesa resuelta");
+})
+  .then((value) => {
+    console.log("El valor de la promesa es:", value);
+
+    throw new Error("Error en el then");
+  })
+  .catch((error) => console.error(error.message));
+
+console.log("Después de haber creado la promesa");
+```
+
+Y esto mostrará lo siguiente por pantalla:
+
+```
+Antes de crear la promesa.
+Después de haber creado la promesa
+El valor de la promesa es: Promesa resuelta
+Error en el then
+```
+
+Y notemos que en efecto estamos capturando la excepción del `then` en el `catch`.
+
+### El método finally.
+
+### Encadenamiento de métodos then.
 
 ### Funciones que retornan promesas.
 
 
-`Dato importante`: La función de callback que le pasamos al constructor del `Promise` se ejecutará de manera `síncrona`, pero los `then`, `catch` y `finally` se ejecutarán de manera `asíncrona`. 
+`Dato importante`: el `executor` de una `Promise` se ejecutará de manera `síncrona`, pero los `then`, `catch` y `finally` se ejecutarán de manera `asíncrona`. 
 
-Notese entonces que los dicha previamente me está indicando que la función callback del constructor del `Promise` generalmente deberá ser usado para comprobar ciertas precondiciones, pero NO debe realizar operaciones costosas por que trabajan de manera `síncrona`. Las operaciones interesantes deberán hacerse en el `then`, el `catch` o el `finally`, ya que esos si trabajan de manera `asíncrona`.
+Notese entonces que los dicha previamente me está indicando que el `executor` de una `Promise` generalmente deberá ser usado para comprobar ciertas precondiciones, pero NO debe realizar operaciones costosas por que trabajan de manera `síncrona`. Las operaciones interesantes y costosas deberán hacerse en el `then`, el `catch` o el `finally`, ya que esos si trabajan de manera `asíncrona`.
 
 ## Async-await.
 
 `Dato importante`: En JavaScript, una función `async` sin un `await`, va a ejecutarse de manera `síncrona`. Es decir que para que una función `async` se ejecute de manera `asíncrona`, debe contener al menos un `await`. Es por eso que se llama `async/await`.
 
+## Top-level await.
+
 ## Promise API.
 
-## Top-level await.
+### Promise.all()
