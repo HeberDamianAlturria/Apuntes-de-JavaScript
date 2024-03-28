@@ -347,6 +347,94 @@ Y notemos que en efecto estamos capturando la excepción del `then` en el `catch
 
 ### El método finally.
 
+El método `finally` es un método especial de las `Promises` que se ejecutará al final sin importar si la promesa ha sido `rejected` o ha sido `resolve`. El método `finally` toma como argumento una función de callback que contendrá el código que ejecutará.
+
+Se utiliza de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+
+  // Cuerpo del executor.
+
+}).then((valorResolved) => {
+
+  // Cuerpo del then.
+  // Se ejecuta cuando la promesa es aceptada.
+
+}).catch((error) => {
+
+  // Cuerpo del catch.
+  // Se ejecuta cuando la promesa es rechazada.
+
+}).finally(() => {
+
+  // Cuerpo del finally.
+  // Se ejecuta siempre al final, independientemente del estado de la promesa.
+
+});
+```
+
+Con que `se ejecuta al final`, lo que queremos decir es que siempre se ejecuta luego del `then` o del `catch` (dependiendo de si la promesa ha sido aceptada o rechazada). 
+
+Generalmente, el método `finally` es utilizado para hacer algún tipo de limpieza sin importar el estado de la promesa. Por ejemplo, podríamos utilizalo para cerrar alguna conexión a la base de datos, por más que la promesa ha sido aceptada o rechazada.
+
+<b>Dato importantísimo:</b>
+
+El `finally` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `finally` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+
+Básicamente, lo que sucede es lo siguiente:
+
+1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+
+2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+
+3. Si la promesa es `rejected`, entonces en el `thread secundario` se ejecutará el `catch`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `catch` de la promesa.
+
+4. Sin importar de si la promesa ha sido `resolved` o `rejected`, en el `thread secundario` se ejecutará el `finally`.
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como funciona el `finally`:
+
+```javascript
+console.log("Antes de crear la promesa.");
+
+const miPromesa = new Promise((resolve, reject) => {
+  const randomNumber = Math.random();
+
+  if (randomNumber < 0.5) {
+    resolve("El número es menor a 0.5");
+  } else {
+    reject(new Error("Error en la promesa"));
+  }
+})
+  .then((value) => console.log(value))
+  .catch((error) => console.error(error.message))
+  .finally(() => console.log("La promesa ha terminado"));
+
+console.log("Después de haber creado la promesa");
+```
+
+Y notemos que si se cumple que el valor de `randomNumber` es `< 0.5`, entonces imprimirá por pantalla:
+
+```
+Antes de crear la promesa.
+Después de haber creado la promesa
+El número es menor a 0.5
+La promesa ha terminado
+```
+
+Y si no se cumple dicha condición, entonces imprimirá por pantalla:
+
+```
+Antes de crear la promesa.
+Después de haber creado la promesa
+Error en la promesa
+La promesa ha terminado
+```
+
+Y notemos que sin importar si la promesa se resolvió o se rechazó, el mensaje del `finally` siempre se imprime al final.
+
 ### Encadenamiento de métodos then.
 
 ### Funciones que retornan promesas.
