@@ -115,9 +115,7 @@ const nuevaPromesa = new Promise((resolve, reject) => {
   // Línea agregada para explicar como funciona el then.
   resolve(ALGUN_VALOR);
 
-});
-
-nuevaPromesa.then((resultadoResolved) => {
+}).then((resultadoResolved) => {
 
   // Cuerpo del then.
 
@@ -125,23 +123,6 @@ nuevaPromesa.then((resultadoResolved) => {
 ```
 
 Notese que el cuerpo del `executor` puede ser más complejo, pero lo simplificamos para explicar como funciona el `then`. En esta forma general, el valor de `resultadoResolved` será el de `ALGUN_VALOR`, ya que se resolvió con ese valor la promesa al hacer `resolve(ALGUN_VALOR);`.
-
-Otra forma `equivalente` de escribir lo mismo es:
-
-```javascript
-const nuevaPromesa = new Promise((resolve, reject) => {
-
-  // Cuerpo del executor.
-
-  // Línea agregada para explicar como funciona el then.
-  resolve(ALGUN_VALOR);
-
-}).then((resultadoResolved) => {
-
-  // Cuerpo del then.
-
-});
-```
 
 <b>Dato importantísimo:</b>
 
@@ -193,9 +174,7 @@ const nuevaPromesa = new Promise((resolve, reject) => {
   // Línea agregada para explicar como funciona el catch.
   reject(ALGUN_VALOR_DE_ERROR);
 
-});
-
-nuevaPromesa.catch((error) => {
+}).catch((error) => {
 
   // Cuerpo del catch.
 
@@ -203,23 +182,6 @@ nuevaPromesa.catch((error) => {
 ```
 
 Notese que el cuerpo del `executor` puede ser más complejo, pero lo simplificamos para explicar como funciona el `catch`. En esta forma general, el valor de `error` será el de `ALGUN_VALOR_DE_ERROR`, ya que se rechazó con ese valor la promesa al hacer `reject(ALGUN_VALOR_DE_ERROR)`.
-
-Otra forma `equivalente` de escribir lo mismo es:
-
-```javascript
-const nuevaPromesa = new Promise((resolve, reject) => {
-
-  // Cuerpo del executor.
-
-  // Línea agregada para explicar como funciona el catch.
-  reject(ALGUN_VALOR_DE_ERROR);
-
-}).catch((error) => {
-
-  // Cuerpo del catch.
-
-});
-```
 
 <br/>
 
@@ -437,6 +399,175 @@ Y notemos que sin importar si la promesa se resolvió o se rechazó, el mensaje 
 
 ### Encadenamiento de métodos then.
 
+El encadenamiento de métodos `then` es una técnica utilizada para ejecutar operaciones asíncronas de manera `secuencial` (es decir, una tras otra). 
+
+La manera de lograrlo es simplemente poner un `then` tras otro, de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el then.
+  resolve(ALGUN_VALOR_1);
+
+})
+  .then((valor_1) => { // Then número 1.
+
+    // Cuerpo del then número 1.
+
+    return ALGUN_VALOR_2;
+  })
+  .then((valor_2) => { // Then número 2.
+
+    // Cuerpo del then número 2.
+
+    return ALGUN_VALOR_3;
+  })
+  /*...*/
+  .then((valor_N) => { // Then número N.
+
+    // Cuerpo del then número N.
+
+  });
+```
+
+Como se puede observar, lo que está sucediendo es lo siguiente:
+
+1. El `then número 1` tendrá como `valor_1` el `ALGUN_VALOR_1`, ya que la promesa es aceptada con dicho valor en la línea `resolve(ALGUN_VALOR_1);`.
+
+2. Los métodos `then` siempre van a retornar `promesas`. Por lo tanto, de forma general, el método `then número i` van a corresponder a ser el método `then` de la promesa retornada por el `then número i-1`, para `i >= 2`.
+
+<b>Dato importante:</b>
+
+Como ya hemos dicho, los métodos `then` siempre van a retornar `promesas`, es por eso que podemos `encadenar un método then tras otro`. La particularidad es que las promesas en los `then` se crean de dos maneras distintas:
+
+1. `De manera explícita`: Esto significa que el `valor retornado` dentro de `un método then` será el valor de una nueva Promesa que se crea explícitamente con el constructor `new Promise()` o mediante el uso de alguna función que retorna un `new Promise()`. 
+  
+    Este caso se vería de la siguiente forma general:
+
+    ```javascript
+    const nuevaPromesa = new Promise((resolve, reject) => {
+      // Cuerpo del executor.
+
+      // Línea agregada para explicar como funciona el then.
+      resolve(ALGUN_VALOR_1);
+
+    })
+      .then((valor_1) => { // Then número 1.
+
+        // Cuerpo del then número 1.
+
+        return new Promise((resolve, reject) => {
+
+          // Cuerpo del executor de la promesa del then número 1.
+
+          // Línea agregada para explicar como funciona el then encadenado.
+          resolve(ALGUN_VALOR_2);
+
+        });
+      })
+      .then((valor_2) => { // Then número 2.
+
+        // Cuerpo del then número 2.
+
+      });
+    ```
+
+    En esta forma general, el `Then número 2` sería un `then` correspondiente a la promesa retornada por el `Then número 1`. Por ende, el `valor_2` será `ALGUN_VALOR_2`, ya que es el valor resultante de que la promesa retornada por el `Then número 1` sea `resolved`.
+
+2. `De manera implícita`: Si el `valor retornado` dentro de `un método then` NO es una promesa, entonces JavaScript lo que hará será envolver a `dicho valor retornado` en una `promesa resuelta`, para que de esa manera podamos seguir encadenando métodos then. Esto lo hace JavaScript de manera `implícita`, por lo que nosotros no tendremos que preocuparnos en hacerlo.
+
+    De forma general, esto se vería como:
+
+    ```javascript
+    const nuevaPromesa = new Promise((resolve, reject) => {
+      // Cuerpo del executor.
+
+      // Línea agregada para explicar como funciona el then.
+      resolve(ALGUN_VALOR_1);
+
+    })
+      .then((valor_1) => { // Then número 1.
+
+        // Cuerpo del then número 1.
+
+        return ALGUN_VALOR_QUE_NO_ES_UNA_PROMESA;
+      })
+      .then((valor_2) => { // Then número 2.
+
+        // Cuerpo del then número 2.
+
+      });
+    ```
+
+    En esta forma general, el `valor_2` será `ALGUN_VALOR_QUE_NO_ES_UNA_PROMESA`. Es decir que el `valor_2` será el valor retornado por el `then número 1`.
+
+    Notese que en esta forma general pareciera que NO hay ningún retorno de promesa involucrado. Sin embargo, JavaScript lo que hará será envolver el `ALGUN_VALOR_QUE_NO_ES_UNA_PROMESA` adentro de una promesa resuelta. Es decir, de forma general JavaScript lo que hará será:
+
+    ```javascript
+    const nuevaPromesa = new Promise((resolve, reject) => {
+      // Cuerpo del executor.
+
+      // Línea agregada para explicar como funciona el then.
+      resolve(ALGUN_VALOR_1);
+
+    })
+      .then((valor_1) => { // Then número 1.
+
+        // Cuerpo del then número 1.
+
+        // Promesa resuelta.
+        return new Promise(
+          (resolve, reject) => resolve(ALGUN_VALOR_QUE_NO_ES_UNA_PROMESA)
+        );
+      })
+      .then((valor_2) => { // Then número 2.
+
+        // Cuerpo del then número 2.
+
+      });
+    ```
+    Pero como hacer esto es muy trivial, JavaScript lo hace de manera automática por nosotros. De esa manera, nosotros simplemente retornamos el valor como vimos en la primera forma general. y JavaScript se encargará de convertirlo en una promesa.
+
+<b>Manejando errores en un encadenamiento de then:</b>
+
+También podemos utilizar el método `catch` para manejar `excepciones` que puedan darse en cualquiera de los `then` que conforman el `encadenamiento de métodos then`, y también para manejar la situación en que una de `las promesas retornadas` por los `then` haya sido `rejected`.
+
+La forma general de hacer esto es:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el then.
+  resolve(ALGUN_VALOR_1);
+
+})
+  .then((valor_1) => { // Then número 1.
+
+    // Cuerpo del then número 1.
+
+    return ALGUN_VALOR_2;
+  })
+  .then((valor_2) => { // Then número 2.
+
+    // Cuerpo del then número 2.
+
+    return ALGUN_VALOR_3;
+  })
+  /*...*/
+  .then((valor_N) => { // Then número N.
+
+    // Cuerpo del then número N.
+
+  })
+  .catch((error) => {
+
+    // Cuerpo del catch para manejar todo tipo de error.
+
+  });
+```
+
 ### Funciones que retornan promesas.
 
 
@@ -450,6 +581,3 @@ Notese entonces que los dicha previamente me está indicando que el `executor` d
 
 ## Top-level await.
 
-## Promise API.
-
-### Promise.all()
