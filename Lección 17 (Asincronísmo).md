@@ -435,13 +435,15 @@ Como se puede observar, lo que está sucediendo es lo siguiente:
 
 1. El `then número 1` tendrá como `valor_1` el `ALGUN_VALOR_1`, ya que la promesa es aceptada con dicho valor en la línea `resolve(ALGUN_VALOR_1);`.
 
-2. Los métodos `then` siempre van a retornar `promesas`. Por lo tanto, de forma general, el método `then número i` van a corresponder a ser el método `then` de la promesa retornada por el `then número i-1`, para `i >= 2`.
+2. Los métodos `then` siempre van a retornar `promesas`. Por lo tanto, de forma general, el método `then número i` va a corresponder a ser el método `then` de la promesa retornada por el `then número i-1`, para `i >= 2`.
+
+Esta separación en `encadenamientos de métodos then` es muy útil para mejorar la legibilidad del código.
 
 <b>Dato importante:</b>
 
 Como ya hemos dicho, los métodos `then` siempre van a retornar `promesas`, es por eso que podemos `encadenar un método then tras otro`. La particularidad es que las promesas en los `then` se crean de dos maneras distintas:
 
-1. `De manera explícita`: Esto significa que el `valor retornado` dentro de `un método then` será el valor de una nueva Promesa que se crea explícitamente con el constructor `new Promise()` o mediante el uso de alguna función que retorna un `new Promise()`. 
+1. `De manera explícita`: Esto significa que el `valor retornado` dentro de `un método then` será el valor de una nueva Promesa que se crea explícitamente con el constructor `new Promise()` o mediante el uso de `alguna función que retorna una Promesa`. 
   
     Este caso se vería de la siguiente forma general:
 
@@ -505,6 +507,8 @@ Como ya hemos dicho, los métodos `then` siempre van a retornar `promesas`, es p
     Notese que en esta forma general pareciera que NO hay ningún retorno de promesa involucrado. Sin embargo, JavaScript lo que hará será envolver el `ALGUN_VALOR_QUE_NO_ES_UNA_PROMESA` adentro de una promesa resuelta. Es decir, de forma general JavaScript lo que hará será:
 
     ```javascript
+    /* Lo que hace JavaScript */
+
     const nuevaPromesa = new Promise((resolve, reject) => {
       // Cuerpo del executor.
 
@@ -529,7 +533,7 @@ Como ya hemos dicho, los métodos `then` siempre van a retornar `promesas`, es p
     ```
     Pero como hacer esto es muy trivial, JavaScript lo hace de manera automática por nosotros. De esa manera, nosotros simplemente retornamos el valor como vimos en la primera forma general. y JavaScript se encargará de convertirlo en una promesa.
 
-<b>Manejando errores en un encadenamiento de then:</b>
+<b>Manejando errores en un encadenamiento de métodos then:</b>
 
 También podemos utilizar el método `catch` para manejar `excepciones` que puedan darse en cualquiera de los `then` que conforman el `encadenamiento de métodos then`, y también para manejar la situación en que una de `las promesas retornadas` por los `then` haya sido `rejected`.
 
@@ -568,12 +572,354 @@ const nuevaPromesa = new Promise((resolve, reject) => {
   });
 ```
 
+Es decir, se utilizan casi de la misma manera que cuando hay un `único then`.
+
+<b>Usando el método finally en un encadenamiento de métodos then:</b>
+
+También podemos utilizar el `finally` de la siguiente forma general:
+
+```javascript
+const nuevaPromesa = new Promise((resolve, reject) => {
+  // Cuerpo del executor.
+
+  // Línea agregada para explicar como funciona el then.
+  resolve(ALGUN_VALOR_1);
+
+})
+  .then((valor_1) => { // Then número 1.
+
+    // Cuerpo del then número 1.
+
+    return ALGUN_VALOR_2;
+  })
+  .then((valor_2) => { // Then número 2.
+
+    // Cuerpo del then número 2.
+
+    return ALGUN_VALOR_3;
+  })
+  /*...*/
+  .then((valor_N) => { // Then número N.
+
+    // Cuerpo del then número N.
+
+  })
+  .catch((error) => {
+
+    // Cuerpo del catch para manejar todo tipo de error.
+
+  })
+  .finally(() => {
+
+    // Cuerpo del finally.
+
+  });
+```
+
+El `finally` se ejecutará cuando todos `then` hayan sido ejecutados o después del `catch` en caso de que un error haya ocurrido. Es decir que el `finally` se ejecuta al final sin importar si la promesa fue `rejected` o `resolved`.
+
+<b>Ejemplo de encadenamiento de métodos then:</b>
+
+A continuación veremos un ejemplo de `encadenamiento de métodos then`:
+
+```javascript
+const getData = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    const tareas = [
+      { id: 1, tarea: "Completar informe", completada: true },
+      { id: 2, tarea: "Reunión con equipo", completada: false },
+      { id: 3, tarea: "Enviar correos electrónicos", completada: true },
+    ];
+    resolve(tareas);
+  }, 2000);
+})
+  .then((tareas) => tareas.filter((tarea) => tarea.completada))
+  .then((tareasCompletadas) => console.log(tareasCompletadas));
+```
+
+Este código lo que hará será tardar `2 segundos` en resolver la promesa con el valor de `tareas`, luego en el `primer then` vamos a filtrar las tareas que aún no están completadas, y en el `segundo then` va a imprimir lo siguiente por pantalla:
+
+```json
+[
+  { id: 1, tarea: 'Completar informe', completada: true },
+  { id: 3, tarea: 'Enviar correos electrónicos', completada: true }
+]
+```
+
 ### Funciones que retornan promesas.
 
+Para mejorar aún más la legibilidad del código, podemos `crear funciones que retornen promesas`. Esto podemos hacerlo de la siguiente forma general:
 
-`Dato importante`: el `executor` de una `Promise` se ejecutará de manera `síncrona`, pero los `then`, `catch` y `finally` se ejecutarán de manera `asíncrona`. 
+```javascript
+function nombreFuncion(/* Parámetros (opcional) */) {
+  return new Promise((resolve, reject) => {
+  
+    // Cuerpo del executor.
+
+  });
+};
+```
+
+Y también podemos `crear funciones que retornen encadenamientos de métodos then`. Esto se puede hacer de la siguiente forma general:
+
+```javascript
+function nombreFuncion(/* Parámetros (opcional) */) {
+  return new Promise((resolve, reject) => {
+  
+    // Cuerpo del executor.
+
+  })
+    .then((valor_1) => { // Then número 1.
+
+      // Cuerpo del then número 1.
+
+      return ALGUN_VALOR_2;
+    })
+    .then((valor_2) => { // Then número 2.
+
+      // Cuerpo del then número 2.
+
+      return ALGUN_VALOR_3;
+    })
+    /*...*/
+    .then((valor_N) => { // Then número N.
+
+      // Cuerpo del then número N.
+
+    });
+};
+```
+
+No importa de que manera lo definamos, como `siempre estamos retornando una promesa`, entonces podemos utilizarla de la siguiente forma general:
+
+```javascript
+nombreFuncion(/* Argumento (opcional) */)
+  .then((valor_1) => { // Then número 1.
+
+    // Cuerpo del then número 1.
+
+    return ALGUN_VALOR_2;
+  })
+  .then((valor_2) => { // Then número 2.
+
+    // Cuerpo del then número 2.
+
+    return ALGUN_VALOR_3;
+  })
+  /*...*/
+  .then((valor_N) => { // Then número N.
+
+    // Cuerpo del then número N.
+
+  })
+  .catch((error) => { // OPCIONAL, pero recomendado
+
+    // Cuerpo del catch para manejar todo tipo de error.
+
+  })
+  .finally(() => { // OPCIONAL
+
+    // Cuerpo del finally.
+
+  });
+```
+
+Es decir que podemos hacer un `encadenamiento de métodos then` para ir manejando las promesas. También podemos agregar el método `catch` y el `finally`, de ser necesarios.
+
+<b>Ejemplo:</b>
+
+A continuación veremos como crear una función que retorna una promesa:
+
+```javascript
+function getData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const tareas = [
+        { id: 1, tarea: "Completar informe", completada: true },
+        { id: 2, tarea: "Reunión con equipo", completada: false },
+        { id: 3, tarea: "Enviar correos electrónicos", completada: true },
+      ];
+      resolve(tareas);
+    }, 2000);
+  });
+}
+
+// Imprime las tareas completadas.
+getData()
+  .then((tareas) => tareas.filter((tarea) => tarea.completada))
+  .then((tareasCompletadas) => {
+    console.log("Las tareas completadas son:");
+    console.log(tareasCompletadas);
+  });
+
+// Imprime las tareas incompletas.
+getData()
+  .then((tareas) => tareas.filter((tarea) => !tarea.completada))
+  .then((tareasIncompletas) => {
+    console.log("Las tareas incompletas son:")
+    console.log(tareasIncompletas);
+  });
+```
+
+Y esto imprimirá por pantalla los siguiente:
+
+```json
+Las tareas completadas son:
+[
+  { id: 1, tarea: 'Completar informe', completada: true },
+  { id: 3, tarea: 'Enviar correos electrónicos', completada: true }
+]
+Las tareas incompletas son:
+[ { id: 2, tarea: 'Reunión con equipo', completada: false } ]
+```
+
+<b>Otro ejemplo interesante:</b>
+
+En la siguiente lección aprenderemos como utilizar el `fetch`, pero quiero crear un ejemplo para empezar a familiarizarnos con esta API. El `fetch` es una función que devuelve una promesa, la cuál toma como argumento un `url` y me permite obtener información del sitio web correspondiente a dicha url.
+
+A continuación veremos un ejemplo de como utilizarla:
+
+```javascript
+function fetchJsonData(url) {
+  return fetch(url).then((response) => {
+    if (!response.ok)
+      throw new Error(`El estado del fetch es ${response.status}`);
+
+    return response.json();
+  });
+}
+
+// Imprime un json obtenido desde la url.
+fetchJsonData("https://rickandmortyapi.com/api/character/1")
+  .then((json) => console.log(json))
+  .catch((error) => console.error(error));
+
+  
+// Imprime de una manera más linda la información de un json obtenido por la url.
+fetchJsonData("https://rickandmortyapi.com/api/character/1")
+  .then((characterInfo) => {
+    console.log(`-----------------------------`);
+    console.log(`| Name: ${characterInfo.name.padEnd(19)} |`);
+    console.log(`| Status: ${characterInfo.status.padEnd(17)} |`);
+    console.log(`| Specie: ${characterInfo.species.padEnd(17)} |`);
+    console.log(`| Gender: ${characterInfo.gender.padEnd(17)} |`);
+    console.log(`| Origin: ${characterInfo.origin.name.padEnd(17)} |`);
+    console.log(`-----------------------------`);
+  })
+  .catch((error) => console.error(error));
+
+
+// Imprime un error, ya que la url no existe y da un estado 404 de error.
+fetchJsonData("https://rickandmortyapi.com/api/NO_EXISTO")
+  .catch((error) => console.error(error));
+```
+
+El `primer uso de fetchJsonData()` va a imprimir un JSON de la siguiente manera:
+
+```json
+{
+  id: 1,
+  name: 'Rick Sanchez',
+  status: 'Alive',
+  species: 'Human',
+  type: '',
+  gender: 'Male',
+  origin: {
+    name: 'Earth (C-137)',
+    url: 'https://rickandmortyapi.com/api/location/1'
+  },
+  location: {
+    name: 'Citadel of Ricks',
+    url: 'https://rickandmortyapi.com/api/location/3'
+  },
+  image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
+  episode: [
+    'https://rickandmortyapi.com/api/episode/1',
+    'https://rickandmortyapi.com/api/episode/2',
+    'https://rickandmortyapi.com/api/episode/3',
+    'https://rickandmortyapi.com/api/episode/4',
+    'https://rickandmortyapi.com/api/episode/5',
+    'https://rickandmortyapi.com/api/episode/6',
+    'https://rickandmortyapi.com/api/episode/7',
+    'https://rickandmortyapi.com/api/episode/8',
+    'https://rickandmortyapi.com/api/episode/9',
+    'https://rickandmortyapi.com/api/episode/10',
+    'https://rickandmortyapi.com/api/episode/11',
+    'https://rickandmortyapi.com/api/episode/12',
+    'https://rickandmortyapi.com/api/episode/13',
+    'https://rickandmortyapi.com/api/episode/14',
+    'https://rickandmortyapi.com/api/episode/15',
+    'https://rickandmortyapi.com/api/episode/16',
+    'https://rickandmortyapi.com/api/episode/17',
+    'https://rickandmortyapi.com/api/episode/18',
+    'https://rickandmortyapi.com/api/episode/19',
+    'https://rickandmortyapi.com/api/episode/20',
+    'https://rickandmortyapi.com/api/episode/21',
+    'https://rickandmortyapi.com/api/episode/22',
+    'https://rickandmortyapi.com/api/episode/23',
+    'https://rickandmortyapi.com/api/episode/24',
+    'https://rickandmortyapi.com/api/episode/25',
+    'https://rickandmortyapi.com/api/episode/26',
+    'https://rickandmortyapi.com/api/episode/27',
+    'https://rickandmortyapi.com/api/episode/28',
+    'https://rickandmortyapi.com/api/episode/29',
+    'https://rickandmortyapi.com/api/episode/30',
+    'https://rickandmortyapi.com/api/episode/31',
+    'https://rickandmortyapi.com/api/episode/32',
+    'https://rickandmortyapi.com/api/episode/33',
+    'https://rickandmortyapi.com/api/episode/34',
+    'https://rickandmortyapi.com/api/episode/35',
+    'https://rickandmortyapi.com/api/episode/36',
+    'https://rickandmortyapi.com/api/episode/37',
+    'https://rickandmortyapi.com/api/episode/38',
+    'https://rickandmortyapi.com/api/episode/39',
+    'https://rickandmortyapi.com/api/episode/40',
+    'https://rickandmortyapi.com/api/episode/41',
+    'https://rickandmortyapi.com/api/episode/42',
+    'https://rickandmortyapi.com/api/episode/43',
+    'https://rickandmortyapi.com/api/episode/44',
+    'https://rickandmortyapi.com/api/episode/45',
+    'https://rickandmortyapi.com/api/episode/46',
+    'https://rickandmortyapi.com/api/episode/47',
+    'https://rickandmortyapi.com/api/episode/48',
+    'https://rickandmortyapi.com/api/episode/49',
+    'https://rickandmortyapi.com/api/episode/50',
+    'https://rickandmortyapi.com/api/episode/51'
+  ],
+  url: 'https://rickandmortyapi.com/api/character/1',
+  created: '2017-11-04T18:48:46.250Z'
+}
+```
+
+El `segundo uso de fetchJsonData()` va a imprimir la información del json de una manera más linda:
+
+```
+-----------------------------
+| Name: Rick Sanchez        |
+| Status: Alive             |
+| Specie: Human             |
+| Gender: Male              |
+| Origin: Earth (C-137)     |
+-----------------------------
+```
+
+Y el `tercer uso de fetchJsonData()` va a imprimir el siguiente error:
+
+```
+Error: El estado del fetch es 404
+    at file:///C:/Users/Familia/Desktop/Heber%20Facultad/Lecciones/Lecciones%20de%20JavaScript/index.mjs:4:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+```
+
+Lo que si, al ser `asíncronas`, no podemos saber cuál de los tres `fetchJsonData()` se va a imprimir primero.
+
+### Dato importante para concluir:
+
+el `executor` de una `Promise` se ejecutará de manera `síncrona`, pero los `then`, `catch` y `finally` se ejecutarán de manera `asíncrona`. 
 
 Notese entonces que los dicha previamente me está indicando que el `executor` de una `Promise` generalmente deberá ser usado para comprobar ciertas precondiciones, pero NO debe realizar operaciones costosas por que trabajan de manera `síncrona`. Las operaciones interesantes y costosas deberán hacerse en el `then`, el `catch` o el `finally`, ya que esos si trabajan de manera `asíncrona`.
+
+Además, cabe mencionar que cuando tenemos dos o más promesas, al ser `asíncronas`, nos es imposible deducir cuál terminará primero. Es más, puede que en una ejecución una termine antes que la otra y en la siguiente ejecución pase el revés.
 
 ## Async-await.
 
