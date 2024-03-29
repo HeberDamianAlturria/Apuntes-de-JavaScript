@@ -923,7 +923,195 @@ Además, cabe mencionar que cuando tenemos dos o más promesas, al ser `asíncro
 
 ## Async-await.
 
-`Dato importante`: En JavaScript, una función `async` sin un `await`, va a ejecutarse de manera `síncrona`. Es decir que para que una función `async` se ejecute de manera `asíncrona`, debe contener al menos un `await`. Es por eso que se llama `async/await`.
+El `async/await` es una sintaxis especial en JavaScript que permite trabajar con promesas de una manera más cómoda y legible. Se asemeja sintácticamente a la escritura de código síncrono, lo que facilita la comprensión y el mantenimiento del código. Sin embargo, el código resultante sigue siendo `asíncrono`, ya que `async/await` trabaja internamente con promesas y `no bloquea el hilo de ejecución` mientras espera que una promesa se resuelva o se rechace.
+
+El uso general de `async/await` implica marcar una función como `async` para indicar que `contiene código asincrónico` y luego usar la palabra clave `await` dentro de esa función para `esperar la resolución de una promesa`.
+
+### Creando una función asíncrona usando el async.
+
+Para especificar que el código que escribimos dentro de una función será `asíncrono`, debemos definirla usando la palabra `async` de la siguiente forma general:
+
+```javascript
+const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
+
+  // Cuerpo de la función asíncrona.
+
+};
+```
+
+Notese que estamos utilizando la palabra clave `async` para `definir la función asíncrona`. De esa manera, ahora podremos utilizar la palabra clave `await` dentro del cuerpo de la función asíncrona, de la cuál hablaremos en breve.
+
+`Consejo:` Se recomienda que el `nombre de las funciones asíncronas` termine con la palabra `Async` para especificar que es una función especial. Esto es más un consejo que una regla estricta.
+
+### Usando await en una función asíncrona.
+
+Dentro de una `función asíncrona` marcada como `async`, puedes usar la palabra clave `await`, la cuál se encargará de `pausar la ejecución de la función asíncrona y esperar que una promesa se resuelva o se rechace antes de continuar`. 
+
+Podemos utilizar el `await` de las siguientes maneras:
+
+1. Podemos utilizar el `await` para guardar en una variable/constante el valor resultante de que una promesa sea `resolved`. Eso lo hacemos de la siguiente forma general:
+
+    ```javascript
+    const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
+
+      /* Cuerpo de la función asíncrona. */
+
+      const valorResolved = await funcionQueRetornaPromesa();
+
+      /* Resto del cuerpo de la función asíncrona. */
+
+    };
+    ```
+
+    De esa manera, cuando la promesa retornada por la función `funcionQueRetornaPromesa()` se `resuelva`, el valor con el que se resuelve se guardará en la constante llamada `valorResolved` y luego continuará la ejecución del resto de código.
+
+2. Si la promesa en cuestión NO retorna un valor al `resolverse`, podemos utilizar el `await` de la siguiente forma general:
+
+    ```javascript
+    const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
+
+      /* Cuerpo de la función asíncrona. */
+
+      await funcionQueRetornaPromesa();
+
+      /* Resto del cuerpo de la función asíncrona. */
+
+    };
+    ```
+
+    De esa manera, esperaremos a que la promesa retornada por la función `funcionQueRetornaPromesa()` se `resuelva` y luego continuará la ejecución del resto de código.
+
+3. En caso de que la promesa en cuestión pueda ser `rejected` (rechazada), entonces podemos manejar esta situación con un `try/catch` de la siguiente forma general:
+
+    ```javascript
+    const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
+
+      /* Cuerpo de la función asíncrona. */
+
+      try {
+        const valorResolved = await funcionQueRetornaPromesa();
+
+        // Resto del código si la promesa se resulve de manera exitosa.
+
+      } catch (error) {
+
+        // Código por si la promesa fue rechazada.
+
+      }
+
+      /* Resto del cuerpo de la función asíncrona. */
+
+    };
+    ```
+
+    Esta manera de hacerlo será la más típica, ya que siempre es conveniente manejar la posible situación en que la promesa sea rechazada.
+
+    También podríamos utilizar el `try/catch/finally` de la siguiente forma general:
+
+    ```javascript
+    const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
+
+      /* Cuerpo de la función asíncrona. */
+
+      try {
+        const valorResolved = await funcionQueRetornaPromesa();
+
+        // Resto del código si la promesa se resulve de manera exitosa.
+
+      } catch (error) {
+
+        // Código por si la promesa fue rechazada.
+
+      } finally {
+
+        // Código que se ejecutará sin importar si le promesa fue rechazada o aceptada.
+
+      }
+
+      /* Resto del cuerpo de la función asíncrona. */
+
+    };
+    ```
+
+<b>Ejemplo de uso del async/await:</b>
+
+A continuación veremos un ejemplo de como se puede utilizar el `async/await`:
+
+```javascript
+// Definición de una función que retorna una promesa que resuelve o rechaza según un número aleatorio.
+function randomPromise() {
+  return new Promise((resolve, reject) => {
+    const randomNumber = Math.random();
+
+    if (randomNumber < 0.5) {
+      resolve("El randomNumber es menor a 0.5");
+    } else {
+      reject(new Error("El randomNumber es mayor o igual a 0.5"));
+    }
+  });
+}
+
+// Definición de una función asíncrona usando async/await
+const exampleAsync = async () => {
+  try {
+    const messageResolved = await randomPromise();
+    console.log(messageResolved);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+console.log("Console.log antes del llamado a la función asíncrona.")
+
+exampleAsync(); // Llamada a la función asíncrona
+
+console.log("Console.log después del llamado a la función asíncrona.");
+```
+
+En este código, si la la promesa se `resuelve`, entonces imprimirá por pantalla lo siguiente:
+
+```
+Console.log antes del llamado a la función asíncrona.
+Console.log después del llamado a la función asíncrona.
+El randomNumber es menor a 0.5
+```
+
+En cambio, si la promesa se `rechaza`, entonces imprimirá algo como lo siguiente:
+
+```
+Console.log antes del llamado a la función asíncrona.
+Console.log después del llamado a la función asíncrona.
+Error: El randomNumber es mayor o igual a 0.5
+    at file:///C:/Users/Familia/Desktop/Heber%20Facultad/Lecciones/Lecciones%20de%20JavaScript/index.mjs:9:14
+    at new Promise (<anonymous>)
+    at randomPromise (file:///C:/Users/Familia/Desktop/Heber%20Facultad/Lecciones/Lecciones%20de%20JavaScript/index.mjs:3:10)
+    at exampleAsync (file:///C:/Users/Familia/Desktop/Heber%20Facultad/Lecciones/Lecciones%20de%20JavaScript/index.mjs:17:35)
+    at file:///C:/Users/Familia/Desktop/Heber%20Facultad/Lecciones/Lecciones%20de%20JavaScript/index.mjs:26:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:217:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:316:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:66:12)
+```
+
+Y se puede apreciar que el código se está ejecutando de manera `asíncrona`.
+
+<b>Dato importante:</b>
+
+El `await` solo puede usarse dentro de una función marcada como `async`.
+
+### Retorno de una función async
+
+Una función `async` siempre `devuelve una promesa`. Esto significa que cuando llamas a una función marcada como `async`, obtienes una promesa en lugar de un valor directo. Esta promesa se resolverá con el valor `retornado` por la función `async`, o se rechazará con el error lanzado por la función `async`. Como ya hemos visto, para esperar que una función `async` se resuelva o se rechace.
+
+
+
+<b>Otro dato súper importante:</b>
+
+NO SÉ SI ESTO ES CORRECTO
+
+En JavaScript, una función `async` sin un `await`, va a ejecutarse de manera `síncrona`. Es decir que para que una función `async` se ejecute de manera `asíncrona`, debe contener `al menos` un `await`. Es por eso que se llama `async/await`, ya que siempre debemos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
+
+Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await`, seguirá devolviendo una promesa.
 
 ## Top-level await.
 
