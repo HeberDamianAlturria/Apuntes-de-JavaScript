@@ -1101,7 +1101,9 @@ El `await` solo puede usarse dentro de una función marcada como `async`.
 
 ### Retorno de una función async
 
-Una función `async` siempre `devuelve una promesa`. Esto significa que cuando llamas a una función marcada como `async`, obtienes una promesa en lugar de un valor directo. Esta promesa se resolverá con el valor `retornado` por la función `async`, o se rechazará con el error lanzado por la función `async`. Como ya hemos visto, para esperar que una función `async` se resuelva o se rechace.
+Una función `async` siempre `devuelve una promesa`. Esto significa que cuando llamos a una función marcada como `async`, obtenemos una promesa en lugar de un valor directo. Esta promesa se resolverá con el valor `retornado` por la función `async`, o se rechazará con el error lanzado por dicha función. Como ya hemos visto, para esperar que una función `async` se resuelva o se rechace debemos utilizar el `await`.
+
+<b>Forma general de obtener el resultado de una función async:</b>
 
 
 
