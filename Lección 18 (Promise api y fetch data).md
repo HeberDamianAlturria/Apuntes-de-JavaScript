@@ -593,3 +593,149 @@ try {
 En este ejemplo, el código ejecuta múltiples solicitudes de forma `paralela` y espera a que se `resuelva` la primera solicitud, e ignorará aquellas que sean `rechazadas`. Luego, imprime los datos obtenidos de la primera solicitud en formato JSON, o maneja cualquier error que pueda ocurrir si `todas` las `promesas` han sido `rechazadas`.
 
 ## Fetch API.
+
+El `fetch` es una API de JavaScript que nos permite hacer solicitudes `HTTP` de manera `asíncrona` mediante `promesas`. Podremos utilizar el `fetch` para poder hacer peticiones `GET`, `PUT`, `DELETE`, `PATCH`, `POST`, etc. a un `servidor web`.
+
+El `fetch` es súper útil para crear aplicaciones del lado del cliente, ya que es fundamental hacer peticiones `HTTP` a una `API de un servidor`.
+
+De forma general, el `fetch` se puede utilizar de la siguiente forma general:
+
+```javascript
+const response = await fetch(URL, OPTIONS);
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. 
+
+El segundo argumento, `OPTIONS`, es opcional y es un `objeto` que nos permite configurar la solicitud. Por defecto, `OPTIONS` será `{}`. Aquí hay una tabla de las opciones comúnes que generalmente utilizaremos:
+
+
+| Opción        | Descripción                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `method`      | Define el método HTTP a utilizar en la solicitud. Por defecto, GET. Otras opciones: HEAD, POST, etc...                     |
+| `headers`     | Permite especificar los encabezados de la solicitud. Por defecto, `{}`                                                     |
+| `body`        | Contiene los datos que se enviarán en el cuerpo de la solicitud. Puede ser de varios tipos: String, FormData, Blob, etc... |
+| `credentials` | Indica si las credenciales del usuario deben incluirse en la solicitud.                                                    |
+| `redirect`    | Controla cómo manejar las redirecciones.                                                                                   |
+
+A lo largo de esta lección veremos algunas de estas configuraciones. Existen más, pero se utilizan en contextos muy específicos, por lo que decidí omitirlos.
+
+Finalmente, `response` será un `objeto` que contendrá información sobre la respuesta que nos ha dado el servidor. El `response` será un objeto muy extenso, pero de dicho objeto generalmente trabajaremos con ciertos `atributos y métodos` que nos permitirán trabajar y procesar la respuesta dada por el servidor. Más adelante profundizaré en esto.
+
+### Haciendo peticiones GET.
+
+La petición más frecuente y fácil de crear es la petición `GET`. Una solicitud `GET` se utiliza para recuperar datos de un servidor web sin realizar cambios en los datos del servidor. Al hacer una petición `GET`, ésta devolverá un `response`.
+
+Podemos hacer una petición `GET` de la siguiente forma general:
+
+```javascript
+const response = await fetch(URL);
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. Y notese que no debemos agregar ninguna opción, ya que el `fetch` por defecto hace una petición `GET`.
+
+### Haciendo peticiones POST.
+
+Una solicitud `POST` se utiliza para enviar datos desde el cliente al servidor, con el objetivo de que el servidor los procese. Los `datos a enviar` deberán guardarse en el `body` de la solicitud. Luego de que los datos son procesador por el servidor, éste nos dará un `response`.
+
+En la mayoría de los casos, al trabajar con una `Método POST`, lo que haremos será mandar como `datos` al `servidor` valores `JSON`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+const datoAEnviar = {
+  clave1: valor1,
+  clave2: valor2,
+  /*...*/,
+  claveN: valorN,
+};
+
+const response = await fetch(URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(datoAEnviar),
+});
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. Y notese que ahora tenemos las siguientes opciones:
+
+* `method`: En este caso el valor de method será `POST`, ya que el método a realizar.
+
+* `headers`: En este caso el valor de headers será `{"Content-Type": "application/json"}`, ya que indica que el `body` a enviar será un `JSON`.
+
+* `body`: Siempre debemos mandar en el `body` un valor de tipo `string`, por lo que debemos `parsear` el `objeto` a un `string` mediante el `JSON.stringify()`.
+
+### Haciendo peticiones PUT.
+
+Una solicitud `PUT` se utiliza para enviar datos desde el cliente al servidor con el propósito de `actualizar un recurso existente por completo` o crear uno nuevo si no existe. Los `datos a enviar` deberán guardarse en el `body` de la solicitud. Luego de que los datos son procesador por el servidor, éste nos dará un `response`.
+
+En la mayoría de los casos, al trabajar con una `Método PUT`, lo que haremos será mandar como `datos` al `servidor` valores `JSON`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+const datoAEnviar = {
+  clave1: valor1,
+  clave2: valor2,
+  /*...*/,
+  claveN: valorN,
+};
+
+const response = await fetch(URL, {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(datoAEnviar),
+});
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. Y notese que ahora tenemos las siguientes opciones:
+
+* `method`: En este caso el valor de method será `PUT`, ya que el método a realizar.
+
+* `headers`: En este caso el valor de headers será `{"Content-Type": "application/json"}`, ya que indica que el `body` a enviar será un `JSON`.
+
+* `body`: Siempre debemos mandar en el `body` un valor de tipo `string`, por lo que debemos `parsear` el `objeto` a un `string` mediante el `JSON.stringify()`.
+
+### Haciendo peticiones PATCH.
+
+A diferencia del método `PUT` que busca `actualizar por completo un recurso existente en el servidor`, el método `PATCH` se utiliza para enviar datos al servidor con el propósito de `actualizar parcialmente un recurso existente`. Los `datos a enviar` deberán guardarse en el `body` de la solicitud. Luego de que los datos son procesador por el servidor, éste nos dará un `response`.
+
+En la mayoría de los casos, al trabajar con una `Método PATCH`, lo que haremos será mandar como `datos` al `servidor` valores `JSON`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+const datoAEnviar = {
+  clave1: valor1,
+  clave2: valor2,
+  /*...*/,
+  claveN: valorN,
+};
+
+const response = await fetch(URL, {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(datoAEnviar),
+});
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. Y notese que ahora tenemos las siguientes opciones:
+
+* `method`: En este caso el valor de method será `PATCH`, ya que el método a realizar.
+
+* `headers`: En este caso el valor de headers será `{"Content-Type": "application/json"}`, ya que indica que el `body` a enviar será un `JSON`.
+
+* `body`: Siempre debemos mandar en el `body` un valor de tipo `string`, por lo que debemos `parsear` el `objeto` a un `string` mediante el `JSON.stringify()`.
+
+### Haciendo peticiones DELETE.
+
+Una solicitud `DELETE` se utiliza para solicitar la `eliminación de un recurso específico en un servidor web`. Podemos hacerlo de la siguiente forma general:
+
+```javascript
+const response = await fetch(URL, {
+  method: "DELETE",
+});
+```
+
+Siendo `URL` un `string` que representa la dirección del sitio al que queremos hacer la solicitud. Y notese que ahora tenemos como opción el `method` establecido en el valor `DELETE`.
+
+### Trabajando con los atributos del response.
