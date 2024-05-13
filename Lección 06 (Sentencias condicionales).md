@@ -181,6 +181,163 @@ Los siguientes valores se evalúan como `false` si son usados como una condició
 
 Todos los demás valores, incluidos todos los objetos, se evalúan como `true` cuando se utilizan en una condición.
 
+## Operador de acceso condicional "?.".
+
+El operador de acceso condicional `?.` se suele utilizar para acceder a `métodos y atributos` de un `objeto`, pero evitando que salte una excepción en caso de que dicho objeto sea `null` o sea `undefined`. Se usa de las siguientes formas generales:
+
+1. `Para acceder a un atributo`: podemos acceder al `atributo` de un `objeto` que puede ser `null` o `undefined` de la siguiente forma general:
+
+    ```javascript
+    nombreObjeto?.nombreAtributo;
+    ```
+
+    Donde lo que sucederá es que si `nombreObjeto` cumple la propiedad de que `NO es null y tampoco es undefined`, entonces se accederá a su atributo llamado `nombreAtributo` (es decir que si `nombreObjeto` NO es `null` y tampoco `undefined`, entonces la expresión es equivalente a haber hecho `nombreObjeto.nombreAtributo;`). En caso contrario, `toda la expresión valdrá undefined`.
+
+2. `Para acceder a un método`: podemos acceder al `método` de un `objeto` que puede ser `null` o `undefined` de la siguiente forma general:
+
+    ```javascript
+    nombreObjeto?.nombreMetodo(/*Argumentos (opcional)*/);
+    ```
+
+    Donde lo que sucederá es que si `nombreObjeto` cumple la propiedad de que `NO es null y tampoco es undefined`, entonces se accederá a su método llamado `nombreMetodo` (es decir que si `nombreObjeto` NO es `null` y tampoco `undefined`, entonces la expresión es equivalente a haber hecho `nombreObjeto.nombreMetodo(/*Argumentos (opcional)*/);`). En caso contrario, `toda la expresión valdrá undefined`.
+
+### Caso de uso más común.
+
+El caso de uso más común es para asignarle a una `variable` el valor de un `atributo` o el resultado de un `método` de algún `objeto`, en caso de que dicho objeto NO sea `null` y tampoco `undefined`; o que le asigne a dicha `variable` el valor `undefined` en caso contrario.
+
+Esto debemos hacerlo de la siguiente forma general:
+
+```javascript
+// En caso de que el valor venga de un atributo.
+let nombreVariable = nombreObjeto?.nombreAtributo;
+
+// En caso de que el valor venga de un método.
+let nombreVariable = nombreObjeto?.nombreMetodo(/*Argumentos (opcional)*/);
+```
+
+Esto mismo funcionará para las `constantes`. Notese que nombreVariable puede ser `undefined` en caso de que `nombreObjeto` sea `null` o `undefined`.
+
+A continuación veremos un ejemplo sencillo de como utilizarlo:
+
+```javascript
+// Ejemplo 1.
+const numbersNull = null; 
+
+const lengthNull = numbersNull?.length; // Esto le asignará a lengthNull el valor undefined.
+
+console.log(lengthNull); // Imprime undefined
+
+// Ejemplo 2.
+const numbers = [1, 2, 3];
+
+const length = numbers?.length; // Esto le asigna el valor del atributo length.
+
+console.log(length); // Imprime 3.
+```
+
+### Encadenamiento de operadores "?."
+
+Un uso muy útil es cuando tenemos un `objeto` que a su vez contiene otros `objetos anidados`. En este caso, para evitar cualquier error podemos utilizar el operador `?.` de manera `encadenada` de la siguiente forma general:
+
+```javascript
+nombreObjeto?.propiedad1?.propiedad2?./*...*/?.propiedadN;
+```
+
+De esa manera, si `nombreObjeto` o cualquiera de sus propiedades cumple que es `null o undefined`, entonces `toda la expresión será undefined`, en caso contrario el valor será accedido de manera correcta. Esta sintáxis previene que el interprete aborte la ejecución del código al hallar que alguna propiedad es `null o undefined`.
+
+A continuación veremos un ejemplo que muestra lo útil de esta sintáxis:
+
+```javascript
+const userInfo = {
+  name: "Heber",
+  age: 22,
+  direction: {
+    country: "Argentina",
+    province: "Córdoba",
+    location: "Agua de Oro",
+  },
+};
+
+const userCountry = userInfo?.direction?.country;
+
+console.log(userCountry); // Imprime: Argentina.
+
+const userFavAnime = userInfo?.favAnime?.name; // no existe en userInfo la clave favAnime.
+
+console.log(userFavAnime); // Imprime: undefined
+```
+
+## Operador ??
+
+El operador `??` (también llamado `operador de coalición nula`) se utiliza para proporcionar un valor de respaldo en caso de que una expresión sea `null` o `undefined`. Se utiliza de la siguiente forma general:
+
+```javascript
+VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED ?? VALOR_POR_DEFECTO;
+```
+
+El operador `??` devuelve el valor de `VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED` si `NO es null y tampoco undefined`; de lo contrario, devuelve el valor de `VALOR_POR_DEFECTO`.
+
+### Casos de uso más comunes.
+
+1. `Para definir un valor por defecto en una asignación`: si tenemos una `variable o constante que puede ser null o undefined` y `necesitamos definir una variable que NO sea null ni undefined, sino que debe tener un valor por defecto`, entonces podemos resolver este problema de la siguiente forma general:
+
+    ```javascript
+    let nombreVariable = VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED ?? VALOR_POR_DEFECTO;
+    ```
+
+    De esa manera, si `VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED` cumple que `NO es null y tampoco undefined`, entonces se le asignará a `nombreVariable` el valor de `VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED`. En caso contrario, se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`.
+
+    A continuación veremos un ejemplo sencillo:
+
+    ```javascript
+    const options = {
+      info: "Todo parece andar bien",
+      warning: "Tenemos una advertencia, pero no hay errores",
+      error: "Tenemos un error",
+    };
+
+    // Ejemplo 1.
+    const infoOption = options.info ?? "No hay opción"; // Se le asigna el valor de option.info.
+
+    console.log(infoOption); // Imprime: Todo parece andar bien
+
+    // Ejemplo 2.
+    const chaosOption = options.chaos ?? "No hay opción"; // Se le asigna el valor de "No hay opción".
+
+    console.log(chaosOption); // Imprime: No hay opción
+    ```
+
+    Notemos en este ejemplo que `options.info` si existe en el objeto `options`, por lo que será distinto de `null o undefined` y por eso se le asigna a `infoOption` el valor correspondiente de `options.info`. En cambio, `options.chaos` dará `undefined` ya que no está en el objeto `option`, por lo tanto `chaosOption` tendrá el valor por defecto de `No hay opción`.
+
+2. `En combinación con el operador de acceso condicional "?."`: Notemos que el operado de acceso condicional `?.` devolvía `undefined` en caso de que el `objeto` era `null o undefined`, por lo tanto podemos usar el operador `??` para dar un `valor por defecto` en dicho caso. Esto lo haremos de la siguiente forma general:
+
+    ```javascript
+    // En caso de que el valor venga de un atributo.
+    let nombreVariable = nombreObjeto?.nombreAtributo ?? VALOR_POR_DEFECTO;
+
+    // En caso de que el valor venga de un método.
+    let nombreVariable = nombreObjeto?.nombreMetodo(/*Argumentos (opcional)*/) ?? VALOR_POR_DEFECTO;
+    ```
+
+    A continuación veremos un ejemplo de como utilizarlo de esta manera:
+    
+    ```javascript
+    // Ejemplo 1.
+    const numbersNull = null; 
+
+    const lengthNull = numbersNull?.length ?? -1; // Esto le asignará a lengthNull el valor por defecto de -1.
+
+    console.log(lengthNull); // Imprime -1.
+
+
+    // Ejemplo 2.
+    const numbers = [1, 2, 3];
+
+    const length = numbers?.length ?? -1; // Esto le asigna el valor del atributo Length.
+
+    console.log(length); // Imprime 3.
+    ```
+
 ## Operador ternario.
 
 El operador ternario es un operador utilizado para abreviar la sintáxis del `if ... else` en situaciones en donde tenemos que asignar un valor a una variable o constante bajo cierta condición. Se utiliza de la siguiente forma general:
