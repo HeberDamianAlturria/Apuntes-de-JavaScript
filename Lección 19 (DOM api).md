@@ -636,3 +636,196 @@ https://www.miniclip.com/games/en/
 https://www.pokemon.com/es/
 https://www.minecraft.net/es-es
 ```
+
+## Gestionar atributos del DOM.
+
+Una vez que tengamos seleccionada una etiqueta HTML y guardada su referencia en una constante/variable de JavaScript, podemos ver que atributos tiene y también podemos manipular los valores de dichos atributos.
+
+### Acceder a los atributos:
+
+Si tenemos la variable/constante de JavaScript llamada `element` que hace referencia a una etiqueta HTML. Podemos utilizar los siguientes métodos para poder acceder a los atributos de dicha etiqueta:
+
+| Métodos                                   | Descripción                                                                                                                      |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `element.hasAttributes()`                 | Devuelve `true` en caso de que el elemento HTML tenga atributos. En caso contrario devuelve `false`.                             |
+| `element.hasAttribute("NOMBRE_ATRIBUTO")` | Devuelve `true` en caso de que el elemento HTML tenga el atributo llamado `NOMBRE_ATRIBUTO`. En caso contrario devuelve `false`. |
+| `element.getAttributeNames()`             | Devuelve un `array` con los nombres de los atributos del elemento HTML.                                                          |
+| `element.getAttribute("NOMBRE_ATRIBUTO")` | Devuelve el `valor` del `atributo` llamado `NOMBRE_ATRIBUTO` del elemento HTML o `null` si no existe.                            |
+
+#### Caso especial.
+
+Notemos que si usamos de la forma general: `element.getAttribute("class")`, esto va a devolvernos un `string` que representa los valores del atributo `class`. Sin embargo, hay veces que queremos una lista de los distintos valores de `class`. Para resolver este problema, tenemos también una propiedad especial llamada `element.classList` que se comporta de una manera similar a un `Array`, pero que realmente es un tipo especial llamado `DOMTokenList`. A continuación explicaré como trabajar con esta propiedad:
+
+
+| Método                                       | Descripción                                                                                                 |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `element.classList`                          | Devuelve la lista de clases del elemento HTML. Cabe mencionar que el tipo de la lista es `DOMTokenList`.    |
+| `element.classList.length`                   | Devuelve el número de clases del elemento HTML.                                                             |
+| `element.classList.item(n)`                  | Devuelve la clase número `n` del elemento HTML, o `null` si no existe.                                      |
+| `element.classList.contains("NOMBRE_CLASE")` | Devuelve `true` si la clase llamada `NOMBRE_CLASE` existe en el elemento HTML, o `false` en caso contrario. |
+
+Y también podemos recorrer el `element.classList` de la siguente forma general:
+
+```javascript
+for (const classValue of element.classList) {
+  // Cuerpo del for.
+}
+```
+
+#### Ejemplo.
+
+Supongamos que tenemos un archivo llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1 id="title" class="cool big title" style="background-color: red">
+      Cool Title.
+    </h1>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el siguiente código en un archivo llamado `index.js`:
+
+```javascript
+const h1Ref = document.querySelector('#title');
+
+const listOfAttributes = h1Ref.getAttributeNames();
+
+for (const attributeName of listOfAttributes) {
+  console.log(`${attributeName}: ${h1Ref.getAttribute(attributeName)}`);
+}
+
+console.log("Valores de la clase:");
+
+for (const classValue of h1Ref.classList) {
+  console.log(classValue);
+}
+```
+
+Y esto va a imprimir por consola lo siguiente:
+
+```
+id: title
+class: cool big title
+style: background-color: red
+Valores de la clase:
+cool
+big
+title
+```
+
+Que son los atributos y sus correspondientes valores de la etiqueta `h1`.
+
+### Modificar o eliminar atributos:
+
+Si tenemos la variable/constante de JavaScript llamada `element` que hace referencia a una etiqueta HTML. Podemos utilizar los siguientes métodos para poder modificar o eliminar los atributos de dicha etiqueta:
+
+| Métodos                                            | Descripción                                                                      |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `element.setAttribute("NOMBRE_ATRIBUTO", "VALOR")` | Añade o cambia el atributo `NOMBRE_ATRIBUTO` al valor `VALOR` del elemento HTML. |
+| `element.removeAttribute("NOMBRE_ATRIBUTO")`       | Elimina el atributo `NOMBRE_ATRIBUTO` del elemento HTML.                         |
+
+#### Caso especial: atributos booleanos.
+
+En caso de tener `atributos booleanos`, el siguiente código es erróneo:
+
+```javascript
+// El siguiente código es ERRÓNEO:
+
+element.setAttribute("NOMBRE_ATRIBUTO_BOOLEANO", true);
+
+element.setAttribute("NOMBRE_ATRIBUTO_BOOLEANO", false);
+```
+
+Sino que la manera adecuada de hacerlo sería utilizar el método `element.toggleAttribute()` de la siguiente forma general:
+
+```javascript
+element.toggleAttribute("NOMBRE_ATRIBUTO_BOOLEANO", true); // Agrega el atributo NOMBRE_ATRIBUTO_BOOLEANO en caso de que no esté.
+
+element.toggleAttribute("NOMBRE_ATRIBUTO_BOOLEANO", false); // Quita el atributo NOMBRE_ATRIBUTO_BOOLEANO en caso de que esté.
+```
+
+Y de esa manera podemos lograr simular que le asignamos valores a booleanos a los atributos booleanos.
+
+#### Caso especial: lista de clases.
+
+También recordemos que con `element.classList` podemos acceder a la lista de clases de la etiqueta HTML. Y `element.classList` también posee métodos para agregar y eliminar clases de la siguiente forma general:
+
+| Método                                                           | Descripción                                                                                                                                                    |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `element.classList.add("CLASS_1", "CLASS_2", ..., "CLASS_N")`    | Añade las clases `CLASS_1`, `CLASS_2`, hasta `CLASS_N` al elemento HTML.                                                                                       |
+| `element.classList.remove("CLASS_1", "CLASS_2", ..., "CLASS_N")` | Elimina las clases `CLASS_1`, `CLASS_2`, hasta `CLASS_N` del elemento HTML.                                                                                    |
+| `element.classList.replace("CLASS_A_REEMPLAZAR", "NUEVA_CLASS")` | Reemplaza la clase `CLASS_A_REEMPLAZAR` por la clase `NUEVA_CLASS`. Va a retornar `true` en caso de que haya logrado reemplazarlo o `false` en caso contrario. |
+
+#### Ejemplo:
+
+Supongamos que tenemos un archivo llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1 id="title" class="big title" style="background-color: red">
+      Cool Title.
+    </h1>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el siguiente código en un archivo llamado `index.js`:
+
+```javascript
+const showAttributes = (listOfAttributes) => {
+  for (const attributeName of listOfAttributes) {
+    console.log(`${attributeName}: ${h1Ref.getAttribute(attributeName)}`);
+  }
+};
+
+const h1Ref = document.querySelector("#title");
+
+console.log("Valores de los atributos viejos:");
+
+const listOfOldAttributes = h1Ref.getAttributeNames();
+
+showAttributes(listOfOldAttributes); // muestra los atributos viejos.
+
+console.log("Valores de los atributos actualizados:");
+
+h1Ref.setAttribute("lang", "es"); // agrega el atributo lang con el valor "es".
+
+h1Ref.classList.add("red", "text"); // agrega las clases red y text.
+
+h1Ref.classList.remove("title"); // remueve la clase title.
+
+const listOfNewAttributes = h1Ref.getAttributeNames();
+
+showAttributes(listOfNewAttributes); // muestra los atributos actualizados.
+```
+
+Y esto va a imprimir por consola lo siguiente:
+
+```
+Valores de los atributos viejos:
+id: title
+class: big title
+style: background-color: red
+
+Valores de los atributos actualizados:
+id: title
+class: big red text
+style: background-color: red
+lang: es
+```
