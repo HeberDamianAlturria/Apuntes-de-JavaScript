@@ -516,3 +516,123 @@ Google
 
 ## Búsquedas acotadas.
 
+### Conocimientos necesarios:
+
+Si tenemos de forma general las siguientes etiquetas de HTML:
+
+```html
+<EtiquetaContenedora>
+  <NombreEtiqueta1> VALOR_1 </NombreEtiqueta1>
+  <NombreEtiqueta2> VALOR_2 </NombreEtiqueta2>
+  <!-- ... -->
+  <NombreEtiquetaN> VALOR_N </NombreEtiquetaN>
+</EtiquetaContenedora>
+```
+
+Nosotros al seleccionar en JavaScript la etiqueta llamada `EtiquetaContenedora` y guardar su referencia en una constante/variable de la siguiente forma general:
+
+```javascript
+/*
+  Para esta forma general voy a usar el método querySelector, 
+  pero podría utilizar cualquier otro método de selección que hayamos visto
+  según sea necesario.
+*/
+
+const etiquetaContenedoraRef = document.querySelector("EtiquetaContenedora"); 
+```
+
+Entonces, la constante `etiquetaContenedoraRef` será en realidad una estructura de datos que definirá un `subárbol del DOM`. Para este caso, dicho `subárbol del DOM` se vería de la siguiente forma general:
+
+```
+                    EtiquetaContenedora
+               /          |       ...      \
+NombreEtiqueta1   NombreEtiqueta2  ...  NombreEtiquetaN
+```
+
+### Definición formal de búsqueda acotada.
+
+Ya sabiendo esto, la técnica de `búsqueda acotada` consiste en guardar una referencia a una `etiqueta HTML contenedora` en una variable o constante en JavaScript. Dado que esto nos proporciona un `subárbol del DOM`, podemos aplicar cualquiera de los métodos de selección previamente mencionados (como `querySelector`, `getElementById`, `querySelectorAll`, etc.) sobre dicha variable o constante `contenedora`, con el objetivo de realizar la búsqueda exclusivamente dentro de ese `subárbol del DOM`. Y, notemos que esto podemos hacerlo múltiples veces de manera iterativa, hasta que lleguemos a una etiqueta que `NO tenga hijos` (es decir, una etiqueta que represente una `hoja` en nuestro `subárbol`).
+
+Esto es de mucha utilidad cuando tenemos que buscar alguna etiqueta que está contenida dentro de múltiples etiquetas anidadas, ya que nos permite simplificar mucho la búsqueda.
+
+Cabe mencionar que, en algunos casos, utilizando un buen `Selector de CSS` junto con algún método como `querySelector` o `querySelectorAll`, podríamos seleccionar de una manera factible una etiqueta que está contenida dentro de múltiples etiquetas anidadas. Sin embargo, para simplificar la lectura del código, hay veces que es conveniente utilizar directamente la técnica de `búsqueda acotada`.
+
+### Forma general de cómo se vería.
+
+Continuándo con la forma general previmantente dada. Recordemos que tenemos de forma general las siguientes etiquetas de HTML:
+
+```html
+<EtiquetaContenedora>
+  <NombreEtiqueta1> VALOR_1 </NombreEtiqueta1>
+  <NombreEtiqueta2> VALOR_2 </NombreEtiqueta2>
+  <!-- ... -->
+  <NombreEtiquetaN> VALOR_N </NombreEtiquetaN>
+</EtiquetaContenedora>
+```
+
+Y supongamos que ahora queremos hallar la etiqueta llamada `NombreEtiquetaI` que sabemos que está contenida por la etiqueta llamada `EtiquetaContenedora`, y queremos hacerlo utilizando la técnica de `búsqueda acotada`. Entonces, podemos hacerlo en JavaScript de la siguiente manera general:
+
+```javascript
+/*
+  Para esta forma general voy a usar el método querySelector, 
+  pero podría utilizar cualquier otro método de selección que hayamos visto
+  según sea necesario.
+*/
+
+// Obtengo la estructura del subárbol del DOM.
+const etiquetaContenedoraRef = document.querySelector("EtiquetaContenedora");
+
+// Busco en base al subárbol del DOM.
+const etiquetaI = etiquetaContenedoraRef.querySelector("NombreEtiquetaI");
+```
+
+### Ejemplo.
+
+Supongamos que tenemos un archivo HTML llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejemplo</title>
+  </head>
+  <body>
+    <h1>Cool URLS:</h1>
+    <h3>Webs:</h3>
+    <ul id="webs">
+      <li><a href="https://google.com">Google</a></li>
+      <li><a href="https://leetcode.com/problemset/">LeetCode</a></li>
+      <li><a href="https://www.youtube.com/">Youtube</a></li>
+    </ul>
+    <h3>Games:</h3>
+    <ul id="games">
+      <li><a href="https://www.miniclip.com/games/en/">Miniclip</a></li>
+      <li><a href="https://www.pokemon.com/es/">Pokemon</a></li>
+      <li><a href="https://www.minecraft.net/es-es">Minecraft</a></li>
+    </ul>
+    <script src="index.js"></script>
+</body>
+</html>
+```
+
+Y tenemos un archivo llamado `index.js` definido de la siguiente forma:
+
+```javascript
+const gamesUl = document.querySelector("#games");
+
+const gameAnchors = gamesUl.querySelectorAll("a");
+
+for (const gameAnchor of gameAnchors) {
+  console.log(gameAnchor.href);
+}
+```
+
+Y esto va a imprimir por consola:
+
+```
+https://www.miniclip.com/games/en/
+https://www.pokemon.com/es/
+https://www.minecraft.net/es-es
+```
