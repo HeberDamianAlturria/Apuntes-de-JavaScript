@@ -877,4 +877,844 @@ console.log(pRef.innerHTML); // Imprime: "Esto es un texto normal y <strong>este
 console.log(pRef.outerHTML); // Imprime: "<p id="parraf">Esto es un texto normal y <strong>este texto está en negro</strong></p>"
 ```
 
+### Modificar el texto de una etiqueta HTML:
 
+Podemos modificar el texto de una etiqueta de la siguiente forma general:
+
+```javascript
+element.textContent = "NUEVO_VALOR";
+```
+
+De esa manera podemos modificar el texto de una etiqueta en JavaScript. 
+
+#### Aclaración importante:
+
+Cabe mencionar que es recomendable modifica el texto de una etiqueta de HTML que `solamente si ésta NO contiene ninguna otra etiqueta como hija`. Ya que si tenemos por ejemplo tenemos las etiquetas:
+
+```html
+<EtiquetaContenedor>
+  <Etiqueta1> VALOR_1 </Etiqueta1>
+  <Etiqueta2> VALOR_2 </Etiqueta2>
+  <!-- ... -->
+  <EtiquetaN> VALOR_N </EtiquetaN>
+</EtiquetaContenedor>
+```
+
+Entonces, al hacer en JavaScript:
+
+```javascript
+const etiquetaContenedoraRef = document.querySelector("EtiquetaContenedor");
+
+etiquetaContenedoraRef.textContent = "NUEVO_VALOR";
+```
+
+Entonces, el DOM va a cambiar a:
+
+```html
+<EtiquetaContenedor>
+  NUEVO_VALOR
+</EtiquetaContenedor>
+```
+
+Eliminando todas las etiqueta hijas que había previamente en el elemento.
+
+#### Ejemplo:
+
+Supongamos que tenemos un archivo llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <p id="parraf">Soy un texto.</p>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el siguiente código en un archivo llamado `index.js`:
+
+```javascript
+const pRef = document.querySelector("#parraf");
+
+pRef.textContent = "Hola Mundo.";
+```
+
+Entonces, el DOM se renderiza con los siguientes valores:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <p id="parraf">Hola Mundo.</p>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Es decir, que modificamos el texto que muestra el párrafo al usuario.
+
+### Crear nuestras propias etiquetas HTML.
+
+En JavaScript podemos crear nuestras propias etiquetas HTML. Eso lo vamos a hacer de la siguiente forma general:
+
+```javascript
+const nombreEtiquetaQueCreo = document.createElement("TIPO_DE_ETIQUETA");
+
+/* Le asigno un valor en su textContent (OPCIONAL): */
+
+nombreEtiquetaQueCreo.textContent = "ALGUN_VALOR";
+
+/* Le asigno valores a los atributos (OPCIONAL): */
+
+nombreEtiquetaQueCreo.setAttribute("NOMBRE_ATRIBUTO_1", "VALOR_1");
+
+nombreEtiquetaQueCreo.setAttribute("NOMBRE_ATRIBUTO_2", "VALOR_2");
+
+// ...
+
+nombreEtiquetaQueCreo.setAttribute("NOMBRE_ATRIBUTO_N", "VALOR_N");
+```
+
+Donde notemos que `TIPO_DE_ETIQUETA` será el tipo de etiqueta que queremos crear. De esa manera `nombreEtiquetaQueCreo` será una referencia a un objeto que representa la etiqueta HTML que estamos creando.
+
+Notemos que en esta forma general también mostamos como le agregamos valor a `.textContent` y como le asignamos valores a sus `atributos`. Sin embargo, esos son pasos opcionales.
+
+#### Dato muy importante:
+
+Es impotante notar que estas etiquetas que creamos en JavaScript, están creadas solamente en memoria, lo que significa que NO están incluidas en el DOM y, por ende, NO son visibles en el documento HTML. Si quisieramos que estas etiquetas sean visibles en el documento HTML, debemos incluirlas en el DOM de manera manual (lo cuál explicaré a continuación como hacer).
+
+Es más, existe una propiedad booleana llamada `.isConnected`, la cuál es `true` si la etiqueta que creamos está agregada al DOM y es `false` en caso contrario.
+
+### Manipular el DOM.
+
+#### Agregar etiquetas al DOM:
+
+Si tenemos la variable/constante de JavaScript llamada `elementInDOM` que hace referencia a una etiqueta HTML que `está incluida en el DOM`, y hemos creado de la manera previamente explicada una etiqueta HTML cuya variable/constante de referencia es `customElement`, la cuál `aún no está incluida en el DOM`. Entonces, podemos utilizar los siguiente métodos para lograr incluir dicha etiqueta en el DOM:
+
+| Métodos                                       | Descripción                                                                                                    |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `elementInDOM.appendChild(customElement)`     | Añade a la etiqueta `elementInDOM` la nueva etiqueta `customElement` como hijo.                                |
+| `elementInDOM.before(customElement)`          | Añade la nueva etiqueta `customElement` justo antes de la etiqueta `elementInDOM`.                             |
+| `elementInDOM.after(customElement)`           | Añade la nueva etiqueta `customElement` justo después de la etiqueta `elementInDOM`.                           |
+| `elementInDOM.prepend(customElement)`         | Se añade la nueva etiqueta `customElement` antes del `primer hijo` de la etiqueta `elementInDOM`.              |
+| `elementInDOM.append(customElement)`          | Se añade la nueva etiqueta `customElement` después del `último hijo` de la etiqueta `elementInDOM`.            |
+| `elementInDOM.replaceChildren(customElement)` | Elimina `todos los hijos` de la etiqueta `elementInDOM` y los sustituye por la nueva etiqueta `customElement`. |
+| `elementInDOM.replaceWith(customElement)`     | Se sustituye la etiqueta `elementInDOM` por la nueva etiqueta `customElement`.                                 |
+
+Utilizando cualquiera de estos métodos, podemos lograr que `customElement` sea agregado al DOM y, por ende, sea visible en el documento HTML.
+
+#### Eliminar etiquetas del DOM:
+
+Si tenemos la variable/constante de JavaScript llamada `elementInDOM` que hace referencia a una etiqueta HTML que `está incluida en el DOM`. Es posible eliminar esta etiqueta de la siguiente forma general:
+
+```javascript
+elementInDOM.remove();
+```
+
+De esa manera logramos eliminar esta etiqueta del `DOM`.
+
+#### Ejemplo:
+
+Supongamos que tenemos un archivo llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <ul id="webs">
+      <li id="googleLI"><a href="https://www.google.com/">Google</a></li>
+      <li id="leetcodeLI"><a href="https://leetcode.com/problemset/">LeetCode</a></li>
+      <li id="wikipediaLI"><a href="https://es.wikipedia.org/">Wikipedia</a></li>
+    </ul>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el siguiente código en un archivo llamado `index.js`:
+
+```javascript
+const websUL = document.querySelector("#webs");
+
+/* Agrega un título. */
+
+const newTitle = document.createElement("h1");
+
+newTitle.textContent = "Lista de sitios web:";
+
+websUL.before(newTitle); // Agrego newTitle antes de websUL en el DOM
+
+/* Agrega un nuevo link a la lista. */
+
+const newLI = document.createElement("li");
+
+newLI.setAttribute("id", "githubLI");
+
+const newAnchorGithub = document.createElement("a");
+
+newAnchorGithub.setAttribute("href", "https://github.com/");
+
+newAnchorGithub.textContent = "Github";
+
+websUL.appendChild(newLI); // Agrego newLI como hijo de websUL en el DOM.
+
+newLI.appendChild(newAnchorGithub); // Agrego newAnchorGithub como hijo de newLI en el DOM.
+
+/* Elimino el elemento de la lista que redirige hacia Google */
+
+const googleLI = websUL.querySelector("#googleLI");
+
+googleLI.remove(); // Elimino googleLI del DOM.
+```
+
+Entonces, el DOM se renderiza con los siguientes valores:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Lista de sitios web:</h1>
+    <ul id="webs">
+      <li id="leetcodeLI"><a href="https://leetcode.com/problemset/">LeetCode</a></li>
+      <li id="wikipediaLI"><a href="https://es.wikipedia.org/">Wikipedia</a></li>
+      <li id="githubLI"><a href="https://github.com/">Github</a></li>
+    </ul>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Es decir que se agrega un `<h1>` con el títlo, y se agrega en el `<ul>` un nuevo `<li>` que contiene un `<a>` que redirige hacia Github. Además, en `<ul>` se eliminó el `<li>` que redirigía a Google.
+
+## Manejar eventos.
+
+### ¿Qué son los eventos?
+
+En JavaScript, los `eventos` son notificaciones que indican que una acción específica ha ocurrido en la interfaz de usuario. Cada elemento HTML tiene sus propios eventos asociados, lo que permite manejar los eventos de cada etiqueta de manera independiente. Esto quiere decir que para cada etiqueta HTML puedo asociar a un determinado `evento` una `función` que `se ejecutará de manera automática` cuando el evento se `dispare`. Por ejemplo: si tengo un botón, entonces al evento que se encarga de registrar cuando un usuario hizo click sobre el botón puedo asociarle una función que se encargue de mostrar una foto de un gatito; de esa manera cada vez que el usuario clickeé el botón entonces automáticamente se mostrará la foto de un gatito.
+
+Notemos entonces que el uso de los `eventos` es fundamental para lograr crear un `sitio web dinámico` que responda ante las acciones del usuario.
+
+### Agregando eventos.
+
+Si tenemos la variable/constante de JavaScript llamada `element` que hace referencia a una etiqueta HTML, entonces podemos agregarle a dicha etiqueta un `evento` de la siguiente forma general:
+
+```javascript
+element.addEventListener("NOMBRE_DEL_EVENTO", () => {
+  /* Cuerpo de la función callback asociada al evento. */
+});
+```
+
+De esa manera cuando el usuario realice en la etiqueta HTML llamada `element` la acción asociada al evento `NOMBRE_DEL_EVENTO`, entonces se ejecutará la `función callback` de manera automática.
+
+También es posible asignarle una `función asíncrona` al `evento` de la siguiete forma general:
+
+```javascript
+element.addEventListener("NOMBRE_DEL_EVENTO", async () => {
+  /* Cuerpo de la función callback asíncrona asociada al evento. */
+});
+```
+
+Y, por último, también la `función callback` puede tomar como argumento un `objeto` el cuál es útil para manejar de manera correcta ciertos `eventos`. Eso lo escribiremos de la siguiente forma general:
+
+```javascript
+// Si la función callback debe ser síncrona.
+element.addEventListener("NOMBRE_DEL_EVENTO", (event) => {
+  /* Cuerpo de la función callback asociada al evento. */
+});
+
+
+// Si la función callback debe ser asíncrona.
+element.addEventListener("NOMBRE_DEL_EVENTO", async (event) => {
+  /* Cuerpo de la función callback asíncrona asociada al evento. */
+});
+```
+
+### Los eventos más típicos.
+
+Ahora vamos a aprender a utilizar los eventos más típicos, ya que hay algunos que tienen una manera concreta de ser usados o son mejores para ciertas etiquetas HTML. Además, aprenderemos bajo qué acciones del usuario se dispara cada evento.
+
+Hay que tener en cuenta que no hablaré de todos los eventos existentes, sino solamente de los más usados.
+
+#### El evento click.
+
+Este evento se disparará cuando el usuario dé un `click` en la etiqueta HTML en que fue definido. Generalmente, lo vamos a utilizar en etiquetas HTML del tipo `<button>` o `<input>`. A continuación haré un ejemplo de como utilizar este evento:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <button id="btn">Click me</button>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const btn = document.getElementById("btn");
+
+btn.addEventListener("click", () => alert("Has presionado el botón"));
+```
+
+Entonces, cuando el usuario dé un `click` en el botón que dice `Click me`, saldrá una alerta que dirá: `Has presionado el botón`.
+
+#### El evento dblclick.
+
+Este evento se disparará cuando el usuario dé un `doble click` en la etiqueta HTML en que fue definido. Generalmente, lo vamos a utilizar en etiquetas HTML del tipo `<button>` o `<input>`. A continuación haré un ejemplo de como utilizar este evento:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <button id="btn">Click me</button>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const btn = document.getElementById("btn");
+
+btn.addEventListener("dblclick", () => alert("Has presionado el botón dos veces"));
+```
+
+Entonces, cuando el usuario dé un `doble click` en el botón que dice `Click me`, saldrá una alerta que dirá: `Has presionado el botón dos veces`.
+
+#### El evento focus.
+
+Este evento es utilizado principalmente por las etiquetas `<select>`, `<textarea>` e `<input>` y lo que hará será disparar el evento en caso de que el usuario le dé el foco (es decir, empiece a interactuar) con alguna de las etiquetas HTML mencionadas. A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("focus", () => console.log("Le hiciste foco al input"));
+```
+
+En este ejemplo, cuando apretemos la etiqueta `<input>` para escribir texto, se mostraría en la consola un mensaje diciendo `Le hiciste foco al input`. Podemos notar que le hemos hecho foco, debido a que se nos aparecerá titilando el cursor para insertar texto. Y es importante notar que una vez que le hicimos foco a la etiqueta, no se volverá a ejecutar la función de nuevo hasta que dejemos de hacerle foco (apretando en cualquier lado de la pantalla fuera de la entrada de texto, lo cuál generará que el cursor de texto desaparezca) y volviendo a apretar a la etiqueta otra vez para darle foco.
+
+#### El evento blur.
+
+Este evento es utilizado principalmente por las etiquetas `<select>`, `<textarea>` e `<input>` y lo que hará será disparar el evento en caso de que el usuario le deje de hacer foco (es decir, empiece deje de interactuar) a alguna de las etiquetas HTML mencionadas. A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("blur", () => console.log("Le dejaste de hacer foco al input"));
+```
+
+En este ejemplo, cuando apretemos la etiqueta `<input>` para escribir texto para darle foco y luego dejamos de darle foco apretando en cualquier otro lado de la pantalla, se mostraría en la consola un mensaje diciendo `Le dejaste de hacer foco al input`. Podemos notar que le hemos dejado de hacer foco, debido a que dejará de aparecer el cursor que titila.
+
+#### El evento copy.
+
+Este evento es utilizado principalmente por las etiquetas `<textarea>` e `<input>`, y lo que hará será disparar el evento en caso de que el usuario intente copiar el texto que se encuentre en las ya mencionadas etiquetas HTML.
+
+Generalmente usaremos el `evento copy` de la siguiente forma general:
+
+```javascript
+element.addEventListener("copy", (event) => {
+  /* Cuerpo de la función callback asociada al evento copy. */
+});
+```
+
+Y lo haremos de esta manera, ya que el `objeto llamado event` que toma como argumento la función de callback asociada al evento, tiene información que nos será de utilidad:
+
+1. En `event.target.value` tendremos el texto que el usuario ha intentado copiar.
+
+2. Si ejecutamos el siguiente método: `event.preventDefault()`, entonces evitaremos que el usuario pueda copiar el texto en cuestión.
+
+<b><i>Ejemplo:</i></b>
+
+A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("copy", (event) => {
+  event.preventDefault(); // Evita que el texto sea copiado.
+
+  console.log(`Texto copiado: ${event.target.value}`); // Muestra el texto que se intentó copiar.
+});
+```
+
+En este ejemplo, cuando escribamos algo en la etiqueta `<input>` y luego lo intentemos copiar, entonces NO se va a copiar y se va a mostrar por consola lo que intentamos copiar.
+
+#### El evento cut.
+
+Este evento es utilizado principalmente por las etiquetas `<textarea>` e `<input>`, y lo que hará será disparar el evento en caso de que el usuario intente cortar el texto que se encuentre en las ya mencionadas etiquetas HTML.
+
+Generalmente usaremos el `evento cut` de la siguiente forma general:
+
+```javascript
+element.addEventListener("cut", (event) => {
+  /* Cuerpo de la función callback asociada al evento cut. */
+});
+```
+
+Y lo haremos de esta manera, ya que el `objeto llamado event` que toma como argumento la función de callback asociada al evento, tiene información que nos será de utilidad:
+
+1. En `event.target.value` tendremos el texto que el usuario ha intentado cortar.
+
+2. Si ejecutamos el siguiente método: `event.preventDefault()`, entonces evitaremos que el usuario pueda cortar el texto en cuestión.
+
+<b><i>Ejemplo:</i></b>
+
+A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("cut", (event) => {
+  event.preventDefault(); // Evita que el texto sea cortado.
+
+  console.log(`Texto cortado: ${event.target.value}`); // Muestra el texto que se intentó cortar.
+});
+```
+
+En este ejemplo, cuando escribamos algo en la etiqueta `<input>` y luego lo intentemos cortar, entonces NO se va a cortar y se va a mostrar por consola lo que intentamos cortar.
+
+#### El evento paste.
+
+Este evento es utilizado principalmente por las etiquetas `<textarea>` e `<input>`, y lo que hará será disparar el evento en caso de que el usuario intente pegar texto que se encuentre en las ya mencionadas etiquetas HTML.
+
+Generalmente usaremos el `evento paste` de la siguiente forma general:
+
+```javascript
+element.addEventListener("paste", (event) => {
+  /* Cuerpo de la función callback asociada al evento paste. */
+});
+```
+
+Y lo haremos de esta manera, ya que el `objeto llamado event` que toma como argumento la función de callback asociada al evento, tiene información que nos será de utilidad:
+
+1. En `event.clipboardData.getData("text")` tendremos el texto que el usuario ha intentado pegar.
+
+2. Si ejecutamos el siguiente método: `event.preventDefault()`, entonces evitaremos que el usuario pueda pegar el texto en cuestión.
+
+<b><i>Ejemplo:</i></b>
+
+A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("paste", (event) => {
+  event.preventDefault(); // Evita que el texto sea pegado.
+
+  console.log(`Texto pegado: ${event.clipboardData.getData("text")}`); // Muestra el texto que se intentó pegar.
+});
+```
+
+En este ejemplo, cuando intentemos pegar algo en la etiqueta `<input>`, entonces NO se va a pegar y se va a mostrar por consola lo que intentamos pegar.
+
+#### El evento input.
+
+Este evento es utilizado por las etiquetas `<input>` y `<textarea>`, y lo que hará será disparar el evento a medida que el usuario vaya modificado el texto dentro de las etiquetas HTML en cuestión. 
+
+Generalmente usaremos el `evento input` de la siguiente forma general:
+
+```javascript
+element.addEventListener("input", (event) => {
+  /* Cuerpo de la función callback asociada al evento input. */
+});
+```
+
+Y lo haremos de esta manera, ya que el `objeto llamado event` que toma como argumento la función de callback asociada al evento, nos permite acceder al `texto actualizado` mediante la propiedad `event.target.value`.
+
+<b><i>Ejemplo:</i></b>
+
+A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <p id="displayText">No hay texto</p>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+const displayTextParraf = document.getElementById("displayText");
+
+textInput.addEventListener("input", (event) => {
+  const text = event.target.value;
+
+  if (!text) {
+    displayTextParraf.textContent = "No hay texto";
+  } else {
+    displayTextParraf.textContent = text;
+  }
+});
+```
+
+En este ejemplo, a medida que el usuario vaya escribiendo dentro de la etiqueta `<input>`, se irá mostrando en la etiqueta `<p>` el valor de lo que el usuario escribe.
+
+#### El evento keyup.
+
+Este evento se utiliza generalmente con las etiquetas `<input>` y `<textarea>`, y lo que hace es disparar el evento cuando el usuario halla `soltado` una tecla que tenía pulsada. La importancia de este evento es que se ejecutará la función únicamente cuando la tecla sea `soltada`, por lo que mientras esté presionada por el usuario, no va a hacer nada.
+
+Generalmente usaremos el `evento keyup` de la siguiente forma general:
+
+```javascript
+element.addEventListener("keyup", (event) => {
+  /* Cuerpo de la función callback asociada al evento keyup. */
+});
+```
+
+Y lo haremos de esta manera, ya que el `objeto llamado event` que toma como argumento la función de callback asociada al evento, tiene información que nos será de utilidad:
+
+1. En `event.target.value` tendremos `todo el texto` que el usuario tiene escrito dentro de la etiqueta HTML. Cabe mencionar que también podemos resetear el valor del texto escrito dentro de la etiqueta HTML haciendo: `event.target.value = "";`.
+
+2. En `event.key` tendremos la `última tecla` que acaba de soltar mientras escribía dentro de la etiqeuta HTML.
+
+<b><i>Caso de uso más común:</i></b>
+
+En la mayoría de las ocasiones vamos a utilizar el `evento keyup` para poder realizar cierta acción en caso de que el usuario haya presionado la tecla `Enter` mientras escribía en nuestra etiqueta HTML, pero en caso contrario NO haremos nada. Esto lo podremos hacer de la siguiente forma general:
+
+```javascript
+element.addEventListener("keyup", (event) => {
+  if (event.key === "Enter") {
+    // Cuerpo de este caso.
+    // Aquí generalmente usaremos el texto completo de event.target.value
+  }
+});
+```
+
+Esto es especialmente útil para implementar buscadores, ya al presionar `Enter` podemos buscar el texto que veniamos escribiendo en la etiqueta HTML.
+
+<b><i>Ejemplo:</i></b>
+
+A continuación haré un ejemplo para comprender mejor la idea:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <input
+      id="txt"
+      type="text"
+      name="Texto Random"
+      placeholder="Escribe algo..."
+    />
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const textInput = document.getElementById("txt");
+
+textInput.addEventListener("keyup", (event) => {
+  if (event.key === "Enter") {
+    alert(`Escribiste: ${event.target.value}`); // Muestro el valor del input.
+
+    event.target.value = ""; // Reseteo el valor del input.
+  }
+});
+```
+
+En este ejemplo, el usuario va a escribir dentro de la etiqueta `<input>`, y cuando presione la tecla `Enter` entonces se mostrará una alerta con el texto que ha escrito y luego se resetea el valor del input.
+
+#### El evento mouseover.
+
+Este evento se disparará cuando el usuario pase el mouse de manera que `entre dentro` de la etiqueta en la que el evento fue definido. A continuación haré un ejemplo simple:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <button id="btn">Apretame</button>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const btn = document.getElementById("btn");
+
+btn.addEventListener("mouseover", () => console.log("Entraste al botón"));
+```
+
+En este ejemplo, cuando el usuario pase el mouse de manera que entre al botón que dice "Apretame" se mostrará en consola el siguiente mensaje: `Entraste al botón`.
+
+#### El evento mouseout.
+
+Este evento se disparará cuando el usuario pase el mouse de manera que `salga` de la etiqueta en la que el evento fue definido (por lo que, primero es necesario que el mouse halla entrado para que se detecte que ha salido). A continuación haré un ejemplo simple:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <button id="btn">Apretame</button>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const btn = document.getElementById("btn");
+
+btn.addEventListener("mouseout", () => console.log("Saliste al botón"));
+```
+
+En este ejemplo, cuando el usuario pase el mouse de manera que salga del botón que dice "Apretame" se mostrará en consola el siguiente mensaje: `Saliste al botón`.
+
+### Ejemplo interesante.
+
+A continuación se verá un ejemplo interesante de como utilizar lo visto hasta el momento:
+
+Si tenemos el archivo `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Generador de imágenes random de perros:</h1>
+    <button id="btn">Generar imagen</button>
+    <div id="img-list"></div>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo de `index.js` con el siguiente código de JavaScript:
+
+```javascript
+const btn = document.getElementById("btn");
+
+const divListImages = document.getElementById("img-list");
+
+const fetchImageUrl = async () => {
+  const response = await fetch("https://dog.ceo/api/breeds/image/random");
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch image :(");
+  }
+
+  const data = await response.json();
+
+  return data.message;
+};
+
+btn.addEventListener("click", async () => {
+  const statusParagraph = document.createElement("p");
+
+  statusParagraph.textContent = "Loading...";
+
+  divListImages.prepend(statusParagraph);
+
+  try {
+    const imageUrl = await fetchImageUrl();
+
+    const imageElement = document.createElement("img");
+
+    imageElement.setAttribute("src", imageUrl);
+
+    statusParagraph.replaceWith(imageElement);
+  } catch (error) {
+    statusParagraph.textContent = error.message;
+    
+    console.error(error);
+  }
+});
+```
+
+En este ejemplo, cada vez que el usuario clickeé el botón que dice `Generar imagen`, entonces va a generarse una etiqueta `<p>` con el texto `Loading...` y se la agregará en el DOM como el primer hijo de la etiqueta `<div>`. Luego puede darse uno y solamente uno de los siguientes escenarios:
+
+* Que el `fetch` se haga de manera existosa. En cuyo caso, la etiqueta `<p>` será reemplazada por una etiqueta `<img>` que mostará la foto del perro.
+
+* Que el `fetch` genere un error. En cuyo caso, la etiqueta `<p>` se actualizará para mostar el mensaje de error.
+
+## Manipular formularios.
