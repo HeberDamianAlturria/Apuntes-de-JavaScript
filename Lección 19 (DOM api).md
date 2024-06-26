@@ -990,9 +990,35 @@ Notemos que en esta forma general también mostamos como le agregamos valor a `.
 
 #### Dato muy importante:
 
-Es impotante notar que estas etiquetas que creamos en JavaScript, están creadas solamente en memoria, lo que significa que NO están incluidas en el DOM y, por ende, NO son visibles en el documento HTML. Si quisieramos que estas etiquetas sean visibles en el documento HTML, debemos incluirlas en el DOM de manera manual (lo cuál explicaré a continuación como hacer).
+Es impotante notar que estas etiquetas que creamos en JavaScript, están creadas solamente en `memoria`, lo que significa que NO están incluidas en el DOM y, por ende, NO son visibles en el documento HTML. Si quisieramos que estas etiquetas sean visibles en el documento HTML, debemos incluirlas en el DOM de manera manual (lo cuál explicaré a continuación como hacer).
 
 Es más, existe una propiedad booleana llamada `.isConnected`, la cuál es `true` si la etiqueta que creamos está agregada al DOM y es `false` en caso contrario.
+
+### Agregar nuestras propias etiquetas HTML como hijas de una etiqueta contenedora.
+
+Si tenemos la variable/constante de JavaScript llamada `elementContainerInMemory` que hace referencia a una etiqueta `contenedora` HTML que `NO está incluida en el DOM`, y hemos creado de la manera previamente explicada una etiqueta HTML cuya variable/constante de referencia es `customElement`, la cuál `Tampoco está incluida en el DOM`. Entonces, podemos utilizar los siguiente métodos para lograr agregar nuestras propias etiquetas HTML como hijas de una etiqueta contenedora:
+
+| Métodos                                                   | Descripción                                                                                                                |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `elementContainerInMemory.appendChild(customElement)`     | Añade a la etiqueta `elementContainerInMemory` la nueva etiqueta `customElement` como hijo.                                |
+| `elementContainerInMemory.prepend(customElement)`         | Se añade la nueva etiqueta `customElement` antes del `primer hijo` de la etiqueta `elementContainerInMemory`.              |
+| `elementContainerInMemory.append(customElement)`          | Se añade la nueva etiqueta `customElement` después del `último hijo` de la etiqueta `elementContainerInMemory`.            |
+| `elementContainerInMemory.replaceChildren(customElement)` | Elimina `todos los hijos` de la etiqueta `elementContainerInMemory` y los sustituye por la nueva etiqueta `customElement`. |
+
+
+Y notemos que estos cambios NO van a verse, ya que aún `NO han sido agregados al DOM`. Sin embargo, cuando se agregue la `elementContainerInMemory` en el DOM, entonces `todos sus hijos también se agregarán al DOM`.
+
+<b>Dato importante:</b>
+
+Cabe mencionar que los método `prepend`, `append` y `replaceChildren` pueden recibir múltiples etiquetas que están en memoria como argumentos. Es decir que si tenemos la variable/constante de JavaScript llamada `elementContainerInMemory` que hace referencia a una etiqueta `contenedora` HTML que `NO está incluida en el DOM`, y hemos creado de la manera previamente explicada un conjunto de etiquetas HTML cuyas variables/constantes de referencia som `customElement1, customElement2, ..., customElementN`, las cuales `tampoco están incluidas en el DOM`. Entonces, podemos utilizar los siguiente métodos para lograr incluir dichas etiquetas en el DOM:
+
+| Métodos                                                                                         | Descripción                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `elementContainerInMemory.prepend(customElement1, customElement2, ..., customElementN)`         | Se añade las etiquetas `customElement1, customElement2, ..., customElementN` antes del `primer hijo` de la etiqueta `elementContainerInMemory`.              |
+| `elementContainerInMemory.append(customElement1, customElement2, ..., customElementN)`          | Se añade las etiquetas `customElement1, customElement2, ..., customElementN` después del `último hijo` de la etiqueta `elementContainerInMemory`.            |
+| `elementContainerInMemory.replaceChildren(customElement1, customElement2, ..., customElementN)` | Elimina `todos los hijos` de la etiqueta `elementContainerInMemory` y los sustituye por las etiquetas `customElement1, customElement2, ..., customElementN`. |
+
+Y notemos que estos cambios NO van a verse, ya que aún `NO han sido agregados al DOM`. Sin embargo, cuando se agregue la `elementContainerInMemory` en el DOM, entonces `todos sus hijos también se agregarán al DOM`.
 
 ### Manipular el DOM.
 
@@ -1011,6 +1037,18 @@ Si tenemos la variable/constante de JavaScript llamada `elementInDOM` que hace r
 | `elementInDOM.replaceWith(customElement)`     | Se sustituye la etiqueta `elementInDOM` por la nueva etiqueta `customElement`.                                 |
 
 Utilizando cualquiera de estos métodos, podemos lograr que `customElement` sea agregado al DOM y, por ende, sea visible en el documento HTML.
+
+<b>Aclaración útil:</b>
+
+Cabe mencionar que los método `before`, `after`, `prepend`, `append` y `replaceChildren` pueden recibir múltiples etiquetas que están en memoria como argumentos. Es decir que si tenemos la variable/constante de JavaScript llamada `elementInDOM` que hace referencia a una etiqueta HTML que `está incluida en el DOM`, y hemos creado de la manera previamente explicada un conjunto de etiquetas HTML cuyas variables/constantes de referencia som `customElement1, customElement2, ..., customElementN`, las cuales `aún NO están incluidas en el DOM`. Entonces, podemos utilizar los siguiente métodos para lograr incluir dichas etiquetas en el DOM:
+
+| Métodos                                                                             | Descripción                                                                                                                                      |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `elementInDOM.before(customElement1, customElement2, ..., customElementN)`          | Añade las etiquetas `customElement1, customElement2, ..., customElementN` justo antes de la etiqueta `elementInDOM`.                             |
+| `elementInDOM.after(customElement1, customElement2, ..., customElementN)`           | Añade las etiquetas `customElement1, customElement2, ..., customElementN` justo después de la etiqueta `elementInDOM`.                           |
+| `elementInDOM.prepend(customElement1, customElement2, ..., customElementN)`         | Se añade las etiquetas `customElement1, customElement2, ..., customElementN` antes del `primer hijo` de la etiqueta `elementInDOM`.              |
+| `elementInDOM.append(customElement1, customElement2, ..., customElementN)`          | Se añade las etiquetas `customElement1, customElement2, ..., customElementN` después del `último hijo` de la etiqueta `elementInDOM`.            |
+| `elementInDOM.replaceChildren(customElement1, customElement2, ..., customElementN)` | Elimina `todos los hijos` de la etiqueta `elementInDOM` y los sustituye por las etiquetas `customElement1, customElement2, ..., customElementN`. |
 
 #### Eliminar etiquetas del DOM:
 
@@ -1718,3 +1756,290 @@ En este ejemplo, cada vez que el usuario clickeé el botón que dice `Generar im
 * Que el `fetch` genere un error. En cuyo caso, la etiqueta `<p>` se actualizará para mostar el mensaje de error.
 
 ## Manipular formularios.
+
+Es fundamental saber trabajar con formularios, ya que en la mayoría de los sitios web dinámicos tendremos que pedirle al usuario que introduzca distintos valores como entrada. Y la manera en que manejamos los valores que introduzca el usuario, para luego validar y enviar esos datos hacia algún backend, es mediante formularios.
+
+### Accediendo y modificando los valores de `<input>` y de `<textarea>`:
+
+Si tenemos una variable/constante llamada `interactiveElement` que hace referencia a una etiqueta del tipo `<input>` o del tipo `<textarea>`. Entonces podemos acceder a sus valores de la siguiente forma general:
+
+```javascript
+interactiveElement.value;
+```
+
+Y podemos también modificar este valor haciendo lo siguiente:
+
+```javascript
+interactiveElement.value = "NUEVO_VALOR";
+```
+
+#### Aclaración importante.
+
+El si tengo una variable/constante llamada `interactiveNumberElement` que hace referencia a una etiqueta del tipo `<input type="number">`, entonces el hacer `interactiveNumberElement.value` esto nos dará el valor correspondiente como un `string`. Hay que tener en cuenta este comportamiento.
+
+### Trabajando con checkboxes y radio buttons:
+
+Si tenemos una variable/constante llamada `interactiveElement` que hace referencia a una etiqueta del tipo `<input type="checkbox">` o `<input type="radio">`. Entonces podemos saber si está seleccionado de la siguiente forma general:
+
+```javascript
+interactiveElement.checked;
+```
+
+Y también podemos marcar y desmarcar estos elementos de la siguiente forma general:
+
+```javascript
+// Marca la etiqueta.
+interactiveElement.checked = true;
+
+// Desmarca la etiqueta.
+interactiveElement.checked = false;
+```
+
+### Trabajando con options.
+
+Si tenemos un conjunto de etiquetas HTML de options de la siguiente forma general:
+
+```html
+<select>
+  <option value="VALOR_1">TEXT_VALOR_1</option>
+  <option value="VALOR_2">TEXT_VALOR_2</option>
+  <!-- ... -->
+  <option value="VALOR_N">TEXT_VALOR_N</option>  
+</select>
+```
+
+Entonces podemos marcar como seleccionada la `opción número I` de la siguiente forma general:
+
+```javascript
+const selectRef = document.querySelector("select");
+
+const listOfOptions = selectRef.options; // 
+
+listOfOptions[I].selected = true; // Selecciono la opción número I.
+
+/* También podríamos hacerlo en una línea como:
+
+selectRef.options[I].selected = true;
+
+*/
+
+// Y podemos acceder al valor de la opción número I como:
+const valorOptionI = listOfOptions[I].value;
+```
+
+Notemos que `selectRef.options` devuelve una lista con todas las opciones. Y para seleccionar alguna, debo hacer que su propieda `selected` sea `true`.
+
+### Accediendo a los valores de un formulario.
+
+Si tenemos la siguiente etiquetas HTML que definen un formulario de la siguiente forma general:
+
+```html
+<form>
+  <!-- Etiquetas input. -->
+  <input type="ALGUN_TIPO_1" name="Name1" />
+  <input type="ALGUN_TIPO_2" name="Name2" />
+  <!-- ... -->
+  <input type="ALGUN_TIPO_N" name="NameN" />
+
+  <!-- Etiqueta textarea. -->
+  <textarea name="NameTextArea"></textarea>
+
+  <!-- Options. -->
+  <select name="NameSelect">
+    <option>VALOR_OPTION_1</option>
+    <option>VALOR_OPTION_2</option>
+    <!-- ... --->
+    <option>VALOR_OPTION_M</option>    
+  </select>
+
+  <!-- Botón de submit. -->
+  <buton type="submit">Submit</button>
+</form>
+```
+
+Entonces podemos acceder a los valores de cada uno de los elementos de la siguiente forma general:
+
+```javascript
+const formRef = document.querySelector("form");
+
+/* Accediendo a los valores de los inputs. */
+
+const valueName1 = formRef.elements.Name1.value; // Para acceder al valor del input cuyo name es Name1.
+/*
+  En caso de que el input defina un checkbox o un radio button, podría acceder a su propiedad checked como:
+
+  const valueName1 = formRef.elements.Name1.checked;
+*/
+
+const valueName2 = formRef.elements.Name2.value; // Para acceder al valor del input cuyo name es Name2.
+/*
+  En caso de que el input defina un checkbox o un radio button, podría acceder a su propiedad checked como:
+
+  const valueName2 = formRef.elements.Name2.checked;
+*/
+
+/*...*/
+
+const valueNameN = formRef.elements.NameN.value; // Para acceder al valor del input cuyo name es NameN.
+/*
+  En caso de que el input defina un checkbox o un radio button, podría acceder a su propiedad checked como:
+
+  const valueNameN = formRef.elements.NameN.checked;
+*/
+
+
+/* Accediendo al valor del textarea. */
+
+const valueNameTextArea = formRef.elements.NameTextArea.value; 
+
+/* Accediendo a las opciones del select. */
+
+const listOfOptionsNameSelect = formRef.elements.NameSelect.options; 
+```
+
+De esta forma general podemos concluir que si tenemos dentro de un `<form>` una etiqueta de la forma `<InteractiveElement name="AlgunValor" />` entonces podemos acceder a su valor usando `formRef.elements.AlgunValor`. Es importante que el valor del atributo `name` de la etiqueta a buscar y la propiedad de `formRef` sean las mismas.
+
+### El evento submit.
+
+Este evento se utiliza en las etiquetas del tipo `<form>` y se dispara cuando un usuario hace `click` en el `botón que sube el form`. Generalmente lo vamos a utilizar de la siguiente forma general:
+
+```javascript
+formRef.addEventListener("submit", (event) => {
+  event.preventDefault(); // IMPORTANTE.
+
+  /* Resto del cuerpo de la función de callback correspondiente al evento submit */
+});
+```
+
+Notemos que lo primero que hacemos es llamar al método `event.preventDefault()`, ya que de esa manera evitamos que la página vuelva a recargarse de manera innecesaria una vez que el usuario intentar subir el formulario. Luego podemos usar los que vimos previamente para acceder a los valores de las distintas etiquetas que conforman el `<form>`.
+
+### Ejemplo integrados.
+
+A continuación haremos un ejemplo que logre integrar todo lo que hemos visto hasta el momentos sobre el manejo de formularios.
+
+Si tenemos el siguiente archivo `index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Buscar personajes de Rick And Morty:</h1>
+    <form id="search-form">
+      <label>
+        Nombre del personaje:
+        <input type="text" name="characterName" placeholder="Ej: Rick" />
+      </label>
+      <label>
+        Estado del personaje:
+        <select name="characterStatus">
+          <option value="">-</option>
+          <option value="Alive">Vivo</option>
+          <option value="Dead">Muerto</option>
+          <option value="Unknown">Desconocido</option>
+        </select>
+      </label>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="search-result-container">
+      <p>No has buscado nada aún.</p>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el archivo llamado `index.js` definido de la siguiente manera:
+
+```javascript
+// Seleccionamos el formulario y el contenedor de resultados.
+const searchForm = document.querySelector("#search-form");
+const searchResultContainer = document.querySelector("#search-result-container");
+
+// Función para obtener personajes de la API de Rick and Morty
+const fetchCharacters = async (characterName, characterStatusValue) => {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character/?name=${characterName}&status=${characterStatusValue}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Ha ocurrido un error al obtener los personajes. Revisa que el personaje exista.");
+  }
+
+  const data = await response.json();
+
+  return data.results;
+};
+
+// Función para obtener los valores del formulario.
+const getFormValues = () => {
+  const characterName = searchForm.elements.characterName.value;
+
+  let characterStatusValue = "";
+
+  for (const optionStatus of searchForm.elements.characterStatus.options) {
+    if (optionStatus.selected) {
+      characterStatusValue = optionStatus.value;
+      break;
+    }
+  }
+
+  return { characterName, characterStatusValue };
+};
+
+// Función para crear tarjetas de personajes.
+const createCharacterCards = (listOfCharacters) => {
+  return listOfCharacters.map((character) => {
+    const characterCardContainer = document.createElement("div");
+
+    const characterCardImage = document.createElement("img");
+    characterCardImage.setAttribute("src", character.image);
+
+    const characterCardName = document.createElement("h2");
+    characterCardName.textContent = `Nombre: ${character.name}`;
+
+    const characterCardStatus = document.createElement("p");
+    characterCardStatus.textContent = `Estado: ${character.status}`;
+
+    const characterCardSpecies = document.createElement("p");
+    characterCardSpecies.textContent = `Especie: ${character.species}`;
+
+    characterCardContainer.append(
+      characterCardImage,
+      characterCardName,
+      characterCardStatus,
+      characterCardSpecies
+    );
+
+    return characterCardContainer;
+  });
+};
+
+// Evento de envío del formulario.
+searchForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const { characterName, characterStatusValue } = getFormValues();
+
+  const fetchStatus = document.createElement("p");
+  fetchStatus.textContent = "Buscando personajes...";
+
+  searchResultContainer.replaceChildren(fetchStatus);
+
+  try {
+    const listOfCharacters = await fetchCharacters(characterName, characterStatusValue);
+
+    const listOfCharacterCards = createCharacterCards(listOfCharacters);
+
+    fetchStatus.replaceWith(...listOfCharacterCards);
+  } catch (error) {
+    fetchStatus.textContent = error.message;
+    console.error(error);
+  }
+});
+```
+
+Entonces esto va a renderizar un formulario que, al enviarlo, nos permitirá buscar un personaje de la serie "Rick And Morty" por su nombre y/o por su estado.
