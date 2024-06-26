@@ -829,3 +829,52 @@ class: big red text
 style: background-color: red
 lang: es
 ```
+
+## Gestionar etiquetas en el DOM.
+
+Al igual que con los atributos, podemos también `leer el contenido de una etiqueta HTML`, `crear nuevas etiquetas HTML en JavaScript` e `insertar dichas etiquetas HTML en el DOM`. Para ello veremos una serie de métodos que nos permitirán realizar estas tareas de una manera sencilla:
+
+### Leer el contenido de una etiqueta HTML:
+
+Si tenemos la variable/constante de JavaScript llamada `element` que hace referencia a una etiqueta HTML. Podemos leer su contenido utilizando las siguientes propiedades especiales:
+
+| Propiedades           | Descripción                                                                                               |
+| --------------------- | --------------------------------------------------------------------------------------------------------- |
+| `element.nodeName`    | Devuelve un `string` que representa el nombre del nodo (etiqueta si es un elemento HTML). Solo lectura.   |
+| `element.textContent` | Devuelve un `string` que representa el contenido de texto del elemento. Se puede asignar para modificar.  |
+| `element.innerHTML`   | Devuelve un `string` que representa el contenido HTML del elemento. Se puede usar asignar para modificar. |
+| `element.outerHTML`   | Idem a `.innerHTML` pero incluyendo el HTML del propio elemento HTML.                                     |
+
+#### Ejemplo:
+
+Supongamos que tenemos un archivo llamado `index.html` definido como:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <p id="parraf">Esto es un texto normal y <strong>este texto está en negro</strong></p>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Y tenemos el siguiente código en un archivo llamado `index.js`:
+
+```javascript
+const pRef = document.querySelector("#parraf");
+
+console.log(pRef.nodeName); // Imprime: "P"
+
+console.log(pRef.textContent); // Imprime: "Esto es un texto normal y este texto está en negro"
+
+console.log(pRef.innerHTML); // Imprime: "Esto es un texto normal y <strong>este texto está en negro</strong>"
+
+console.log(pRef.outerHTML); // Imprime: "<p id="parraf">Esto es un texto normal y <strong>este texto está en negro</strong></p>"
+```
+
+
