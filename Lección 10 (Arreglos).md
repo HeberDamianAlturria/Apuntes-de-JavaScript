@@ -608,7 +608,7 @@ Pero tengamos cuidado de que todos los elementos de `ARRAY` sean de `tipo primit
 Podemos concatenar dos o más arreglos utilizando el operador `spread` de la siguiente forma general:
 
 ```javascript
-const arregloConcatenado = [...ARRAY_1, ...ARRAY_2 /*...*/, , ...ARRAY_n];
+const arregloConcatenado = [...ARRAY_1, ...ARRAY_2, /*...*/, ...ARRAY_n];
 ```
 
 Esto funcionará a la perfección si es que `ARRAY_1, ARRAY_2, /*...*/, ARRAY_n` son arreglos compuestos de `tipos primitivos`. Si alguno tiene un `tipo no primitivo`, entonces tendremos problemas de `aliasing` como hemos mencionado previamente.
@@ -628,7 +628,7 @@ console.log(arregloConcatenado); // Imprime [ 1, 2, 3, 'Hola', 'soy', 'Heber' ]
 En futuras lecciones aprenderemos sobre funciones. Por ahora, vamos a aprender como hacer para pasarle los valores de un array como argumentos a una función utilizando el operador `spread`. Esto se hace de la siguiente forma general:
 
 ```javascript
-const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
+const ARRAY = [ELEM_1, ELEM_2, /*...*/, ELEM_n];
 
 nombreDeLaFuncion(...ARRAY); // Es equivalente a hacer: nombreDeLaFuncion(ELEM_1, ELEM_2, /*...*/, ELEM_n);
 ```
@@ -1308,9 +1308,9 @@ A continuación veremos un ejemplo de como es que esto funciona:
 ```javascript
 const arreglo = [1, 2, 3, 4, 6, 10];
 
-const existeNumeroPequeño = arreglo.every((numero) => numero <= 10);
+const todosNumerosPequeños = arreglo.every((numero) => numero <= 10);
 
-console.log(existeNumeroGrande); // Imprime true.
+console.log(todosNumerosPequeños); // Imprime true.
 ```
 
 ### El método map().
@@ -1457,9 +1457,9 @@ numbers.reverse();
 console.log(numbers); // Imprime [5,4,3,2,1]
 ```
 
-#### Aclaración importante.
+#### El método toReversed().
 
-En las últimas versiones de `EcmaSCRIPT` se ha añadido el método `toReversed()` que nos permite retornar un `nuevo arreglo` con el orden de los elementos al revés. Por lo tanto, `NO va a modificar el arreglo original`. Se utiliza de la sigueiente manera:
+En las últimas versiones de `EcmaSCRIPT` se ha añadido el método `toReversed()` que nos permite retornar un `nuevo arreglo` con el orden de los elementos al revés. Por lo tanto, `NO va a modificar el arreglo original`. Se utiliza de la siguiente manera:
 
 ```javascript
 const reversedArray = ARRAY.toReversed();
