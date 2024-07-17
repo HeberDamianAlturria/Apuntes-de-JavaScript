@@ -12,7 +12,7 @@ El principal concepto de la `programación funcional` son las `funciones puras`,
 
 Veamos ahora más a detalle los principales conceptos que definen a una `función pura`:
 
-### Determinismo.
+### Determinismo (transparencia referencial).
 
 Esta característica de las funciones puras hace referencia a que `siempre se produce el mismo resultado cuando se llama a la función con los mismos argumentos`.
 
@@ -437,12 +437,588 @@ Como hemos visto, la `inmutabilidad` es también un pilar fundamental de la `Pro
 
 ## High order functions.
 
-## Currificación.
+Las `funciones de alto orden` o también llamadas `high order functions`, son aquellas funciones que pueden tomar como argumento una o más funciones y/o pueden retornar una o más funciones como resultados. Hemos hablado con anterioridad de las `high order functions`, pero ahora vamos a enfocarlo principalmente en términos de la `programación funcional`.
 
-## pipelines de funciones.
+A continuación veremos las distintas maneras de utilizar las `high order functions`:
+
+### Pasar funciones como argumento.
+
+Las `high order functions` pueden tomar como argumento una o más `funciones puras`. Además, querremos que la `high order function` sea `determinista` y no tenga `side effects`, para lograr garantizar que es una `función pura`. Esto se vería de la siguiente forma general:
+
+```javascript
+const highOrderFunction = (function_1, function_2, /*...*/, function_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con las funciones proporcionadas 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ }
+);
+```
+
+A las funciones que son pasadas como argumento a otra función se les llaman `funciones de callback` y, como estamos usando la programación funcional, deberán ser `funciones puras`.
+
+<br />
+
+También pueden tomar como argumentos una o más `funciones puras` y a su vez también tomar como argumento uno o más elementos que NO sean funciones. Además, querremos que la `high order function` sea `determinista` y no tenga `side effects`, para lograr garantizar que es una `función pura`. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+// Funciones primero y luego valores
+const highOrderFunction = (function_1, function_2, /*...*/, function_N, elem_1, elem_2, /*...*/, elem_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con los elementos y 
+   * funciones proporcionados 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ },
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N
+);
+
+
+// Valores primero y luego funciones
+const highOrderFunction = (elem_1, elem_2, /*...*/, elem_N, function_1, function_2, /*...*/, function_N) => {
+  /* Cuerpo de la función 
+   * que trabaja con los elementos y 
+   * funciones proporcionados 
+   */
+
+  return VALOR;
+};
+
+// Llamando a esta función usando funciones anónimas.
+const resultado = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 1 */ },
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback 2 */ },
+  /*...*/,
+  (/* Puede tomar o no argumentos */) => { /* lógica de la función callback N */ }
+);
+```
+
+En estas formas generales hemos estado utilizando `arrow functions` para representar a las `funciones puras`, pero podemos utilizar también `expresión de función` o también el nombre de funciones que hayamos definido a lo largo del código.
+
+Como ejemplo de este tipo de `high order functions` tenemos los métodos de arreglos como `map`, `filter`, `reduce`, etc. los cuales toman como argumento una `función pura`.
+
+A continuación haré un ejemplo de como se utilizan:
+
+```javascript
+const users = [
+  {
+    id: 1,
+    name: "Heber",
+    favoriteAnimes: ["Death Note", "Monster", "Steins;gate"],
+  },
+  { id: 2, name: "Naty", favoriteAnimes: ["Horimiya", "Steins;gate"] },
+  { id: 3, name: "L Lawliet", favoriteAnimes: ["Death Note", "Naruto"] },
+];
+
+const getUniqueAnimesByCriteria = (users, filterCriteria) => {
+  return new Set(
+    users.filter(filterCriteria).flatMap((user) => user.favoriteAnimes)
+  );
+};
+
+console.log(users);
+/* Imprime:
+
+  [
+    {
+      id: 1,
+      name: 'Heber',
+      favoriteAnimes: [ 'Death Note', 'Monster', 'Steins;gate' ]
+    },
+    { id: 2, name: 'Naty', favoriteAnimes: [ 'Horimiya', 'Steins;gate' ] },
+    { id: 3, name: 'L Lawliet', favoriteAnimes: [ 'Death Note', 'Naruto' ] }
+  ]
+*/
+
+const favoriteAnimesOfUserWithId1 = getUniqueAnimesByCriteria(
+  users,
+  (user) => user.id === 1
+);
+
+console.log(favoriteAnimesOfUserWithId1); // Imprime: Set(3) { 'Death Note', 'Monster', 'Steins;gate' }
+
+const favoriteAnimesOfUsersWithTwoFavorites = getUniqueAnimesByCriteria(
+  users,
+  (user) => user.favoriteAnimes.length === 2
+);
+
+console.log(favoriteAnimesOfUsersWithTwoFavorites); // Imprime: Set(4) { 'Horimiya', 'Steins;gate', 'Death Note', 'Naruto' }
+```
+
+Notemos que en este ejemplo `getUniqueAnimesByCriteria` es una `función de alto orden`, la cuál cumple la propiedad de ser `pura`, ya que en ningún momento muta el arreglo de objetos llamado `users`.
+
+#### Casos de uso.
+
+El pasar funciones como argumento nos permite reutilizar mejor el código, ya que para una misma base de código le estamos agregando la flexibilidad de poder definir partes de su comportamiento mediante las `funciones puras` que toma como `callback`.
+
+### Retornar funciones.
+
+Las `high order functions` pueden retornar una función como resultado. Para poder garantizar que la `high order function` que definimos sea `pura`, NO basta con que dicha función de orden superior cumpla con las definiciones de una `función pura`, sino que también se necesita que `la función que ésta retorna también sea pura` Esto se vería de la siguiente forma general:
+
+```javascript
+const highOrderFunction = (parameter_1, parameter_2, /*...*/, parameter_N) => {
+  /* Cuerpo de la función externa */
+
+  // Retorno la función.
+  return (/* Puede tener parámetros o no */) => {
+    /* Cuerpo de la función interna */
+
+    return VALOR;
+  };
+};
+
+// Llamar a la highOrderFunction devuelve otra función.
+const funcionResultante = highOrderFunction(
+  VALOR_1,
+  VALOR_2,
+  /*...*/,
+  VALOR_N,
+);
+```
+
+Cabe mencionar que en la programación funcional está PROHIBIDO que la `función retornada` por la `highOrderFunction` haga uso del `closure` para `modificar o mutar` los datos definidos en el cuerpo de la `highOrderFunction`, ya que eso provocaría que la `función retornada` NO sea `pura` debido a que tendría `side effects` y, por ende, provocaría que la `highOrderFunction` tampoco sea `pura`. Sin embargo, si es posible y deseable que la `función retornada` por la `highOrderFunction` haga uso del `closure` para `acceder en modo lectura dentro de su cuerpo` los datos definidas en el cuerpo de la `highOrderFunction`, siempre con el debido cuidado de que la `función retornada` preserve la `inmutabilidad`; de esa manera podremos lograr que la `función retornada` sea una `función pura`.
+
+A continuación veremos unos ejemplos sencillos que ilustran lo dicho previamente:
+
+#### Ejemplo de high order function cuya función retornada NO es pura:
+
+Analicemos el siguiente código:
+
+```javascript
+const createCounter = () => {
+  let count = 0;
+
+  return () => count++;
+};
+
+const counter = createCounter();
+
+let counterValue = counter(); 
+
+console.log(counterValue); // Imprime: 0
+
+counterValue = counter();
+
+console.log(counterValue); // Imprime: 1
+
+counterValue = counter();
+
+console.log(counterValue); // Imprime: 2
+```
+
+Como se puede observar en este ejemplo, al hacer `const counter = createCounter();` lo que hacemos es que `counter` sea ahora la función retornada por la función `createCounter`. Y notemos que debido a esto, `counter` puede acceder a la variable `count` que define el `creteCounter`, por más que dicha función haya terminado de ejecutarse. Sin embargo, notemos que `counter` NO es una `función pura` ya que NO es `determinista` y produce el `side effect` de incrementar el valor de la variable `count` perteneciente al `closure` de `createCounter`. Así que notemos que el problema viene de que la `función retornada` por el `createCounter` está `modificando` el valor de la variable `count` y, por ende, rompiendo la `inmutabilidad`.
+
+#### Ejemplo de high order function cuya función retornada es pura:
+
+Analicemos el siguiente código:
+
+```javascript
+const createTaxCalculator = (taxPercentage) => {
+  return (income) => {
+    return income * (taxPercentage / 100);
+  };
+};
+
+const calculateIncomeTaxUS = createTaxCalculator(20); // 20% de impuesto.
+
+const incomeTaxResultUS = calculateIncomeTaxUS(200);
+
+console.log(incomeTaxResultUS); // Imprime: 40
+
+
+const calculateIncomeTaxUK = createTaxCalculator(15); // 15% de impuesto.
+
+const incomeTaxResultUK = calculateIncomeTaxUK(200);
+
+console.log(incomeTaxResultUK); // Imprime: 30
+```
+
+Notemos que en este ejemplo la `función retornada` por el `createTaxCalculator` lo que hará será `acceder en modo lectura` a la variable `taxPercentage` para usarla dentro del cuerpo de dicha función retornada. De esa manera, tenemos que la `función retornada` por `createTaxCalculator` es una `función pura` y, por ende también `createTaxCalculator` será una `función pura`.
+
+#### Currificación.
+
+Es importante mencionar que esta técnica nos permite hacer `currificación`, lo que significa que a una función que toma muchos argumentos (a la que le llamaré `función original`) la transformamos en dos o más `funciones parciales` que toman menos argumentos de forma individual que la `función original`, pero que en conjunto hacen la misma tarea y toman la misma cantidad de argumentos que la `función original`. Esto se ve de la siguiente forma general:
+
+```javascript
+// Función original que toma varios argumentos.
+const originalFunction = (arg1, arg2, /*...*/, argN) => {
+  // Cuerpo de la función original
+};
+
+const originalResult = originalFunction(VALUE_1, VALUE_2, /*...*/, VALUE_N);
+
+// Función currificada
+const curriedFunction = (arg1) => (arg2) => /*...*/ (argN) => {
+  // Cuerpo de la función currificada que hace lo mismo que el cuerpo de la función original.
+};
+
+const result = curriedFunction(VALUE_1)(VALUE_2)/*...*/(VALUE_N);
+
+// Y va a cumplirse que originalResult es igual a result.
+```
+
+Pero lo importante de la currificación es que podemos hacer `Partial Function Application`, lo que significa que podemos crear nuevas funciones pasandole como argumentos algunos valores y dejando el resto de argumentos para pasarselos en el futuro. Esto se vería de la siguiente forma general:
+
+```javascript
+// Función currificada
+const curriedFunction = (arg1) => (arg2) => /*...*/ (argI) => (argJ) => /*...*/ (argN) => {
+  // Cuerpo de la función currificada que hace lo mismo que el cuerpo de la función original.
+};
+
+const partialFunction = curriedFunction(VALUE_1)(VALUE_2)/*...*/(VALUE_I); 
+
+const result = partialFunction(VALUE_J)/*...*/(VALUE_N);
+
+/*
+  Es equivalente a haber hecho:
+
+ const result = curriedFunction(VALUE_1)(VALUE_2)...(VALUE_I)(VALUE_J)...(VALUE_N);
+*/
+```
+
+Esto nos da la flexibilidad de crear nuevas funciones en base a pasarle solamente una cierta cantidad de argumentos a la función currificada.
+
+A continuación veremos un ejemplo de uso de la currificación:
+
+```javascript
+const taxCalculatorOriginal = (taxPercentage, amount) => {
+  const taxAmount = amount * (taxPercentage / 100);
+  return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+};
+
+const curriedTaxCalculator = (taxPercentage) => (amount) => {
+  const taxAmount = amount * (taxPercentage / 100);
+  return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+};
+
+const calculateIVA = curriedTaxCalculator(16); // IVA del 16%
+/* Y como taxPercentage es igual a 16, entonces esto es equivalente a tener:
+
+  const calculateIVA = (amount) => {
+    const taxAmount = amount * (16 / 100);
+    return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+  };
+*/
+
+const calculateSalesTax = curriedTaxCalculator(10); // Impuesto de venta del 10%
+/* Y como taxPercentage es igual a 10, entonces esto es equivalente a tener:
+
+  const calculateIVA = (amount) => {
+    const taxAmount = amount * (10 / 100);
+    return `Impuestos a pagar: $${taxAmount.toFixed(2)}`;
+  };
+*/
+
+// Y estos tres llamados son equivalentes:
+console.log(calculateIVA(1000)); // Imprime: Impuestos a pagar: $160.00
+console.log(curriedTaxCalculator(16)(1000)); // Imprime: Impuestos a pagar: $160.00
+console.log(taxCalculatorOriginal(16, 1000)); // Imprime: Impuestos a pagar: $160.00
+
+// Y estos tres llamados son equivalentes:
+console.log(calculateSalesTax(500)); // Imprime: Impuestos a pagar: $50.00
+console.log(curriedTaxCalculator(10)(500)); // Imprime: Impuestos a pagar: $50.00
+console.log(taxCalculatorOriginal(10, 500)); // Imprime: Impuestos a pagar: $50.00
+```
+
+Lo interesante de este ejemplo es que utilizamos la `Partial Function Application` para crear nuevas funciones.
+
+## pipelines de funciones (composición de funciones).
+
+En general, cuando trabajemos con la programación funcional, lo que estaremos haciendo es trabajar con `pipelines de funciones o composición de funciones`. Esto implica combinar varias funciones pequeñas y específicas para construir operaciones más complejas de manera clara y legible. Para lograr este objetivo, los pipelines de funciones deben seguir varios principios clave de la programación funcional:
+
+* `Funciones Pequeñas y Específicas`: Cada función realiza una tarea específica y simple. Esto facilita la reutilización y el mantenimiento del código.
+
+* `Inmutabilidad`: Las funciones no mutan los datos originales. En su lugar, crean y devuelven nuevos datos basados en los datos de entrada.
+
+* `Flujo de Datos`: El flujo de datos a través del pipeline es unidireccional y predecible. Esto significa que las funciones en el pipeline reciben datos, realizan alguna operación y pasan los resultados a la siguiente función sin alterar los datos originales.
+
+* `Pureza Funcional`: Las funciones no tienen efectos secundarios y son deterministas. Esto significa que no alteran estados externos ni dependen de estados mutables, y además siempre se comportarán de la misma manera ante los mismos argumentos.
+
+### Manera sencilla de definir la composición.
+
+Podemos definir de manera sencilla a la composición de la siguiente forma general:
+
+```javascript
+const function1 = (value1) => {
+  /* Cuerpo de la función 1 */
+
+  return returnValue1;
+};
+
+const function2 = (value2) => {
+  /* Cuerpo de la función 2 */
+
+  return returnValue2;
+};
+
+const functionN = (valueN) => {
+  /* Cuerpo de la función N */
+
+  return returnValueN;
+};
+
+const compositionOfFunctions = (startValue) => functionN(function2(function1(startValue)));
+
+const resultComposition = compositionOfFunctions(ALGUN_VALOR);
+```
+
+Entonces, al hacer `const resultComposition = compositionOfFunctions(ALGUN_VALOR);` lo que estamos haciendo visualmente es ejecutar el siguiente `pipeline`:
+
+```
+    ALGUN_VALOR                   returnValue1                    returnValue2                       returnValueN
+-------------------> function1 ------------------> function2 ----------------------> functionN ------------------------> resultComposition
+```
+
+Es decir que lo que hará será:
+
+1. Pasarle `ALGUN_VALOR` como argumento de `function1`.
+
+2. Al resultado obtenido de `function1` se lo pasamos como argumento a `function2`.
+
+3. Al resultado obtenido de `function2` se lo pasamos como argumento a `functionN`.
+
+4. Al resultado obtenido de `functionN` se lo asignamos a la constante `resultComposition`
+
+Y notemos que lo fundamental para que este `pipeline` funcione de manera adecuada es lo siguiente:
+
+1. `function1` debe poder tomar como argumento `ALGUN_VALOR`.
+
+2. `function2` debe poder tomar como argumento el resultado de `function1`.
+
+3. `functionN` debe poder tomar como argumento el resultado de `function2`.
+
+#### Dato importante.
+
+Es muy importante destacar que `el orden de llamada de las funciones al hacer la composición es fundamental`, ya que definirá el `flujo de datos a través del pipeline`. Es más, puede que cambiando el orden de llamada de las funciones en la composición, el código deje de funcionar o que el resultado obtenido sea distinto al planeado.
+
+De forma general, veamos que pasa si solamente invertimos el orden de llamada de las funciones en la forma general previamente mencionada:
+
+```javascript
+const compositionOfFunctions2 = (startValue) => function1(function2(functionN(startValue)));
+
+const resultComposition2 = compositionOfFunctions2(ALGUN_VALOR_2);
+```
+
+Entonces, al hacer `const resultComposition2 = compositionOfFunctions2(ALGUN_VALOR_2);` lo que estamos haciendo visualmente es ejecutar el siguiente `pipeline`:
+
+```
+    ALGUN_VALOR_2                   returnValueN                    returnValue2                       returnValue1
+-------------------> functionN ------------------> function2 ----------------------> function1 ------------------------> resultComposition2
+```
+
+
+Es decir que lo que hará será:
+
+1. Pasarle `ALGUN_VALOR_2` como argumento de `functionN`.
+
+2. Al resultado obtenido de `functionN` se lo pasamos como argumento a `function2`.
+
+3. Al resultado obtenido de `function2` se lo pasamos como argumento a `function1`.
+
+4. Al resultado obtenido de `function1` se lo asignamos a la constante `resultComposition2`
+
+Y notemos que lo fundamental para que este `pipeline` funcione de manera adecuada es lo siguiente:
+
+1. `functionN` debe poder tomar como argumento `ALGUN_VALOR`.
+
+2. `function2` debe poder tomar como argumento el resultado de `functionN`.
+
+3. `function1` debe poder tomar como argumento el resultado de `function2`.
+
+Y como invertimos el orden de llamada, entonces `los requerimientos para que el código funcione también cambiaron`. Esto se debe a que `se ha alterado el flujo de datos por el pipeline`.
+
+`Conclusión`: El orden de llamada de las funciones en la composición se fundamental, ya que definirá el `flujo de datos por el pipeline`. Por lo que hay que ser cuidadoso.
+
+#### Ejemplo.
+
+A continuación veremos un ejemplo de como realizar la composición:
+
+```javascript
+const numbers = [1, 2, 3, 4];
+
+const getEvenNumbers = (numbers) => numbers.filter((number) => number % 2 === 0);
+
+const multiplyByTwo = (numbers) => numbers.map((number) => number * 2);
+
+const composeFunctions = (numbers) => multiplyByTwo(getEvenNumbers(numbers));
+
+console.log(composeFunctions(numbers)); // [4, 8]
+
+
+/* Ejemplo de que pasa si invertimos las llamadas */
+
+const composeFunctionsInverted = (numbers) => getEvenNumbers(multiplyByTwo(numbers));
+
+console.log(composeFunctionsInverted(numbers)); // [2, 4, 6, 8]
+```
+
+### Manera más completa de definir la composición.
+
+Podemos hacer uso de las `high order functions` para poder definir una función que me haga la composición de una cantidad ilimitada de funciones de manera automática, en lugar de tener que hacerlas nosotros manualmente. Dicha función de composición general se define como:
+
+```javascript
+const compose = (...functions) => (startValue) => functions.reduce((acc, fn) => fn(acc), startValue);
+```
+
+Entonces, si la utilizamos de la siguiente forma general:
+
+```javascript
+const composeOfFunctions = compose(function1, function2, functionN);
+
+const resultComposition = compositionOfFunctions(ALGUN_VALOR);
+```
+
+Estariamos haciendo exactamente lo que vimos previamente. Es decir que al hacer `const resultComposition = compositionOfFunctions(ALGUN_VALOR);` lo que estamos haciendo visualmente es ejecutar el siguiente `pipeline`:
+
+```
+    ALGUN_VALOR                   returnValue1                    returnValue2                       returnValueN
+-------------------> function1 ------------------> function2 ----------------------> functionN ------------------------> resultComposition
+```
+
+Es decir que lo que hará será:
+
+1. Pasarle `ALGUN_VALOR` como argumento de `function1`.
+
+2. Al resultado obtenido de `function1` se lo pasamos como argumento a `function2`.
+
+3. Al resultado obtenido de `function2` se lo pasamos como argumento a `functionN`.
+
+4. Al resultado obtenido de `functionN` se lo asignamos a la constante `resultComposition`
+
+Y notemos que lo fundamental para que este `pipeline` funcione de manera adecuada es lo siguiente:
+
+1. `function1` debe poder tomar como argumento `ALGUN_VALOR`.
+
+2. `function2` debe poder tomar como argumento el resultado de `function1`.
+
+3. `functionN` debe poder tomar como argumento el resultado de `function2`.
+
+`IMPORTANTE`: Por más que hayamos cambiado la manera de definir la composición, el orden de llamada de las funciones en la composición se fundamental, ya que definirá el `flujo de datos por el pipeline`. Por lo que hay que ser cuidadoso.
+
+#### Ejemplo:
+
+A continuación veremos un ejemplo de como utilizar el `compose`:
+
+```javascript
+const numbers = [1, 2, 3, 4];
+
+const compose = (...functions) => (numbers) => functions.reduce((acc, fn) => fn(acc), numbers);
+
+const getEvenNumbers = (numbers) => numbers.filter((number) => number % 2 === 0);
+
+const multiplyByTwo = (numbers) => numbers.map((number) => number * 2);
+
+const composeFunctions = compose(getEvenNumbers, multiplyByTwo);
+
+console.log(composeFunctions(numbers)); // [4, 8]
+
+
+/* Ejemplo de que pasa si invertimos las llamadas */
+
+const composeFunctionsInverted = compose(multiplyByTwo, getEvenNumbers);
+
+console.log(composeFunctionsInverted(numbers)); // [2, 4, 6, 8]
+```
+
+Este ejemplo hace exactamente lo mismo que el ejemplo anterior, pero lo hace de una manera más elegante y fácil de leer.
 
 ## Memoization.
 
-Si bien este concepto no pertenece exclusivamente a la `programación funcional`, es importante mencionarlo ya que debido a que las `funciones puras` retornan siempre lo mismo cuando sus argumentos son también los mismos, entonces es posible `memoizar` los valores de retorno de dichas funciones puras en función de sus argumentos mediante una caché.
+Si bien este concepto no pertenece exclusivamente a la `programación funcional`, es importante mencionarlo ya que debido a que las `funciones puras` retornan siempre el mismo resultado cuando reciben los mismos argumentos, entonces es posible `memoizar` los valores de retorno de dichas funciones, utilizando una `caché` basada en sus argumentos. Esta técnica nos permitirá `mejorar significativamente la performance` de nuestro código pero con `el costo de consumir más memoria`.
 
-## Ventajas y desventajas de la programación funcional
+Como la `memoización` es una técnica de programación, existen muchas maneras de implementarla. A continuación explicaré una manera general de implementar la `memoización`:
+
+```javascript
+const memoize = (fn) => {
+  const cache = {};
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (!cache[key]) {
+      cache[key] = fn(...args);
+    }
+    return cache[key];
+  };
+};
+```
+
+A continuación veremos un ejemplo sencillo de como utilizar esta definición de `memoize`:
+
+```javascript
+const memoize = (fn) => {
+  const cache = {};
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (!cache[key]) {
+      cache[key] = fn(...args);
+    }
+    return cache[key];
+  };
+};
+
+const fibonacci = memoize((n) => {
+  if (n <= 1) return 1;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+});
+
+console.log(fibonacci(130)); // 1.0663404174917107e+27
+
+console.log(fibonacci(130)); // 1.0663404174917107e+27
+```
+
+Notemos que en este ejemplo, la primera vez que se llama a `fibonacci(130)`, la función recursiva se ejecuta, y cada resultado intermedio se almacena en la caché.
+La segunda vez que se llama a `fibonacci(130)`, el resultado ya está en la caché, por lo que se devuelve instantáneamente sin necesidad de recalcularlo.
+
+Cabe mencionar que en este ejemplo si no fuera por el `memoize`, entonces no podríamos ejecutar `fibonacci(130)` debido a que se generaría un stack overflow y el tiempo de cómputo sería muy lento.
+
+## Ventajas y desventajas de la programación funcional.
+
+A continuación veremos una lista de ventajas y desventajas de la programación funcionar en `JavaScript`:
+
+### Ventajas.
+
+* Al trabajar con datos inmutables, se evitan errores relacionados con el cambio de estado y las mutaciones inesperadas. Esto hace que el código sea más predecible y fácil de razonar.
+
+* Las funciones puras siempre devuelven el mismo resultado para los mismos argumentos y no tienen efectos secundarios, lo que facilita la creación de tests y el mantenimiento del código.
+
+* La capacidad de combinar funciones pequeñas y específicas para crear funciones más complejas, promueve la reutilización de código y la modularidad.
+
+* Dado que las funciones puras no dependen del estado global, es más fácil ejecutar el código en paralelo sin preocuparse por las condiciones de carrera.
+
+* Las funciones puras y la inmutabilidad facilitan los unit tests y la depuración, ya que no hay efectos secundarios inesperados.
+
+### Desventajas.
+
+* La inmutabilidad y la creación constante de nuevos objetos pueden ser menos eficientes en términos de memoria y rendimiento, especialmente en aplicaciones con grandes volúmenes de datos.
+
+* El código funcional, especialmente cuando se usan técnicas avanzadas, puede ser difícil de leer y mantener para aquellos que no están familiarizados con el paradigma.
+
+* Aunque JavaScript soporta la programación funcional, no está diseñado exclusivamente para ello. Por ende, vamos a depender muchas veces del uso de librerías externas que faciliten algunas características de la programación funcional.
+
+* La mayor parte del ecosistema de JavaScript, incluidos muchos frameworks y bibliotecas, está diseñado con un enfoque más orientado a objetos o imperativo.
+
+* Hay muchas tareas que deben realizarse en JavaScript que si o si requieren generar side effects, como por ejemplo: manipular el DOM. Por lo tanto, no podremos utilizar un enfoque tan purista de la programación funcional si realizamos dichas tareas.
+
+Así que como hemos visto, la programación funcional es una herramienta poderosa, pero hay que ser cautelosos al elegir si es adecuada para el problema que estoy resolviendo o no.
