@@ -598,6 +598,95 @@ console.log(doubleNumbers); // Imprime [ 2, 4, 6, 8, 10, 12 ]
 
 Como se puede observar, al método `map` le pasamos como función de callback la siguiente función lambda: `function (num) { return num * 2; }`.
 
+## Asignando valores por defecto en funciones.
+
+Los parámetros de las funciones también pueden tener `valores por defecto`, lo cuales serán de utilidad para que los parámetros tengan valores predefinidos si no se pasa ningún valor o si se pasa `undefined` al llamar a la función. Esta característica hace que las funciones sean más flexibles y evita la necesidad de comprobar explícitamente si los argumentos son `undefined` dentro del cuerpo de la función. Podemos definir funciones que tengan valores por defecto de la siguiente forma general:
+
+- Funciones que donde todos sus parámetros tienen valores por defecto:
+
+  Podemos definir en `JavaScript` una función cuyos argumentos tengan todos valore por defecto de la siguiente forma general:
+
+  ```javascript
+  /* Usando funciones lambda */
+  const nombreFunction = (parameter1 = VALOR_POR_DEFECTO_1, parameter2 = VALOR_POR_DEFECTO_2, /*...*/, parameterN = VALOR_POR_DEFECTO_N) => {
+
+    /* Cuerpo de la función */
+
+    // Puede retornar un valor (opcional).
+  };
+
+  /* Usando la palabra function */
+  function nombreFunction(parameter1 = VALOR_POR_DEFECTO_1, parameter2 = VALOR_POR_DEFECTO_2, /*...*/, parameterN = VALOR_POR_DEFECTO_N) {
+
+    /* Cuerpo de la función */
+
+    // Puede retornar un valor (opcional).
+  }
+  ```
+
+  De esta manera, tenemos la flexibilidad de llamar a una función llamada `nombreFunction` pasándole todos, solamente algunos o ningún valor como argumento, ya que tendrán sus parámetros valores por defecto.
+
+  A continuación veremos un ejemplo sencillo de esto:
+
+  ```javascript
+  const add = (a = 1, b = 2) => a + b;
+
+  console.log(add(200, 300)); // Imprime: 500
+
+  // add(2) es igual a hacer add(2, 2), ya que por defecto b = 2
+  console.log(add(2)); // Imprime: 4
+
+  // add(undefined, 1) es igual a hacer add(1, 1), ya que por defecto a = 1
+  console.log(add(undefined, 1)); // Imprime: 2
+
+  // add() es igual a hacer add(1, 2), ya que por defecto a = 1 y b = 2
+  console.log(add()); // Imprime: 3
+  ```
+
+  Y notemos que con algo tan sencillo podemos lograr que una función se comporte de diferentes maneras, lo cuál es muy útil para algunas circunstancias.
+
+- Funciones que donde solamenta ALGUNOS de sus parámetros tienen valores por defecto:
+
+  También podemos hacer que solamente `ALGUNOS` de sus parámetros tengan valores por defecto. Esto podemos hacerlo de las siguiente forma general:
+
+  ```javascript
+  /* Usando funciones lambda */
+  const nombreFunction = (parameter1, parameter2, /*...*/, parameterI, parameterJ = VALOR_POR_DEFECTO_J, /*...*/, parameterN = VALOR_POR_DEFECTO_N) => {
+
+    /* Cuerpo de la función */
+
+    // Puede retornar un valor (opcional).
+  };
+
+  /* Usando la palabra function */
+  function nombreFunction(parameter1, parameter2, /*...*/, parameterI, parameterJ = VALOR_POR_DEFECTO_J, /*...*/, parameterN = VALOR_POR_DEFECTO_N) {
+
+    /* Cuerpo de la función */
+
+    // Puede retornar un valor (opcional).
+  }
+  ```
+
+  Como se puede observar, para poder lograr que solamente ALGUNOS parámetros tengan valores por defecto debemos entonces:
+  
+  1. Poner adelante los nombres de los parámetros que deberán tener un valor si o si cuando se llame a la función.
+
+  2. Ponemos al final los nombres de los parámetros que tendrán valores por defecto en caso de que no se les provea un valor explícito al llamar a la función.
+
+  A continuación veremos un ejemplo sencillo:
+
+  ```javascript
+  const showNames = (firstName, lastName = "Perez") => {
+    console.log(`Hello ${firstName} ${lastName}`);
+  };
+
+  showNames("Heber"); // Hello Heber Perez
+
+  showNames("Heber", undefined); // Hello Heber Perez
+
+  showNames("Heber", "ALturria"); // Hello Heber ALturria
+  ```
+
 ## Pasaje de parametros por valor y por referencia.
 
 Hemos visto en lecciones anteriores que los `tipos primitivos` se asignan `por valor` y los `tipos NO primitivos` se asignan `por referencia`. Bueno, a la hora de pasarle argumentos a una función, los valores se le son asignados a los parámetros tendremos que tener en cuenta si se pasan `por valor` o `por referencia` para evitar efectos secundarios. 
