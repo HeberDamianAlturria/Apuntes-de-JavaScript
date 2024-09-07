@@ -981,7 +981,7 @@ Podemos utilizar el `await` de las siguientes maneras:
 
     De esa manera, esperaremos a que la promesa retornada por la función `funcionQueRetornaPromesa()` se `resuelva` y luego continuará la ejecución del resto de código.
 
-3. En caso de que la promesa en cuestión pueda ser `rejected` (rechazada), entonces podemos manejar esta situación con un `try/catch` de la siguiente forma general:
+3. En caso de que la promesa en cuestión pueda ser `resolved` o `rejected`. entonces podemos manejar esta situación con un `try/catch` de la siguiente forma general:
 
     ```javascript
     const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
@@ -1032,6 +1032,8 @@ Podemos utilizar el `await` de las siguientes maneras:
 
     };
     ```
+
+Cabe mencionar que la `funcionQueRetornaPromesa()` puede ser tanto una función simple cuyo `return` es algún `Promise` o puede ser una función marcada como `async` ya que dichas funciones devuelven promesas.
 
 <b>Ejemplo de uso del async/await:</b>
 
@@ -1350,7 +1352,7 @@ getResponse("https://jsonplaceholder.typicode.com/posts/1")
 
 <b>Dato súper importante:</b> 
 
-Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa. Esto significa que podremos utilizar el `then/catch/finally` en la promesa devuelta por la `función async`, lo cuál si se ejecutaría de manera `asíncrona`. También podemos en una `función async` usar el `then/catch/finally` para manejar una `promesa`, sin necesidad del `await` y hacerlo que se ejecute de manera `asíncrona`. Pero si no se usa ninguno de estos "Trucos", entonces una función `async` sin un `await a una promesa`, va a ejecutarse de manera `síncrona`; es decir que, en este caso, para que una función `async` se ejecute de manera `asíncrona`, debe contener `al menos` un `await a una promesa`. Es por eso que se llama `async/await`, ya que siempre debemos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
+Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa. Esto significa que podremos utilizar el `then/catch/finally` en la promesa devuelta por la `función async` una vez que la llamemos, lo cuál si se ejecutaría de manera `asíncrona`. También podemos en el cuerpo de una `función async` usar el `then/catch/finally` para manejar una `promesa`, sin necesidad del `await` y hacerlo que se ejecute de manera `asíncrona`. Pero si no se usa ninguno de estos "Trucos", entonces una función `async` sin un `await a una promesa`, va a ejecutarse de manera `síncrona`; es decir que, en este caso, para que una función `async` se ejecute de manera `asíncrona`, debe contener `al menos` un `await a una promesa`. Es por eso que se llama `async/await`, ya que siempre debemos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
 
 A continuación veremos un ejemplo para mostrar que lo dicho previamente es cierto:
 
@@ -1377,7 +1379,97 @@ Cuerpo del funcionAsyncSinAwait
 Después de llamar a funcionAsyncSinAwait
 ```
 
-Es decir que la información se imprime de manera `síncrona`.
+Es decir que la información se imprime de manera `síncrona` debido a que `funcionAsyncSinAwait` NO contiene ningún `await` a una `promesa` en su cuerpo.
+
+### El `for await...of`.
+
+Si tengo un `iterador de promesas` (como puede ser un `arreglo de promesas` o `una función generadora asíncrona`), puedo ir iterando dicho iterador e ir esperando a que las promesas que contiene se vayan resolviendo. Esto podemos hacerlo de la siguiente forma general:
+
+```javascript
+for await (const valueResolved of ITERADOR_DE_PROMESAS) {
+  
+  /* Cuerpo del for await...of */
+
+}
+```
+
+Y esta sintáxis lo que hará será ir iterando el `ITERADOR_DE_PROMESAS` y, por cada promesa que se encuentre, va a hacerle un `await` para obtener su valor y luego ejecutará el `Cuerpo del for await...of` para dicho valor obtenido. Notese entonces que esta iteración se hace de manera `secuencial` (es decir, una tras otra y NO en paralelo), por lo que puede ser útil cuando tengamos que resolver promesas de manera secuencial, o cuando estemos trabajando con una `función generadora asíncrona`.
+
+Cabe mencionar que como estamos usando un `await`, entonces esta sintáxis debe ser hecha dentro de una `función async` o mediante el `Top-level await`.
+
+La particularidad que tiene el `for await...of` es que cuando se obtenga una promesa que sea `rejected`, entonces saltará una excepción que impedirá seguir iterando. Por lo tanto, hay que utilizar el `try/catch` para poder manejar esta situción de la siguiente forma general:
+
+```javascript
+try {
+
+  for await (const valueResolved of ITERADOR_DE_PROMESAS) {
+  
+    /* Cuerpo del for await...of */
+
+  }
+
+} catch (error) {
+
+  /* Cuerpo del catch para manejar el error. */
+
+}
+```
+
+También es posible utilizar el `try/catch/finally` si nos fuese necesario.
+
+Otra aclaración importante
+
+#### Ejemplo de uso del `for await...of`.
+
+A continuación veremos un ejemplo sencillo de como utilizar el `for await...of`:
+
+```javascript
+const fetchCharacterByIdAsync = async (id) => {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character/${id}`
+  );
+
+  if (!response.ok) throw new Error("Error to make fetch");
+
+  const data = await response.json();
+
+  return { name: data.name, status: data.status };
+};
+
+async function* searchCharactersGenerator(initialId, toEndId) {
+  if (initialId > toEndId) throw new Error("initialId is bigger than toEndId");
+
+  let id = initialId;
+
+  while (id <= toEndId) {
+    yield await fetchCharacterByIdAsync(id);
+    id++;
+  }
+}
+
+const fetchRangeOfCharacters = async (initialId, toEndId) => {
+  try {
+    for await (const characterInfo of searchCharactersGenerator(initialId, toEndId)) {
+      console.log(characterInfo);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+fetchRangeOfCharacters(1, 2);
+```
+
+Y, si todo sale bien, esto imprimiría por consola lo siguiente:
+
+```
+{ name: 'Rick Sanchez', status: 'Alive' }
+{ name: 'Morty Smith', status: 'Alive' }
+```
+
+#### Diferencias entre `for await...of` y `Promise.all`.
+
+La principal diferencia entre ambos es que el `Promise.all` se utiliza para esperar a que todas las promesas se resuelva `en paralelo`, en cambio `for await...of` se utiliza para poder esperar a que las promesas se resuelvan de una en una en `secuencia`.
 
 ## Top-level await.
 
