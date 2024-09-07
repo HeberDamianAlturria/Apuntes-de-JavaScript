@@ -1417,8 +1417,6 @@ try {
 
 También es posible utilizar el `try/catch/finally` si nos fuese necesario.
 
-Otra aclaración importante
-
 #### Ejemplo de uso del `for await...of`.
 
 A continuación veremos un ejemplo sencillo de como utilizar el `for await...of`:

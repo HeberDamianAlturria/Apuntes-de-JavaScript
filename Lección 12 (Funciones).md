@@ -1447,7 +1447,7 @@ Las `IIFE` son funciones que se ejecutan inmediatamente después de su creación
   /* Cuerpo de la función */
 })();
 ```
-Este tipo de funciones actuarán generalmente como un procedimiento, el cuál tendrá su propio `scope privado` (siempre y cuando usemos `let` y `const` en el cuerpo de la IIFE), pero si podrán acceder al `scope externo` de donde estén definidas.
+Este tipo de funciones actuarán generalmente como un `procedimiento`, el cuál tendrá su propio `scope privado` (siempre y cuando usemos `let` y `const` en el cuerpo de la IIFE), pero si podrán acceder al `scope externo` de donde estén definidas.
 
 También podemos utilizar las `IIFE` para retornar valores de la siguiente forma general:
 
@@ -1496,6 +1496,22 @@ Counter.decrementCount();
 console.log(Counter.getCount()); // Imprime: 1
 ```
 
+### IFFE para funciones asíncronas.
+
+En contextos en donde tengamos que trabajar con funciones asíncronas y no podamos usar el `Top-level await`, una alternativa muy útil es crear un `IFFE` utilizando una función asíncrona para poder hacer el `await` dentro del `IFFE`. Esto se vería de la siguiente forma general:
+
+```javascript
+(async () => {
+
+  // Cuerpo de la función asíncrona que se ejecuta automáticamente.
+
+  const valor = await funcionQueRetornaPromesa(/* Argumentos (opcional) */);
+
+  /*...*/
+
+})();
+```
+
 ### Casos de uso de las IIFE.
 
 Podemos utilizar las `IIFE` para:
@@ -1506,6 +1522,582 @@ Podemos utilizar las `IIFE` para:
 
 3. Crear variables privadas.
 
+4. Hacer un `await` en caso de que no pudamos usar el `Top-level await`.
+
 ## Funciones generadoras.
 
-COMPLETAR.
+Las `funciones generadoras` son un tipo de función especial que permite `pausar su ejecución` y `luego reanudarla más tarde`. Se utilizan para `generar secuencias de valores bajo demanda`, que pueden ser finitas o infinitas, `sin tener que calcular todos los valores de una sola vez`. Esto último significa que son muy eficientes en términos de memoria y de CPU.
+
+Las funciones generadores se entienden mucho más con ejemplos prácticos que con sintáxis general, por lo que voy a intentar poner varios ejemplos de casos de uso. Además, las sintáxis generales que dé, son solamente a modo de representación, pero en la práctica podemos combinar muchas cosas de las que hemos visto en lecciones pasadas o futuras.
+
+### Sintáxis para crear una función generadora y como utilizarla.
+
+Para crear una `función generadora` tenemos que hacerlo utilizando `function*` de la siguiente forma general:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Cuerpo de la función generadora */
+
+}
+```
+
+De esta manera `nombreFuncionGeneradora` será una función generadora.
+
+Lo iteresante de las `funciones generadoras` es que `pueden pausar su ejecución para retornar un valor y luego retomar su ejecución desde ese punto`. Para hacer eso, dentro del cuerpo de la función generador, debemos utilizar un operador especial llamado `yield` de la siguiente forma general:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Ejecución antes de yield */
+
+  yield VALOR_A_RETORNAR;
+
+  /* Ejecución luego del yield */
+
+}
+```
+
+Siendo `VALOR_A_RETORNAR` un valor que querramos que retorne la función en ese punto. Podemos tener tantos `yield` como nos sean necesarios. Es más, podemos tener ciclos infinitos que vayan haciendo `yield` de distintos valores.
+
+Y, si quisieramos que en algún punto la función generadora `finalice definitivamente su ejecución`, debemos utilizar `return` de la siguiente forma general:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Ejecución antes de yield */
+
+  yield VALOR_A_RETORNAR_1;
+
+  /* Ejecución luego del yield */
+
+  return VALOR_A_RETORNAR_2; // Si no quisieramos retornar nada, podríamos poner solamente "return;"
+
+  /* El return finaliza la ejecución, por lo tanto, todo lo que haya abajo jamás se ejecutará */
+
+}
+```
+
+Siendo `VALOR_A_RETORNAR_2` un valor que querramos retornar al finalizar la ejecución. Sin embargo, si no quisieramos retornar nada, podríamos simplemente escribir `return;` en lugar de `return VALOR_A_RETORNAR_2;`.
+
+Las funciones generadoras van a finalizar su ejecución cuando se encuentren con un `return`. Obviamente, al final del cuerpo de la `función generadora` siempre hay un `return` implícito, el cuál se vería de la siguiente manera:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Ejecución antes de yield */
+
+  yield VALOR_A_RETORNAR;
+
+  /* Ejecución luego del yield */
+
+  return; // aquí hay un return implícito, ya que es el final del cuerpo de la función generadora.
+}
+```
+
+<br />
+
+Ya que hemos visto la sintáxis básica para crear `funciones generadoras`, ahora vamos a ver la sintáxis de como poder utilizar la `función generadora`. 
+
+La manera de utilizar una función generadora es de la siguiente forma general:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Ejecución antes de yield */
+
+  yield VALOR_A_RETORNAR;
+
+  /* Ejecución luego del yield */
+
+}
+
+// Creamos el iterador
+const nombreIterador = nombreFuncionGeneradora(/* Argumentos (opcional) */);
+
+// Accedemos al valor del yield.
+const {value, done} = nombreIterador.next();
+```
+
+Cuando llamamos a una `función generadora`, esta no ejecuta inmediatamente su código, sino que nos devuelve un `objeto iterador`. Este objeto iterador tiene un método llamado `.next()`, que cuando lo invocamos, ejecuta el código de la función generadora hasta encontrarse con un `yield` o un `return` y devuelve un objeto con dos propiedades:
+
+* `value`: En `value` estará el valor retornado por el `yield` o `return`.
+* `done`: El `done` será un booleano que será `true` si la función generadora ha terminado (es decir que se encontró con un `return`) o `false` si todavía puede generar más valores.
+
+Con esta información, podemos utilizar múltiples veces el método `.next()` del `objeto iterador` para ir generando valores a medida que los necesitemos.
+
+### Ejemplo de una función generadora sencilla.
+
+A continuación veremos un ejemplo sencillo que ejemplifica todo lo que hemos hablado previamente:
+
+```javascript
+function* generatorOfSimpleNumbers() {
+  console.log("Antes del primer yield");
+  yield 1;
+
+  console.log("Antes del segundo yield");
+  yield 2;
+
+  console.log("Antes del tercer yield");
+  yield 3;
+}
+
+const iterator = generatorOfSimpleNumbers();
+
+console.log(iterator.next()); 
+/*
+  Primero imprime: "Antes del primer yield"
+  Y luego imprime: {value: 1, done: false}
+*/
+
+console.log(iterator.next()); 
+/*
+  Primero imprime: "Antes del segundo yield"
+  Y luego imprime: {value: 2, done: false}
+*/
+
+console.log(iterator.next()); 
+/*
+  Primero imprime: "Antes del tercer yield"
+  Y luego imprime: {value: 3, done: false}
+*/
+
+
+console.log(iterator.next()); 
+/*
+  imprime: {value: undefined, done: true}
+*/
+```
+
+Este ejemplo muestra cómo funciona una **función generadora** básica en JavaScript, y cómo se puede pausar y reanudar su ejecución utilizando el método `next()` del **iterador** que devuelve.
+
+Notemos que en este ejemplo tenemos una `función generadora` llamada `generatorOfSimpleNumbers`, la cuál imprime en qué parte de la función estamos y luego hace un `yield` devolviendo un valor numérico. Y notemos que en base a dicha función iteradora, creamos un `objeto iterador` al que le llamamos `iterator`. Utilizamos este `iterator` para ejecutar cada porción del código de la función generadora de la siguiente manera:
+
+1. **Primera llamada a `next()`**:
+   - Con `iterator.next()`, la ejecución comienza desde el principio de la función generadora.
+   - Se imprime el mensaje `"Antes del primer yield"`, y luego se pausa la ejecución en el primer `yield`, devolviendo el valor `1` en un objeto de la forma `{ value: 1, done: false }`.
+   - `done: false` indica que la función generadora aún no ha terminado.
+
+2. **Segunda llamada a `next()`**:
+   - Al invocar `iterator.next()` nuevamente, la función generadora reanuda su ejecución donde se había pausado, justo después del primer `yield`.
+   - Imprime `"Antes del segundo yield"`, luego pausa nuevamente en el segundo `yield`, y devuelve el valor `2` en un objeto `{ value: 2, done: false }`.
+   - `done: false` indica que la función generadora aún no ha terminado.
+
+3. **Tercera llamada a `next()`**:
+   - De nuevo, se llama a `next()`, reanudando la ejecución desde donde quedó.
+   - Se imprime `"Antes del tercer yield"`, y luego la ejecución se pausa en el tercer `yield`, devolviendo el valor `3` en el objeto `{ value: 3, done: false }`.
+   - `done: false` indica que la función generadora aún no ha terminado.
+
+4. **Cuarta llamada a `next()`**:
+   - En la cuarta llamada a `next()`, no quedan más `yield` en la función generadora, y solamente queda un `return` implícito debido a que estamos en el final del cuerpo de la función generadora.
+   - En este punto, el método `next()` devuelve `{ value: undefined, done: true }`. Notese que `value: undefined` se debe a que el `return implícito` NO retorna ningún valor.
+   - `done: true` indicando que la función generadora ha terminado.
+
+Este ejemplo ilustra cómo una función generadora **divide su ejecución en varios pasos** y devuelve valores de forma progresiva, permitiendo controlar cuándo se reanuda su código.
+
+### Crear una función generadora usando ciclos.
+
+La sintáxis que dimos previamente es la más fácil de entender, sin embargo es mucho más conveniente utilizar `ciclos` para poder crear una `función generadora`. A continuación veremos una sintáxis en su forma general de como hacer esto:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Cuerpo de la función antes del ciclo. 
+     Podemos usarlo para inicializar variables/constantes 
+   */
+
+  while (CONDICION) {
+    
+    /* Ejecución antes del yield */
+
+    yield VALOR_A_RETORNAR;
+
+    /* Ejecución luego del yield */
+  }
+
+  /* Cuerpo de la función luego del ciclo */
+
+}
+```
+
+En esta forma general he utilizado el `while` para representar un `ciclo`, pero podemos utilizar el `for`, el `for...of`, el `for...in`, el `do...while`, entre otros.
+
+Lo interesante de esta sintaxis es que permite generar secuencias de valores basadas en la condición del ciclo. Si el ciclo es `infinito`, la `función generadora` podrá seguir produciendo valores de manera `infinita`. Por otro lado, si el ciclo es `finito`, entonces la `función generadora` podrá generar una cantidad `finita` de valores.
+
+#### Ejemplo de función generadora finita.
+
+A continuación veremos un ejemplo de una función generadora `finita`:
+
+```javascript
+function* generateRange(fromNumber, toNumber) {
+  if (fromNumber > toNumber)
+    throw new Error("fromNumber is bigger than toNumber");
+
+  for (let number = fromNumber; number <= toNumber; number++) {
+    yield number;
+  }
+}
+
+const iteratorRange = generateRange(1, 3);
+
+console.log(iteratorRange.next()); // Imprime: { value: 1, done: false }
+
+console.log(iteratorRange.next()); // Imprime: { value: 2, done: false }
+
+console.log(iteratorRange.next()); // Imprime: { value: 3, done: false }
+
+console.log(iteratorRange.next()); // Imprime: { value: undefined, done: true }
+```
+
+Y notemos que la función `generateRange` generará una cantidad `finita` de valores gracias a que su ciclo for es `finito` y terminará cuando se cumpla que `number > toNumber`.
+
+#### Ejemplo de función generadora infinita.
+
+A continuación veremos un ejemplo de una función generadora `infinita`:
+
+```javascript
+function* fibonacciSequence() {
+  let a = 0;
+  let b = 1;
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
+}
+
+const fibonacciGenerator = fibonacciSequence();
+
+console.log(fibonacciGenerator.next().value); // imprime: 0
+console.log(fibonacciGenerator.next().value); // imprime: 1
+console.log(fibonacciGenerator.next().value); // imprime: 1
+console.log(fibonacciGenerator.next().value); // imprime: 2
+console.log(fibonacciGenerator.next().value); // imprime: 3
+console.log(fibonacciGenerator.next().value); // imprime: 5
+console.log(fibonacciGenerator.next().value); // imprime: 8
+```
+
+Y notemos que la función `fibonacciSequence` generará una cantidad `infinita` de valores gracias a que su ciclo while es `infinito`.
+
+### Iterando una función generadora usando for...of
+
+Notemos que en los ejemplos anteriores hemos utilizar del `objeto iterador` su método llamado `.next()` y hemos repetido muchas veces las líneas de código para poder ir pausando y obteniendo los valores generador por la `función generadora`. Sin embargo, también es posible iterar mediante un `for...of` la `función generadora` de la siguiente forma general:
+
+```javascript
+function* nombreFuncionGeneradora(/* Parametros (opcional) */) {
+
+  /* Cuerpo de la función generadora */
+
+}
+
+/*...*/
+
+for (const nombreValor of nombreFuncionGeneradora(/* Argumentos (opcional) */)) {
+  
+  /* Cuerpo del for */
+
+}
+```
+
+Y esto lo que hará será iterar automáticamente sobre cada valor producido por la `función generadora` sin necesidad de llamar al `.next()` y por cada valor ejecutará el `cuerpo del for`. Dicha iteración automática finalizará cuando `done` sea `true`.
+
+Cabe mencionar que utilizar esta sintáxis para iterar una `función generadora` tiene sentido si sabemos que dicha `función generadora` produce una cantidad `finita` de valores. En caso de que la `función generadora` sea `infinita`, entonces el `for nunca acabará su ejecución`.
+
+#### Ejemplo sencillo.
+
+A continuación veremos un ejemplo de como utilizar el `for...of` para iterar una `función generadora`:
+
+```javascript
+function* evenNumberGenerator(toNumber) {
+  let number = 0;
+
+  while (number <= toNumber) {
+    if (number % 2 === 0) yield number;
+
+    number++;
+  }
+}
+
+for (const evenNumber of evenNumberGenerator(10)) {
+  console.log(evenNumber);
+}
+```
+
+Y esto va a imprimir:
+
+```
+0
+2
+4
+6
+8
+10
+```
+
+#### Limitaciones del `for...of`
+
+La principal limitación que tiene el iterar una **función generadora** mediante el uso del `for...of` es que si se utiliza un `return` con un valor al final de la función generadora, este valor no será accesible dentro del ciclo `for...of`. El `for...of` solo itera sobre los valores generados por los `yield`, y el valor del `return` no forma parte de la secuencia de iteración.
+
+El siguiente ejemplo muestra lo dicho previamente:
+
+```javascript
+function* generateNumbers() {
+  yield 1;
+  yield 2;
+  yield 3;
+  return 'fin'; // Este valor no será accesible en el ciclo for...of
+}
+
+for (const value of generateNumbers()) {
+  console.log(value);
+}
+// Imprime:
+// 1
+// 2
+// 3
+```
+
+En este caso, el valor `'fin'` que se retorna al final de la función generadora no se imprime ni se procesa dentro del ciclo `for...of`. Para acceder al valor de retorno final, tendrías que llamar al método `.next()` manualmente y verificar el valor devuelto en el objeto `{ value, done }` una vez que la iteración haya terminado.
+
+### Composición de generadores con `yield*`.
+
+La sintaxis `yield*` permite que una `función generadora` delegue la ejecución a otro generador, simplificando la composición de generadores y la creación de secuencias de valores complejas. Utilizando `yield*`, una `función generadora` puede producir todos los valores de otro generador sin necesidad de iterar manualmente sobre ellos.
+
+A continuación, se muestra la forma general de cómo utilizar `yield*`:
+
+```javascript
+function* nombreOtroGenerador() {
+
+  /* Cuerpo de la función generadora llamada nombreOtroGenerador */
+
+}
+
+function* nombreGeneradorPrincipal() {
+  // Ejecución antes de delegar
+
+  yield* nombreOtroGenerador(); // Delega la ejecución al generador `nombreOtroGenerador`
+
+  // Ejecución después de delegar
+}
+```
+
+Como se puede observar, `nombreGeneradorPrincipal` está compuesto por `nombreOtroGenerador`. Por lo tanto, el flujo de ejecución será el siguiente:
+
+1. El generador principal llamado `nombreGeneradorPrincipal` empieza a ejecutarse.
+
+2. Encuentra `yield* nombreOtroGenerador()`, por lo que delega la ejecución a `nombreOtroGenerador`.
+
+3. `nombreOtroGenerador` producirá valores `hasta completarse`.
+
+4. El control regresa al generador principal, que puede continuar con la ejecución restante después de `yield*`.
+
+#### Ejemplo sencillo de uso del operador `yield*`.
+
+A continuación veremos un ejemplo sencillo de como utilizar el operador `yield*`:
+
+```javascript
+// Generador para secuencia de números del 1 al 3
+function* numbers() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+// Generador para secuencia de letras de la 'a' a la 'c'
+function* letters() {
+  yield 'a';
+  yield 'b';
+  yield 'c';
+}
+
+// Generador principal que utiliza yield* para delegar en otros generadores
+function* combined() {
+  yield* numbers();  // Delegar la ejecución a numbers
+  yield* letters();  // Delegar la ejecución a letters
+}
+
+// Uso del generador combinado
+const combinedGenerator = combined();
+for (const value of combinedGenerator) {
+  console.log(value);
+}
+```
+
+Y esto va a imprimir lo siguiente:
+
+```
+1
+2
+3
+a
+b
+c
+```
+
+Y este comportamiento se debe a que:
+
+* En la función generadora `combined`, `yield* numbers();` delega la iteración a `numbers`. Esto significa que cuando `combined` es iterado, se generarán los valores `1, 2 y 3` tal como si fueran emitidos directamente por `combined`.
+
+* Similarmente, `yield* letters();` delega la iteración a `letters`. Después de que `combined` ha terminado de emitir los valores de `numbers`, continuará emitiendo los valores `'a', 'b' y 'c'` de `letters`.
+
+### Función generadora asíncrona mediante `async/await`.
+
+Las `funciones generadoras asíncronas` permiten combinar el poder de los generadores y las operaciones asíncronas en JavaScript. Podemos crear una función generadora asíncrona usando `async function*` de la siguiente forma general:
+
+```javascript
+async function* nombreGeneradorAsync(/* Parametros (opcional) */) {
+
+  /* Cuerpo de la función generadora asíncrona */
+
+}
+```
+
+De esta manera, dentro del cuerpo de la `función generadora asíncrona` vamos a poder hacer uso tanto del `await` para esperar a que las promesas se resuelva, como del `yield` para pausar la ejecución y devolver un resultado `envuelto en una promesa`. Generalmente, vamos a hacer un `yield await` de la siguiente forma general:
+
+```javascript
+async function* nombreGeneradorAsync(/* Parametros (opcional) */) {
+
+  /* Cuerpo antes del yield await */
+
+  yield await funcionQueRetornaPromesa();
+
+  /* Cuerpo después del yield await */
+}
+```
+
+Con esta sintaxis, estamos utilizando `await` para esperar a que `funcionQueRetornaPromesa()` complete su ejecución asíncrona. Una vez que la promesa se resuelve y obtenemos el resultado, `yield` devuelve ese resultado `envuelto en una promesa`.
+
+Obviamente dentro del cuerpo de la `nombreGeneradorAsync` podemos tener cualquier tipo de código, como pueden ser `ciclos` o también podemos tener un `try/catch` para manejar el caso en que la `funcionQueRetornaPromesa()` al hacerle `await funcionQueRetornaPromesa();` salte algún tipo de `excepción`. Esto ya dependerá de nuestras necesidades.
+
+<br />
+
+Ahora que entendimos como crear una `función generadora asíncrona`, estamos en condiciones para entender como utilizarla. De forma general se puede utilizar de la siguiente forma:
+
+```javascript
+async function* nombreGeneradorAsync(/* Parametros (opcional) */) {
+
+  /* Cuerpo antes del yield await */
+
+  yield await funcionQueRetornaPromesa();
+
+  /* Cuerpo después del yield await */
+}
+
+const nombreIteradorAsincrono = nombreGeneradorAsync();
+
+const { value, done } = await nombreIteradorAsincrono.next();
+```
+
+Notemos que, como el `yield` de la función generadora asíncrona `devuelve sus resultados envueltos en una promesa`, entonces al utilizar el método `.next()` del `objeto iterador`, entonces para acceder al valor tenemos que hacer `await nombreIteradorAsincrono.next();`. Es decir que la sintáxis es la misma que usabamos con `funciones generadores` simple, pero con la diferencia de que tendremos que hacer un `await` del método `.next()`.
+
+
+### Ejemplo sencillo.
+
+A continuación veremos un ejemplo sencillo de como crear una `función generadora asíncrona`:
+
+```javascript
+async function* readLinesAsync() {
+  const lines = [
+    "Línea 1: Hola mundo",
+    "Línea 2: Aprendiendo JavaScript",
+    "Línea 3: Generadores asíncronos",
+  ];
+
+  for (const line of lines) {
+    yield await new Promise(resolve => setTimeout(() => resolve(line), 1000)); // Espera 1 segundo y emite la línea
+  }
+}
+
+const readerAsync = readLinesAsync();
+
+console.log(await readerAsync.next()); // Imprime: "{ value: 'Línea 1: Hola mundo', done: false }" luego de 1 segundo
+
+console.log(await readerAsync.next()); // Imprime: "{ value: 'Línea 2: Aprendiendo JavaScript', done: false }" luego de 1 segundo
+
+console.log(await readerAsync.next()); // Imprime: "{ value: 'Línea 3: Generadores asíncronos', done: false }" luego de 1 segundo
+
+console.log(await readerAsync.next()); // Imprime: "{ value: undefined, done: true }"
+```
+
+#### El `for await...of` para iterar una función generadora asíncrona.
+
+JavaScript nos proporciona una sintáxis muy cómoda para iterar sobre `funciones generadoras asíncronas`, la cuál se llama `for await...of`, la cuál se usaría de la siguiete forma general:
+
+```javascript
+async function* nombreGeneradorAsync(/* Parametros (opcional) */) {
+
+  /* Cuerpo de la función generadora asíncrona */
+
+}
+
+for await (const nombreValor of nombreGeneradorAsync(/* Argumentos (opcional) */)) {
+
+  /* Cuerpo del for await...of */
+
+}
+```
+
+Y esta sintáxis del `for await...of` lo que hará será ir iterando sobre la `función generadora asíncrona` y, por cada promesa retornada por el `yield`, va a hacerle un `await` para obtener su valor y luego ejecutará el `Cuerpo del for await...of` para dicho valor obtenido. Notese entonces que esta iteración se hace de manera `secuencial` (es decir, una tras otra y NO en paralelo).
+
+Obviamente que tiene sentido hacer este tipo de iteración solamente si la `función generadora asíncrona` devuelve una cantidad `finita` de resultados, ya que sino estaríamos haciendo un `ciclo infinito`.
+
+La particularidad que tiene el `for await...of` es que cuando se obtenga una promesa que sea `rejected`, entonces saltará una excepción que impedirá seguir iterando. Por lo tanto, hay que utilizar el `try/catch` para poder manejar esta situción de la siguiente forma general:
+
+```javascript
+try {
+
+  for await (const nombreValor of nombreGeneradorAsync(/* Argumentos (opcional) */)) {
+
+    /* Cuerpo del for await...of */
+
+  }
+
+} catch (error) {
+
+  /* Cuerpo del catch para manejar el error. */
+
+}
+```
+
+También es posible utilizar el `try/catch/finally` si nos fuese necesario.
+
+<br />
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+async function* readLinesAsync() {
+  const lines = [
+    "Línea 1: Hola mundo",
+    "Línea 2: Aprendiendo JavaScript",
+    "Línea 3: Generadores asíncronos",
+  ];
+
+  for (const line of lines) {
+    yield await new Promise(resolve => setTimeout(() => resolve(line), 1000)); // Espera 1 segundo y emite la línea
+  }
+}
+
+for await (const line of readLinesAsync()) {
+  console.log(line);
+}
+```
+
+Y esto va a imprimir lo siguiente:
+
+```
+Línea 1: Hola mundo
+Línea 2: Aprendiendo JavaScript
+Línea 3: Generadores asíncronos
+```
+
+Donde cada línea se va a imprimir luego de 1 segundo.
+
+### Ventajas de la función generadora.
+
+A continuación voy a citar las ventajas del uso de `funciones generadoras`:
+
+* `Iteración de Datos de Forma Eficiente`: Las funciones generadoras permiten crear iteradores personalizados que generan valores sobre la marcha. Esto es útil cuando necesitas procesar datos secuencialmente y no quieres cargar todos los datos en memoria a la vez. Por ejemplo, puedes generar una secuencia de números, leer líneas de un archivo grande, o recibir datos de una fuente en tiempo real sin consumir mucha memoria.
+
+* `Mejor Manejo de Recursos`: Al generar valores bajo demanda, las funciones generadoras permiten un manejo más eficiente de recursos. Esto es especialmente beneficioso cuando trabajas con grandes conjuntos de datos o flujos continuos de información, ya que puedes procesar los datos en trozos pequeños en lugar de cargar todo en memoria. Es esta característica la que nos permite tener una secuencia `infinita` de valores generados bajo demanda.
+
+* `Soporte para Iteración Asíncrona`: Cuando se combinan con funciones generadoras asíncronas (`async function*`), los generadores permiten manejar flujos de datos asíncronos de manera intuitiva. Puedes usar `yield` junto con `await` para esperar a que se resuelvan promesas y emitir valores secuenciales, lo que simplifica la escritura de código que maneja datos que llegan de manera asincrónica.

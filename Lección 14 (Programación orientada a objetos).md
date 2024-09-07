@@ -907,6 +907,10 @@ console.log(rectangle.width); // 909090
 rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
 ```
 
+## Métodos asíncronos de clase.
+
+COMPLETAR.
+
 ## Herencia de clases.
 
 La `herencia` consiste en que una `clase hija` obtenga los métodos y atributos que contine la `clase padre`, pero que a su vez pueda contener sus propios atributos y métodos. Se puede pensar como que la `clase hija` es una extensión de la `clase padre`, ya que tiene los métodos y atributos de la clase padre más los suyos propios. 
@@ -1453,7 +1457,3 @@ Notemos que podemos utilizar los métodos y atributos estáticos para llevar un 
 Esto es útil cuando queremos realizar un seguimiento de datos o acciones a nivel de clase, en lugar de a nivel de instancia. Además, los métodos estáticos proporcionan utilidades y funcionalidades que no dependen del estado de una instancia particular, sino que son relevantes para la clase en su conjunto.
 
 En resumen, los métodos y atributos estáticos son una parte esencial de la programación orientada a objetos en JavaScript y nos permiten diseñar clases más flexibles, modulares y fáciles de mantener.
-
-## Inner Class.
-
-COMPLETAR
