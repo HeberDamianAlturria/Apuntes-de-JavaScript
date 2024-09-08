@@ -490,7 +490,7 @@ class NombreDeLaClase {
 }
 ```
 
-Al igual que como sucede con la funciones convencionales, los `métodos` pueden tener o NO parámetros y también pueden retornar o NO algún valor.
+Al igual que como sucede con la funciones convencionales, los `métodos` pueden tener o NO parámetros y también pueden retornar o NO algún valor. La particularidad que tienen los `métodos` es que pueden acceder a los `atributos` y a `los otros métodos` que hemos definido en la `clase` que los contienen.
 
 Y notemos que luego podríamos utilizar el método de la siguiente forma general:
 
@@ -909,7 +909,157 @@ rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
 
 ## Métodos asíncronos de clase.
 
-COMPLETAR.
+También una clase puede contener `métodos asíncronos` definidos mediante el uso del `async/await` de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+
+  async nombreDelMetodoAsync(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método asíncrono */
+
+  }
+
+  /* Otros métodos de la clase. */
+
+}
+```
+
+Un `método asíncrono` tiene el mismo comportamiento que una `función asíncrona`; esto significa que el `método asíncrono` al ser definido con la palabra clave `async`, entonces `siempre devuelve una promesa`, y además puede utilizar el `await` dentro del cuerpo de dicho `método asíncrono` para esperar a que se resuelvan otras promesas. La particularidad del `método asíncrono` es que puede acceder a los atributos y a los demás métodos que hemos definido dentro de la `clase` que lo contiene.
+
+<br />
+
+Notemos que luego podríamos utilizar el `método asíncrono` de la siguiente forma general:
+
+```javascript
+const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+// En caso de que el método NO retorne ningún valor.
+await instanciaDeClase.nombreDelMetodo(/* Valores */);
+
+// En caso de que el método SI retorne un valor.
+const valorRetornado = await instanciaDeClase.nombreDelMetodo(/* Valores */);
+```
+
+Dado que un `método asíncrono siempre retorna una promesa`, debemos usar `await` para acceder a su resultado. 
+
+También puede ser que el `método asíncrono` sea `rejected` y, por ende, lance un error mediante un `throw`, por lo que en ese caso debemos usar el `try/catch` de la siguiente forma general para manejar el error:
+
+```javascript
+const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
+
+// En caso de que el método NO retorne ningún valor.
+try {
+  await instanciaDeClase.nombreDelMetodo(/* Valores */);
+} catch (error) {
+  /* Cuerpo del catch para manejar el error */
+}
+
+// En caso de que el método SI retorne un valor.
+try {
+  const valorRetornado = await instanciaDeClase.nombreDelMetodo(/* Valores */);
+} catch (error) {
+  /* Cuerpo del catch para manejar el error */
+}
+```
+
+Y, si nos fuese necesario, podríamos en utilizar el `try/catch/finally`.
+
+### Ejemplo de método asíncrono en una clase.
+
+A continuación veremos un ejemplo interesante de como utilizar lo `métodos asíncronos` para crear una clase encargada de administrar logs:
+
+```javascript
+import fs from "fs/promises";
+
+class EventLogger {
+  #filePath;
+
+  constructor(filePath) {
+    this.#filePath = filePath;
+  }
+
+  // Creo un getter para obtener el path del archivo.
+  get filePath() {
+    return this.#filePath;
+  }
+
+  // Agrega un nuevo evento al archivo
+  async logEvent(eventMessage) {
+    const timestamp = new Date().toISOString();
+    const event = `${timestamp} - ${eventMessage}\n`;
+
+    try {
+      // Escribe los eventos acumulados en el archivo
+      await fs.writeFile(this.#filePath, event, { flag: "a" }); // 'a' para append
+    } catch (error) {
+      console.error("Error al registrar el evento: ", error);
+    }
+  }
+
+  // Retorna la Lista de todos los eventos almacenados en el archivo
+  async getListEvents() {
+    try {
+      const data = await fs.readFile(this.#filePath, "utf8");
+
+      return data.split("\n").filter(Boolean); // Elimina las líneas vacías
+    } catch (error) {
+      console.error("Error al leer los eventos: ", error);
+    }
+
+    return [];
+  }
+
+  // Limpiar eventos almacenados.
+  async clearEvents() {
+    try {
+      await fs.writeFile(this.#filePath, "", { flag: "w" }); // Borrar datos del archivo
+      console.log("Eventos limpiados.");
+    } catch (error) {
+      console.error("Error al limpiar los eventos: ", error);
+    }
+  }
+}
+
+// Ejemplo de uso
+
+// Crea una instancia de EventLogger
+const logger = new EventLogger("eventos.log");
+
+// Registra algunos eventos
+await logger.logEvent("Usuario inició sesión");
+await logger.logEvent("Usuario hizo clic en el botón de compra");
+
+// Lista los eventos registrados
+console.log(await logger.getListEvents());
+/*
+  Imprime:
+  [
+    '2021-09-21T21:00:00.000Z - Usuario inició sesión',
+    '2021-09-21T21:01:00.000Z - Usuario hizo clic en el botón de compra'
+  ]
+*/
+
+await logger.clearEvents(); // Imprime: Eventos limpiados.
+
+// Lista los eventos después de limpiar
+console.log(await logger.getListEvents()); // Imprime: []
+
+console.log(logger.filePath); // Imprime: eventos.log
+```
+
+Este código define una clase `EventLogger` que registra eventos en un archivo, los lista y los limpia. Aquí explico brevemente los puntos más importantes de esta clase:
+
+1. **Campo privado `#filePath`**: La ruta del archivo donde se almacenan los eventos es un campo privado, accesible solo dentro de la clase. Dicho campo también posee un `getter` que me permite acceder al valor fuera de la clase, sin embargo no posee un `setter` ya que no quería que sea modificado.
+
+2. **Método asíncrono `logEvent`**: Registra un evento en el archivo con un timestamp. Se añade el evento al final del archivo sin sobrescribir los eventos anteriores.
+
+3. **Método asíncrono `getListEvents`**: Lee el archivo, devuelve los eventos como un array de líneas, filtrando las vacías.
+
+4. **Método asíncrono `clearEvents`**: Limpia todos los eventos, sobrescribiendo el archivo con un contenido vacío.
+
+5. **Uso**: Se puede registrar eventos, listarlos y limpiarlos, manejando posibles errores durante las operaciones de archivo.
 
 ## Herencia de clases.
 

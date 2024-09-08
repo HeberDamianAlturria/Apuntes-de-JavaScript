@@ -7,3 +7,5 @@
 *.mjs
 
 package.json
+
+*.log
