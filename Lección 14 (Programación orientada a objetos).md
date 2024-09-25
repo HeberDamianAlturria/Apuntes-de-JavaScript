@@ -936,10 +936,10 @@ Notemos que luego podríamos utilizar el `método asíncrono` de la siguiente fo
 const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
 
 // En caso de que el método NO retorne ningún valor.
-await instanciaDeClase.nombreDelMetodo(/* Valores */);
+await instanciaDeClase.nombreDelMetodoAsync(/* Valores */);
 
 // En caso de que el método SI retorne un valor.
-const valorRetornado = await instanciaDeClase.nombreDelMetodo(/* Valores */);
+const valorRetornado = await instanciaDeClase.nombreDelMetodoAsync(/* Valores */);
 ```
 
 Dado que un `método asíncrono siempre retorna una promesa`, debemos usar `await` para acceder a su resultado. 
@@ -951,14 +951,14 @@ const instanciaDeClase = new NombreDeLaClase(/* Valores constructor */);
 
 // En caso de que el método NO retorne ningún valor.
 try {
-  await instanciaDeClase.nombreDelMetodo(/* Valores */);
+  await instanciaDeClase.nombreDelMetodoAsync(/* Valores */);
 } catch (error) {
   /* Cuerpo del catch para manejar el error */
 }
 
 // En caso de que el método SI retorne un valor.
 try {
-  const valorRetornado = await instanciaDeClase.nombreDelMetodo(/* Valores */);
+  const valorRetornado = await instanciaDeClase.nombreDelMetodoAsync(/* Valores */);
 } catch (error) {
   /* Cuerpo del catch para manejar el error */
 }
