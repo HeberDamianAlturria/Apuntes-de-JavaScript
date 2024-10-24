@@ -497,31 +497,6 @@ También se pueden concatenar varios arreglos de la siguiente forma general:
 const arregloResultante = ARRAY_1.concat(ARRAY_2, ARRAY_3, ..., ARRAY_N);
 ```
 
-## Como clonar un array.
-
-Queremos evitar el `aliasing` a la hora de clonar un array. Para lograrlo, tenemos que hacer un `deep clone`, lo que significa que debemos copiar en nueva memoria no solamente al arreglo, sino a cada elemento que compone al arreglo como pueden ser `otros arreglos internos u objectos`. Así que para hacer un `deep clone`, recomiendo hacerlo de la siguiente forma general:
-
-```javascript
-const deepCloneArray = JSON.parse(JSON.stringify(ARRAY));
-```
-
-A continuación veremos un ejemplo de como esto se hace:
-
-```javascript
-const nestedArray = [1, [2], 3, { hola: "mundo" }];
-const arrayCopy = JSON.parse(JSON.stringify(nestedArray));
-
-arrayCopy[1][0] = 2000;
-arrayCopy[3].hola = "Adios";
-
-console.log(arrayCopy); // Imprime [ 1, [ 2000 ], 3, { hola: 'Adios' } ]
-console.log(nestedArray); // Imprime [ 1, [ 2 ], 3, { hola: 'mundo' } ]
-```
-
-`Importante:` Cabe mencionar que esto funcionará especialmente para arreglos que tengan un formato de tipo JSON. Si no tiene este formato, entonces recomiendo buscar otra alternativa, ya que puede que algunos valores cambien.
-
-`OTRO DATO IMPORTANTE:` recomiendo hacer un `deep clone` únicamente si necesitamos crear una copia de un arreglo para modificarla sin modificar el arreglo original. En otros casos, recomiendo utilizar otra alternativa como puede ser el `spread operator`, ya que hacer `JSON.parse(JSON.stringify(ARRAY))` es muy costoso computacionalmente.
-
 ## Operador Spread para arreglos.
 
 El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para arreglos.
@@ -530,16 +505,16 @@ El operador `spread` es utilizado para expandir los elementos de un `arreglo`. S
 
 A continuación veremos una serie de usos que podemos darle al operador `spread`:
 
-### Utilizando el operador Spread para copiar un arreglo.
+### Utilizando el operador Spread para copiar superficial de un arreglo.
 
-Notemos que nosotros podemos utilizar el operado `spread` para crear un nuevo arreglo utilizando los elementos de otro arreglo. Esto se ve de la siguiente forma general:
+Podemos utilizar el operado `spread` para crear una `copia superficial` de un arreglo. Esto se ve de la siguiente forma general:
 
 ```javascript
 const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
 const nuevoArreglo = [...ARRAY]; // Equivale a [ELEM_1, ELEM_2, /*...*/, ELEM_n]
 ```
 
-Es decir, hemos creado un `nuevoArreglo` en función de los elementos del `ARRAY`. Esto funciona a la perfección si `todos los elementos del ARRAY` son `tipos primitivos`.
+Es decir, hemos creado un `nuevoArreglo` en función de los elementos del `ARRAY`. Esto funciona a la perfección si `todos los elementos del ARRAY` son `tipos primitivos`, es por eso que decirmos que es una `copia superficial`. Sin embargo, si el `ARRAY` tiene elementos `no primitivos`, entonces vamos a tener problemas de `aliasing` (que veremos más adelante).
 
 Veamos a continuación un ejemplo de como esto funciona bien:
 
@@ -801,6 +776,8 @@ let [VARIABLE_1, VARIABLE_2 /*...*/, , VARIABLE_i, ...RESTO_ARRAY] = ARRAY;
 
 Básicamente, lo que estará sucediendo en este caso es que `VARIABLE_1 = ELEM_1, VARIABLE_2 = ELEM_2, ..., VARIABLE_i = ELEM_i` (lo mismo pasa para las constantes), y finalmente a los elementos que restan del `ARRAY` los asignamos como un arreglo a el `RESTO_ARRAY` resultando en que `RESTO_ARRAY = [ELEM_i, ELEM_(i+1), /*...*/, ELEM_n]`. `IMPORTANTE:` el `operador rest` siempre `va a ir al final`.
 
+Cabe mencionar que el `RESTO_ARRAY` será una `copia superficial` de los elementos que no se asignaron a las `variables/constantes`, por lo que si los elementos del `ARRAY` son `no primitivos`, entonces vamos a tener problemas de `aliasing`.
+
 A continuación veremos un ejemplo sencillo:
 
 ```javascript
@@ -835,6 +812,128 @@ let a = 1,
 console.log(a); // Imprime 2000
 console.log(b); // Imprime 1
 ```
+
+
+## Como clonar un array.
+
+### Entendiendo el problema.
+
+Cuando queremos clonar un `array`, debemos tener en cuenta que si hacemos una asignación directa de un `array` a otro, entonces ambos `arrays` van a apuntar a la misma posición de memoria, lo que significa que si modificamos un `array`, entonces el otro `array` también se verá modificado. Esto se conoce como `aliasing`.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const arreglo = [1, 2, 3, 4, 5];
+const copiaArreglo = arreglo;
+
+copiaArreglo[0] = 1000;
+
+console.log(arreglo); // Imprime [1000, 2, 3, 4, 5]
+console.log(copiaArreglo); // Imprime [1000, 2, 3, 4, 5]
+```
+
+En este ejemplo vemos que si modificamos `copiaArreglo`, entonces también se modifica `arreglo`. Esto es un problema que queremos evitar.
+
+### Copia superficial.
+
+Para evitar el `aliasing` a la hora de clonar un `array`, podemos hacer una `copia superficial`. Las `copias superficiales` funcionan perfectamente si `todos los elementos` del `array` son de `tipo primitivo`. Hay muchas manera de hacer `copias superficiales`, pero la más común es utilizando el `spread operator`. Esto se hace de la siguiente forma general:
+
+```javascript
+const copiaArreglo = [...ARREGLO];
+```
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const arreglo = [1, 2, 3, 4, 5];
+const copiaArreglo = [...arreglo];
+
+copiaArreglo[0] = 1000;
+
+console.log(arreglo); // Imprime [1, 2, 3, 4, 5]
+console.log(copiaArreglo); // Imprime [1000, 2, 3, 4, 5]
+```
+
+En este caso, si modificamos `copiaArreglo`, entonces no se modifica `arreglo`. Esto es debido a que hemos hecho una `copia superficial` de `arreglo`.
+
+Sin embargo, las `copias superficiales` solamente funcionan si `todos los elementos` del `array` a copiar son de `tipo primitivo`. Si hay algún elemento que NO sea de `tipo primitivo`, entonces vamos a tener problemas de `aliasing`. A continuación veremos un ejemplo de este error:
+
+```javascript
+const arreglo = [1, [2], 3, { hola: "mundo" }];
+const copiaArreglo = [...arreglo];
+
+copiaArreglo[1][0] = 2000;
+copiaArreglo[3].hola = "Adios";
+
+console.log(arreglo); // Imprime [1, [2000], 3, {hola: "Adios"}]
+console.log(copiaArreglo); // Imprime [1, [2000], 3, {hola: "Adios"}]
+```
+
+En este caso, si modificamos `copiaArreglo`, entonces también se modifica `arreglo`. Esto es debido a que hemos hecho una `copia superficial` de `arreglo` y algunos de los elementos de `arreglo` no son de `tipos primitivos`.
+
+### Copia profunda.
+
+Si queremos hacer una copia de un `array` que tenga elementos que NO sean de `tipo primitivo`, entonces debemos hacer una `copia profunda` para evitar problemas de `aliasing`. Las `copias profundas` son más complicadas de hacer y son más costosas computacionalmente que las `copias superficiales`. Sin embargo, las `copias profundas` son necesarias si queremos evitar el `aliasing` en `arrays` que tengan elementos que no sean de `tipo primitivo`. 
+
+La idea de las `copias profundas` es duplicar no solo el arreglo en sí, sino también cada uno de los objetos o elementos tanto primitivos como no primitivos que contiene. Esto significa que cualquier cambio que se haga a los elementos de la copia no afectará a los elementos del original y viceversa, eliminando el problema del aliasing.
+
+Hay dos maneras muy conocidas de hacer `copias profundas` de un `array`:
+
+#### Utilizando el JSON.parse(JSON.stringify(ARRAY)).
+
+La manera más común de hacer una `copia profunda` de un `array` es utilizando el `JSON.parse(JSON.stringify(ARRAY))`. Esto se hace de la siguiente forma general:
+
+```javascript
+const deepCloneArray = JSON.parse(JSON.stringify(ARRAY));
+```
+
+Lo que estamos haciendo aquí es convertir el `ARRAY` a un `string` utilizando `JSON.stringify(ARRAY)`, luego convertimos ese `string` a un `objeto` utilizando `JSON.parse(STRING)` y finalmente asignamos ese `objeto` a `deepCloneArray`. Esto va a hacer una `copia profunda` de `ARRAY`.
+
+`Importante:` Cabe mencionar que esto funcionará especialmente para arreglos que tengan un formato de tipo `JSON`. Si no tiene este formato, entonces recomiendo buscar otra alternativa, ya que puede que algunos valores cambien. Además, esta manera de hacer `copias profundas` es muy costosa computacionalmente.
+
+A continuación veremos un ejemplo de como esto se hace:
+
+```javascript
+const nestedArray = [1, [2], 3, { hola: "mundo" }];
+const arrayCopy = JSON.parse(JSON.stringify(nestedArray));
+
+arrayCopy[1][0] = 2000;
+arrayCopy[3].hola = "Adios";
+
+console.log(arrayCopy); // Imprime [ 1, [ 2000 ], 3, { hola: 'Adios' } ]
+console.log(nestedArray); // Imprime [ 1, [ 2 ], 3, { hola: 'mundo' } ]
+```
+
+Como se puede observar, si modificamos `arrayCopy`, entonces no se modifica `nestedArray`. Esto es debido a que hemos hecho una `copia profunda` de `nestedArray`.
+
+#### Utilizando la función structuredClone(). La mejor solución.
+
+La otra manera de hacer una `copia profunda` de un `array` es utilizando la función `structuredClone()`. Esta función se utiliza de la siguiente forma general:
+
+```javascript
+const deepCloneArray = structuredClone(ARRAY);
+```
+
+Lo que estamos haciendo aquí es simplemente llamando a la función `structuredClone()` y pasándole como argumento el `ARRAY` que queremos clonar. Esto va a hacer una `copia profunda` de `ARRAY`. Además, tiene la ventaja de que puede realizar copias profundas de tantos niveles como sea necesario.
+
+Sin embargo, esta función tiene algunas limitaciones, como que `NO puede clonar funciones ni métodos` y que `NO puede clonar elementos DOM`.
+
+`Importante`: Esta solución es la mejor para hacer `copias profundas` de `arrays` que tengan elementos que no sean de `tipo primitivo`. Además, es mucho más eficiente que la solución anterior. Recomiendo utilizar esta solución siempre que sea posible.
+
+A continuación veremos un ejemplo de como esto se hace:
+
+```javascript
+const nestedArray = [1, [2], 3, { hola: "mundo" }];
+const arrayCopy = structuredClone(nestedArray);
+
+arrayCopy[1][0] = 2000;
+arrayCopy[3].hola = "Adios";
+
+console.log(arrayCopy); // Imprime [ 1, [ 2000 ], 3, { hola: 'Adios' } ]
+console.log(nestedArray); // Imprime [ 1, [ 2 ], 3, { hola: 'mundo' } ]
+```
+
+Como se puede observar, si modificamos `arrayCopy`, entonces no se modifica `nestedArray`. Esto es debido a que hemos hecho una `copia profunda` de `nestedArray`.
 
 ## Arreglos multidimensionales.
 
@@ -1058,7 +1157,7 @@ const valorbooleano = ARRAY.includes(VALOR_PRIMITIVO);
 
 Este método lo que hará será iterar el `ARRAY` y verá si se cumple que algún elemento del arreglo es igual (mediante el operador `===`) al `VALOR_PRIMITIVO`.
 
-`IMPORTANTE`: solamente debemos utilizar este método para vert si el `ARRAY` contiene algún valor del `tipo primitivo`, ya que al hacer uso del `===` para la comparación entonces `NO` funcionará para `tipos complejos`.
+`IMPORTANTE`: solamente debemos utilizar este método para ver si el `ARRAY` contiene algún valor del `tipo primitivo`, ya que al hacer uso del `===` para la comparación entonces `NO` funcionará para `tipos complejos`.
 
 A continuación veremos un ejemplo de como se usa:
 
@@ -1082,12 +1181,22 @@ const subArray = ARRAY.slice(INDICE_INICIAL, INDICE_FINAL);
 
 Y esto lo que hará será devolver un subArray que estará conformado por los elementos del `ARRAY` desde el `INDICE_INICIAL` hasta el `INDICE_FINAL - 1` (es decir, hasta el `INDICE_FINAL` no incluido). Notemos que el `INDICE_FINAL` es opcional, ya que por defecto tendrá el valor de `ARRAY.length`.
 
+El subArray es una `copia superficial` de los elementos del `ARRAY`, por lo que si modificamos el subArray, no se verán reflejados los cambios en el `ARRAY` original. Sin embargo, si el `ARRAY` tiene elementos `no primitivos`, entonces se generará `aliasing` entre los elementos del `ARRAY` y del `subArray`. Si quisieramos evitar esto, entonces deberíamos hacer una `copia profunda` del `ARRAY` de la siguiente forma general:
+
+```javascript
+const subArray = structuredClone(ARRAY.slice(INDICE_INICIAL, INDICE_FINAL));
+```
+
 A continuación veremos algunos ejemplos:
 
 ```javascript
 const arreglo = ["Apple", "Banana", "Kiwi", "Orange"];
 
 console.log(arreglo.slice(1, 3)); // Imprime ["Banana", "Kiwi"]
+
+console.log(arreglo.slice(2)); // Imprime ["Kiwi", "Orange"]
+
+console.log(arreglo.slice()); // Imprime ["Apple", "Banana", "Kiwi", "Orange"]
 ```
 
 #### Ejemplo visual de como funciona con índices positivos
@@ -1199,7 +1308,7 @@ El método filter es utilizado para filtrar elementos de un array bajo cierto cr
 const nuevoArreglo = ARRAY.filter((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // valor booleano que define si filtrar o no.
+  return VALOR_BOOLEANO; // valor booleano que define si filtrar o no.
 });
 ```
 
@@ -1225,7 +1334,7 @@ El método find es utilizado para encontrar `el primer elemento` de un array que
 const elementoSatisfaceCondicion = ARRAY.find((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // valor booleano que define si el elemento satisface la condición.
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
 });
 ```
 
@@ -1249,7 +1358,7 @@ El método `findIndex` funciona exactamente igual al `find`, pero en lugar de de
 const indexElementoSatisfaceCondicion = ARRAY.findIndex((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // valor booleano que define si el elemento satisface la condición.
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
 });
 ```
 
@@ -1273,7 +1382,7 @@ El método `some` funciona de una manera similar a los dos anteriores. Lo que ha
 const existeElementoSatisfaceCondicion = ARRAY.some((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // valor booleano que define si el elemento satisface la condición.
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
 });
 ```
 
@@ -1297,7 +1406,7 @@ El método `every` es similar al `some`, solamente que va a retornar `true` si `
 const todolementoSatisfaceCondicion = ARRAY.every((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // valor booleano que define si el elemento satisface la condición.
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
 });
 ```
 
@@ -1321,7 +1430,7 @@ El método `map` sirve para transformar todos los elementos de un arreglo en otr
 const arregloCambiado = ARRAY.map((elemento, indice) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // nuevo valor que tendrá el elemento.
+  return NUEVO_VALOR; // nuevo valor que tendrá el elemento.
 });
 ```
 
@@ -1365,7 +1474,7 @@ El método `reduce` es utilizado para iterar un arreglo y reducirlo a un único 
 const valorObtenido = ARRAY.reduce((valorAcumulado, elemento) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // nuevo valor que tendrá el valorAcumulado para la siguiente iteración.
+  return NUEVO_VALOR_ACUMULADO; // nuevo valor que tendrá el valorAcumulado para la siguiente iteración.
 }, VALOR_INICIAL);
 ```
 
@@ -1465,7 +1574,11 @@ En las últimas versiones de `EcmaSCRIPT` se ha añadido el método `toReversed(
 const reversedArray = ARRAY.toReversed();
 ```
 
-Al momento de escribir este apunte, este método es muy nuevo y no es soportado por todos los navegadores pero si por las últimas versiones de `NodeJS`.
+Cabe mencionar que este método hará una `copia superficial` de los elementos del `ARRAY` y los va a devolver en orden inverso. En caso de que el `ARRAY` tenga elementos `no primitivos`, entonces se generará `aliasing` entre los elementos del `ARRAY` y del `reversedArray`. Si quisieramos evitar esto, entonces deberíamos hacer una `copia profunda` del `ARRAY` de la siguiente forma general:
+
+```javascript
+const reversedArray = structuredClone(ARRAY.toReversed());
+```
 
 A continuación veremos un ejemplo sencillo:
 
@@ -1490,7 +1603,7 @@ const ARRAY = [ELEM_1, ELEM_2 /*...*/, , ELEM_n];
 ARRAY.sort((ELEM_I, ELEM_J) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // Un valor numérico.
+  return VALOR_NUMERICO; // Un valor numérico que define el orden.
 });
 ```
 
@@ -1602,11 +1715,21 @@ Este método también es muy moderno al momento de escribir este apunte, por lo 
 const sortedArray = ARRAY.toSorted((ELEM_I, ELEM_J) => {
   /* Cuerpo de la función (opcional) */
 
-  return; // Un valor numérico.
+  return VALOR_NUMERICO; // Un valor numérico que define el orden.
 });
 ```
 
 Y lo que hará será devolver un `nuevo arreglo` donde los elementos del `ARRAY` van a estar ya ordenados. La ventaja es que no me modifica el `arreglo original`.
+
+Cabe mencionar que este método va a retornar una `copia superficial` de los elementos del `ARRAY` y los va a devolver en orden. En caso de que el `ARRAY` tenga elementos `no primitivos`, entonces se generará `aliasing` entre los elementos del `ARRAY` y del `sortedArray`. Si quisieramos evitar esto, entonces deberíamos hacer una `copia profunda` del `ARRAY` de la siguiente forma general:
+
+```javascript
+const sortedArray = structuredClone(ARRAY.toSorted((ELEM_I, ELEM_J) => {
+  /* Cuerpo de la función (opcional) */
+
+  return VALOR_NUMERICO; // Un valor numérico que define el orden.
+}));
+```
 
 A continuación veremos un ejemplo:
 
