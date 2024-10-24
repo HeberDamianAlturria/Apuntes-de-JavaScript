@@ -326,56 +326,6 @@ console.log("favorite animes" in personalInfo); // Imprime true
 console.log("jaja" in personalInfo); // Imprime false
 ```
 
-## Copiando un objeto.
-
-### Introducción al problema.
-
-Notemos que los objetos al ser un `tipo no primitivo`, se asignan por `referencia`. Por consiguiente, si hacemos algo como:
-
-```javascript
-const persona1 = {
-  name: "Heber",
-  age: 22,
-};
-
-const persona2 = persona1; // Genera aliasing
-
-persona1.name = "Gokú";
-
-console.log(persona1); // Imprime { name: "Gokú", age: 22 }
-
-console.log(persona2); // Imprime { name: "Gokú", age: 22 }
-```
-
-Y el error radica en que al hacer `const persona2 = persona1;` genera que persona2 apunte a la misma dirección de memoria que `persona1`. Y por eso al cambiar el valor de `name` en `persona1`, también se ve reflejado el cambio en `persona2`.
-
-### Solución al problema.
-
-Lo que debemos hacer para resolver el problema antes mencionado es hacer una `copia profunda` del `objeto original`. Esto se hace de la siguiente forma general:
-
-```javascript
-const objetoCopiado = JSON.parse(JSON.stringify(OBJETO_ORIGINAL));
-```
-
-Esto genera que se cree una copia en nueva memoria del `OBJETO_ORIGINAL`. Esta copia es `profunda`, lo que significa que también se guardarán en nueva memoria los `tipos no primitivos` que haya en `OBJETO_ORIGINAL`.
-
-A continuación vamos a ver un ejemplo:
-
-```javascript
-const persona1 = {
-  name: "Heber",
-  age: 22,
-};
-
-const persona2 = JSON.parse(JSON.stringify(OBJETO_ORIGINAL));
-
-persona1.name = "Gokú";
-
-console.log(persona1); // Imprime { name: "Gokú", age: 22 }
-
-console.log(persona2); // Imprime { name: "Heber", age: 22 }
-```
-
 ## Comparar dos objeto.
 
 Debido al problema de que los objetos se asignan por `referencia`, entonces comparar dos objetos no es tan trivial como hacer `OBJETO_1 === OBJETO_2` ya que solamente estaríamos comparando si sus posiciones de memoria son iguales.
@@ -597,7 +547,7 @@ Notemos que podemos hacer una copia de un objeto de la siguiente forma general:
 const copiaObjeto = { ...OBJETO_ORIGINAL };
 ```
 
-Esto funcionará a la perfección si todos los `valores` del `OBJETO_ORIGINAL` son de `tipo primitivo`.
+Esto funcionará a la perfección si todos los `valores` del `OBJETO_ORIGINAL` son de `tipo primitivo`. Esto se debe a que estamos haciendo una `copia superficial` del objeto, lo que significa que si cambiamos el valor de una clave en `OBJETO_ORIGINAL`, entonces no se verá reflejado en `copiaObjeto`.
 
 A continuación veremos un ejemplo:
 
@@ -980,10 +930,23 @@ function nombreFuncion(objeto) {
 }
 ```
 
+`Importante`: Cabe mencionar que esta solución funcionará si a la función se le pasa un `objeto` como argumento, en caso contrario, si la función recibe como argumento `null` o `undefined` entonces el código se romperá. Esto quiere decir que si llamamos a la función de la siguiente manera: `nombreFunction()`, entonces el código se rompería. Si quisieramos que la función funcione por más que se le pase como argumento un `null` o un `undefined`, entonces deberíamos hacer lo siguiente:
+
+```javascript
+function nombreFuncion({keyI = VALOR_DEFECTO_I, /*...*/, keyJ = VALOR_DEFECTO_J} = {}) {
+
+  /* Cuerpo de la función */
+
+  // Return de la función.
+}
+```
+
+De esa manera, al llamar a la función como `nombreFuncion()`, entonces NO se romperá el código debido a que la función recibirá como argumento un objeto vacío. Esto genera que, al destructurar el objeto, se le asignarán los valores por defecto. Es decir que ahora llamar a la función de la siguiente manera: `nombreFuncion()`, es equivalente a llamarla de la siguiente manera: `nombreFuncion({})`.
+
 A continuación veremos un ejemplo sencillo de como esto se utiliza:
 
 ```javascript
-function sumar({ number1 = 0, number2 = 0, number3 = 0 }) {
+function sumar({ number1 = 0, number2 = 0, number3 = 0 } = {}) {
   return number1 + number2 + number3;
 }
 
@@ -1007,6 +970,8 @@ console.log(sumar(objeto1)); // Imprime 160
 console.log(sumar(objeto2)); // Imprime 30
 
 console.log(sumar(objeto3)); // Imprime 0
+
+console.log(sumar()); // Imprime 0
 ```
 
 #### Ejemplo un poco más complejo.
@@ -1038,6 +1003,130 @@ function App() {
 ```
 
 No es necesario que se entienda lo que hace este código, sino que lo importante es ver que podemos utilizarlo a la hora de utilizar otros `frameworks`.
+
+## Copiando un objeto.
+
+### Entendiendo el problema.
+
+Si hacemos una asignación directa de un `objeto` a otro, entonces lo que estamos haciendo es que ambos objetos apunten a la misma dirección de memoria, lo que significa que si modificamos un objeto entonces el otro también verá modificado. Esto se conoce como `aliasing` y es debido a que los `objetos` se asignan por `referencia`. 
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const persona1 = {
+  name: "Heber",
+  age: 22,
+};
+
+const persona2 = persona1; // Genera aliasing
+
+persona1.name = "Gokú";
+
+console.log(persona1); // Imprime { name: "Gokú", age: 22 }
+
+console.log(persona2); // Imprime { name: "Gokú", age: 22 }
+```
+
+Y el error radica en que al hacer `const persona2 = persona1;` genera que persona2 apunte a la misma dirección de memoria que `persona1`. Y por eso al cambiar el valor de `name` en `persona1`, también se ve reflejado el cambio en `persona2`.
+
+### Copia superficial de un objeto.
+
+Para evitar un `aliasing` entre dos objetos, entonces lo que podemos hacer es hacer una `copia superficial` de un objeto. Esto funciona perfectamente si todos los `valores` del `objeto` son de `tipo primitivo`. La manera más común de hacerlo es utilizando el `operador spread` y se hace de la siguiente forma general:
+
+```javascript
+const COPIA_OBJETO = { ...OBJETO_ORIGINAL };
+```
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const persona1 = {
+  name: "Heber",
+  age: 22,
+};
+
+const persona2 = { ...persona1 }; // Copia superficial
+
+persona1.name = "Gokú";
+
+console.log(persona1); // Imprime { name: "Gokú", age: 22 }
+
+console.log(persona2); // Imprime { name: "Heber", age: 22 }
+```
+
+Como podemos observar, al cambiar el valor de `name` en `persona1`, no se ve reflejado en `persona2`.
+
+### Copia profunda de un objeto.
+
+Aquí tienes una versión adaptada para objetos:
+
+---
+
+Si queremos hacer una copia de un `objeto` que contenga valores que `no sean de tipo primitivo` (como otros objetos o arrays), es necesario hacer una `copia profunda` para evitar problemas de `aliasing`. Las copias profundas son más complicadas de realizar y son más costosas en términos de rendimiento que las `copias superficiales`. Sin embargo, son esenciales para evitar el aliasing en objetos que contienen valores no primitivas. 
+
+La idea de las `copias profundas` es duplicar no solo el objeto en sí, sino también cada uno de valores tanto primitivos como no primitivos que contiene. Esto significa que cualquier cambio que se haga a los elementos de la copia no afectará a los elementos del original y viceversa, eliminando el problema del aliasing.
+
+Hay dos maneras muy conocidas de hacer `copias profundas` de un `array`:
+
+#### Usando JSON.stringify() y JSON.parse()
+
+La manera más sencilla de hacer una `copia profunda` de un `objeto` es convertirlo a un `string` con `JSON.stringify()` y luego convertirlo de nuevo a un `objeto` con `JSON.parse()`. Esto se hace de la siguiente forma general:
+
+```javascript
+const COPIA_OBJETO = JSON.parse(JSON.stringify(OBJETO_ORIGINAL));
+```
+
+Donde `OBJETO_ORIGINAL` es el objeto que queremos copiar y `COPIA_OBJETO` es la copia profunda del objeto original. Y esto funcionará perfectamente para cualquier tipo de objeto que sea un JSON válido.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const persona1 = {
+  name: "Heber",
+  age: 22,
+  favAnime: ["Death Note", "Monster", "Steins;gate"],
+};
+
+const persona2 = JSON.parse(JSON.stringify(persona1)); // Copia profunda
+
+persona1.favAnime.push("Evangelion");
+
+console.log(persona1); // Imprime { name: "Heber", age: 22, favAnime: ["Death Note", "Monster", "Steins;gate", "Evangelion"] }
+
+console.log(persona2); // Imprime { name: "Heber", age: 22, favAnime: ["Death Note", "Monster", "Steins;gate"] }
+```
+
+#### Usando la función structuredClone(). La mejor solución.
+
+La otra manera de hacer una `copia profunda` de un `objeto` es utilizando la función `structuredClone()`. Esta función se utiliza de la siguiente forma general:
+
+```javascript
+const COPIA_OBJETO = structuredClone(OBJETO_ORIGINAL);
+```
+
+Lo que estamos haciendo aquí es simplemente llamando a la función `structuredClone()` y pasándole como argumento el `OBJETO_ORIGINAL` que queremos clonar. Esto va a hacer una `copia profunda` de `OBJETO_ORIGINAL` y lo va a retornar. Además, tiene la ventaja de que puede realizar copias profundas de tantos niveles como sea necesario.
+
+Sin embargo, esta función tiene algunas limitaciones, como que `NO puede clonar funciones ni métodos` y que `NO puede clonar elementos DOM`.
+
+`Importante`: Esta solución es la mejor para hacer `copias profundas` de `objetos` que tengan elementos que no sean de `tipo primitivo`. Además, es mucho más eficiente que la solución anterior. Recomiendo utilizar esta solución siempre que sea posible.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const persona1 = {
+  name: "Heber",
+  age: 22,
+  favAnime: ["Death Note", "Monster", "Steins;gate"],
+};
+
+const persona2 = structuredClone(persona1); // Copia profunda
+
+persona1.favAnime.push("Evangelion");
+
+console.log(persona1); // Imprime { name: "Heber", age: 22, favAnime: ["Death Note", "Monster", "Steins;gate", "Evangelion"] }
+
+console.log(persona2); // Imprime { name: "Heber", age: 22, favAnime: ["Death Note", "Monster", "Steins;gate"] }
+```
 
 ## Métodos importantes sobre objetos.
 

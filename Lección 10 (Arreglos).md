@@ -818,7 +818,7 @@ console.log(b); // Imprime 1
 
 ### Entendiendo el problema.
 
-Cuando queremos clonar un `array`, debemos tener en cuenta que si hacemos una asignación directa de un `array` a otro, entonces ambos `arrays` van a apuntar a la misma posición de memoria, lo que significa que si modificamos un `array`, entonces el otro `array` también se verá modificado. Esto se conoce como `aliasing`.
+Si hacemos una asignación directa de un `array` a otro, entonces ambos `arrays` van a apuntar a la misma posición de memoria, lo que significa que si modificamos un `array`, entonces el otro `array` también se verá modificado. Esto se conoce como `aliasing` y es debido a que los `arrays` se asignan por `referencia`.
 
 A continuación veremos un ejemplo de esto:
 
@@ -873,7 +873,7 @@ En este caso, si modificamos `copiaArreglo`, entonces también se modifica `arre
 
 ### Copia profunda.
 
-Si queremos hacer una copia de un `array` que tenga elementos que NO sean de `tipo primitivo`, entonces debemos hacer una `copia profunda` para evitar problemas de `aliasing`. Las `copias profundas` son más complicadas de hacer y son más costosas computacionalmente que las `copias superficiales`. Sin embargo, las `copias profundas` son necesarias si queremos evitar el `aliasing` en `arrays` que tengan elementos que no sean de `tipo primitivo`. 
+Si queremos hacer una copia de un `array` que tenga elementos que NO sean de `tipo primitivo` (como objetos u otros arrays), entonces debemos hacer una `copia profunda` para evitar problemas de `aliasing`. Las `copias profundas` son más complicadas de hacer y son más costosas computacionalmente que las `copias superficiales`. Sin embargo, las `copias profundas` son necesarias si queremos evitar el `aliasing` en `arrays` que tengan elementos que no sean de `tipo primitivo`. 
 
 La idea de las `copias profundas` es duplicar no solo el arreglo en sí, sino también cada uno de los objetos o elementos tanto primitivos como no primitivos que contiene. Esto significa que cualquier cambio que se haga a los elementos de la copia no afectará a los elementos del original y viceversa, eliminando el problema del aliasing.
 
