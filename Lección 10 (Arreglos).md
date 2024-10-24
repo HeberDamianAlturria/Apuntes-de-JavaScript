@@ -1374,6 +1374,54 @@ const indiceResultado = arreglo.findIndex((word) => word.length <= 3);
 console.log(indiceResultado); // Imprime 2.
 ```
 
+### El método findLast().
+
+El método `findLast` funciona exactamente igual al `find`, pero en lugar de devolver el `primer elemento` que cumple la condición, va a devolver `el último elemento que cumple la condición`. Se utiliza de la siguiente forma general:
+
+```javascript
+const elementoSatisfaceCondicion = ARRAY.findLast((elemento, indice) => {
+  /* Cuerpo de la función (opcional) */
+
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+Básicamente, el `findLast` toma como argumento una función. Lo que `findLast` hará será iterar el `ARRAY` al revés y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces significa que el `elemento` ha cumplido la condición y se `devuelve dicho elemento como resultado del método`, en cambio si retorna `false` entonces se sigue iterando. Si ningún elemento cumple la condición, entonces va a retornar `undefined`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = [1, 2, 3, 5, 6, 7, 8];
+
+const mayorA3 = arreglo.findLast((numero) => numero > 3);
+
+console.log(mayorA3); // Imprime 8.
+```
+
+### El método findLastIndex().
+
+El método `findLastIndex` funciona exactamente igual al `findIndex`, pero en lugar de devolver el `índice del primer elemento` que cumple la condición, va a devolver `el índice del último elemento que cumple la condición`. Se utiliza de la siguiente forma general:
+
+```javascript
+const indexElementoSatisfaceCondicion = ARRAY.findLastIndex((elemento, indice) => {
+  /* Cuerpo de la función (opcional) */
+
+  return VALOR_BOOLEANO; // valor booleano que define si el elemento satisface la condición.
+});
+```
+
+Básicamente, el `findLastIndex` toma como argumento una función. Lo que `findLastIndex` hará será iterar el `ARRAY` al revés y por cada elemento va a llamar a la `función de callback` pasándole como argumento el `elemento` y la `posición del elemento en el arreglo`; si la función retorna `true`, entonces significa que el `elemento` ha cumplido la condición y se `devuelve el índice de dicho elemento como resultado del método`, en cambio si retorna `false` entonces se sigue iterando. Si ningún elemento cumple la condición, entonces el método `findLastIndex` va a retornar `-1`.
+
+A continuación veremos un ejemplo de como es que esto funciona:
+
+```javascript
+const arreglo = ["Hola", "Chau", "Sol", "Maincra"];
+
+const indiceResultado = arreglo.findLastIndex((word) => word.length <= 3);
+
+console.log(indiceResultado); // Imprime 2.
+```
+
 ### El método some().
 
 El método `some` funciona de una manera similar a los dos anteriores. Lo que hace es returnar `true` si `existe` elemento del `array` cumpla la condición. Se utiliza de la siguiente forma general:
@@ -1779,4 +1827,138 @@ console.log(Array.isArray(123)); // Imprime false.
 console.log(Array.isArray("asd")); // Imprime false.
 
 console.log(Array.isArray(["Hola", "mundo"])); // Imprime true.
+```
+
+### El método with().
+
+El método `with()` crea una copia superficial del array original, reemplazando el elemento en una posición específica por un nuevo valor, sin modificar el array original. Esto permite trabajar con inmutabilidad, manteniendo el estado del array original intacto y devolviendo una nueva versión del mismo con el cambio aplicado. Se utiliza de la siguiente forma general:
+
+```javascript
+const newArray = ARRAY.with(INDICE, NUEVO_VALOR);
+```
+
+Donde `INDICE` es la posición del elemento que se quiere reemplazar y `NUEVO_VALOR` es el nuevo valor que se quiere asignar en esa posición. Lo que hará este método es devolver un `nuevo arreglo` con el `NUEVO_VALOR` en la posición `INDICE` y los demás elementos serán los mismos que el `ARRAY` original. 
+
+Cabe mencionar que este método va a retornar una `copia superficial` de los elementos del `ARRAY` y los va a devolver con el `NUEVO_VALOR` en la posición `INDICE`. En caso de que el `ARRAY` tenga elementos `no primitivos`, entonces se generará `aliasing` entre los elementos del `ARRAY` y del `newArray`. Si quisieramos evitar esto, entonces deberíamos hacer una `copia profunda` del `ARRAY` de la siguiente forma general:
+
+```javascript
+const newArray = structuredClone(ARRAY.with(INDICE, NUEVO_VALOR));
+```
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const newArray = numbers.with(2, 1000);
+
+console.log(numbers); // Imprime [1, 2, 3, 4, 5]
+
+console.log(newArray); // Imprime [1, 2, 1000, 4, 5]
+```
+
+### El método splice().
+
+El método `splice()` es utilizado para modificar un `ARRAY` eliminando elementos existentes y/o agregando nuevos elementos. Se utiliza de la siguiente forma general:
+
+```javascript
+const elementosEliminados = ARRAY.splice(INDICE_INICIAL, CANTIDAD_A_ELIMINAR, ELEM_1, ELEM_2, ..., ELEM_n);
+```
+
+Donde `INDICE_INICIAL` es la posición en la que se va a empezar a modificar el `ARRAY`, `CANTIDAD_A_ELIMINAR` es la cantidad de elementos que se van a eliminar a partir de la posición `INDICE_INICIAL` (inclusive), y `ELEM_1, ELEM_2, ..., ELEM_n` son los elementos que se van a agregar en el `ARRAY` a partir de la posición `INDICE_INICIAL` (inclusive).
+
+Este método va a modificar el `ARRAY` original y va a devolver un `nuevo arreglo` con los elementos eliminados. Notemos que si no se quiere eliminar ningún elemento, entonces se debe pasar como argumento `0` en `CANTIDAD_A_ELIMINAR`.
+
+Cabe mencionar que este método es realmente una navaja suiza, ya que se puede utilizar para agregar elementos, eliminar elementos, o incluso para modificar elementos.
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const elementosEliminados = numbers.splice(2, 2, 1000, 2000, 3000);
+
+console.log(numbers); // Imprime [1, 2, 1000, 2000, 3000, 5]
+
+console.log(elementosEliminados); // Imprime [3, 4]
+```
+
+Notemos que en este caso se eliminaron los elementos `3` y `4` y se agregaron los elementos `1000`, `2000` y `3000`.
+
+#### El método toSpliced().
+
+El método `toSpliced()` es muy moderno al momento de escribir este apunte, por lo que muchos navegadores no le dan soporte, pero las últimas versiones de `NodeJS` si permiten utilizarlo. Se utiliza de la siguiente forma general:
+
+```javascript
+const newArray = ARRAY.toSpliced(INDICE_INICIAL, CANTIDAD_A_ELIMINAR, ELEM_1, ELEM_2, ..., ELEM_n);
+```
+
+Donde `INDICE_INICIAL` es la posición en la que se va a empezar a modificar el `ARRAY`, `CANTIDAD_A_ELIMINAR` es la cantidad de elementos que se van a eliminar a partir de la posición `INDICE_INICIAL` (inclusive), y `ELEM_1, ELEM_2, ..., ELEM_n` son los elementos que se van a agregar en el `ARRAY` a partir de la posición `INDICE_INICIAL` (inclusive). 
+
+Lo que hará este método es devolver un `nuevo arreglo` con los elementos modificados y el `ARRAY` original no se va a modificar. Es decir, que este método va a retornar una `copia superficial` de los elementos del `ARRAY` y los va a devolver con los elementos modificados. En caso de que el `ARRAY` tenga elementos `no primitivos`, entonces se generará `aliasing` entre los elementos del `ARRAY` y del `newArray`. Si quisieramos evitar esto, entonces deberíamos hacer una `copia profunda` del `ARRAY` de la siguiente forma general:
+
+```javascript
+const newArray = structuredClone(ARRAY.toSpliced(INDICE_INICIAL, CANTIDAD_A_ELIMINAR, ELEM_1, ELEM_2, ..., ELEM_n));
+```
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const newArray = numbers.toSpliced(2, 2, 1000, 2000, 3000);
+
+console.log(numbers); // Imprime [1, 2, 3, 4, 5]
+
+console.log(newArray); // Imprime [1, 2, 1000, 2000, 3000, 5]
+```
+
+#### Utilizando el método splice() o toSpliced() para agregar elementos.
+
+En caso de que se quiera agregar elementos en una posición específica del `ARRAY`, entonces se puede hacer de la siguiente forma general:
+
+```javascript
+// Utilizando el método splice().
+ARRAY.splice(INDICE_INICIAL, 0, ELEM_1, ELEM_2, ..., ELEM_n);
+
+// Utilizando el método toSpliced().
+const newArray = ARRAY.toSpliced(INDICE_INICIAL, 0, ELEM_1, ELEM_2, ..., ELEM_n);
+```
+
+Donde `INDICE_INICIAL` es la posición en la que se va a empezar a modificar el `ARRAY`, y `ELEM_1, ELEM_2, ..., ELEM_n` son los elementos que se van a agregar en el `ARRAY` a partir de la posición `INDICE_INICIAL` (inclusive). Notese que en ambos casos se pasa como argumento `0` en `CANTIDAD_A_ELIMINAR`.
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+numbers.splice(2, 0, 1000, 2000, 3000);
+
+console.log(numbers); // Imprime [1, 2, 1000, 2000, 3000, 3, 4, 5]
+```
+
+#### Utilizando el método splice() o toSpliced() para eliminar elementos.
+
+En caso de que se quiera eliminar elementos en una posición específica del `ARRAY`, entonces se puede hacer de la siguiente forma general:
+
+```javascript
+// Utilizando el método splice().
+const elementosEliminados = ARRAY.splice(INDICE_INICIAL, CANTIDAD_A_ELIMINAR);
+
+// Utilizando el método toSpliced().
+const newArray = ARRAY.toSpliced(INDICE_INICIAL, CANTIDAD_A_ELIMINAR);
+```
+
+Donde `INDICE_INICIAL` es la posición en la que se va a empezar a modificar el `ARRAY`, y `CANTIDAD_A_ELIMINAR` es la cantidad de elementos que se van a eliminar a partir de la posición `INDICE_INICIAL` (inclusive). Notese que en ambos casos se pasa como argumento la cantidad de elementos que se quieren eliminar, pero NO se pasan elementos a agregar.
+
+A continuación veremos un ejemplo de como se utiliza:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+const elementosEliminados = numbers.splice(2, 2);
+
+console.log(numbers); // Imprime [1, 2, 5]
+
+console.log(elementosEliminados); // Imprime [3, 4]
 ```
