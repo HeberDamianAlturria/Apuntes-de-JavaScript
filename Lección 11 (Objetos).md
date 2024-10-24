@@ -1493,3 +1493,58 @@ console.log(moviesByDirector);
   }
 */
 ```
+
+#### Hacer copias profundas de los objetos agrupados.
+
+Puede ser útil hacer copias profundas de los objetos agrupados para evitar problemas de `aliasing`. Para hacer esto, podemos utilizar la función `structuredClone()` que vimos anteriormente. Podemos lograrlo de la siguiente forma general:
+
+```javascript
+const ARRAY_OBJETOS = [
+  { key1: value1, key2: value2, /*...*/ },
+  { key1: value3, key2: value4, /*...*/ },
+  /*...*/
+  { key1: valueN, key2: valueM, /*...*/ },
+];
+
+const DEEP_COPY_OBJETO_AGRUPADO = structuredClone(Object.groupBy(ARRAY_OBJETOS, (objeto) => {
+  /* Cuerpo de la función callback */
+
+  return VALOR_KEY; // Debe retornar el valor de la key por la que se va a agrupar el objeto.
+}));
+```
+
+De esta manera, estamos haciendo una `copia profunda` de los objetos agrupados.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const movies = [
+  { title: "Inception", director: "Christopher Nolan", releaseYear: 2010 },
+  { title: "Interstellar", director: "Christopher Nolan", releaseYear: 2014 },
+  { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 },
+  { title: "The Dark Knight", director: "Christopher Nolan", releaseYear: 2008 },
+];
+
+const moviesByDirector = Object.groupBy(movies, (movie) => movie.director);
+
+const deepCopyMoviesByDirector = structuredClone(moviesByDirector);
+
+console.log(movies[2].title); // Imprime "The Matrix"
+
+console.log(moviesByDirector["Lana Wachowski"][0].title); // Imprime "The Matrix"
+
+console.log(deepCopyMoviesByDirector["Lana Wachowski"][0].title); // Imprime "The Matrix"
+
+
+/* Modifico el titulo de la pelicula "The Matrix" por "Dragon Ball Z" */
+
+moviesByDirector["Lana Wachowski"][0].title = "Dragon Ball Z";
+
+console.log(movies[2].title); // Imprime "Dragon Ball Z"
+
+console.log(moviesByDirector["Lana Wachowski"][0].title); // Imprime " Dragon Ball Z"
+
+console.log(deepCopyMoviesByDirector["Lana Wachowski"][0].title); // Imprime "The Matrix"
+```
+
+Como podemos observar, al modificar el título de la película "The Matrix" en el objeto `moviesByDirector`, también se ve reflejado en el objeto `movies`. Sin embargo, al hacer una copia profunda de los objetos agrupados, el cambio no se ve reflejado en la copia profunda.
