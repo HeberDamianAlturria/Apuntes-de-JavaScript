@@ -645,4 +645,116 @@ true && true && true && console.log("Hola"); // Imprime Hola
 
 Notemos que en el primer caso no imprime "Hola" ya que la expresión del medio es `false` y por lo tanto no evalúa la expresión `console.log("Hola")`, ya que apenas se topa con el `false` deja de evaluar lo que hay a su derecha y devuelve `false` para toda la expresión. En cambio, en el segundo caso imprime "Hola" ya que la expresión es `true` y por lo tanto evalúa la expresión `console.log("Hola")`.
 
+#### Caso de uso más común.
 
+El caso de uso más común es para retornar un valor por defecto en caso de que una condición sea `truthy`. Esto lo hacemos de la siguiente forma general:
+
+```javascript
+let nombreVariable = EXPRESION_QUE_PUEDE_SER_TRUTHY && VALOR_POR_DEFECTO;
+```
+
+De esa manera, si `EXPRESION_QUE_PUEDE_SER_TRUTHY` es `truthy`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `EXPRESION_QUE_PUEDE_SER_TRUTHY` es `falsy`, se le asignará a `nombreVariable` el valor `falsy` retornado por la `EXPRESION_QUE_PUEDE_SER_TRUTHY`.
+
+Esto se debe a que el operador `&&` va a devolver el valor de la expresión a su derecha si la expresión a su izquierda es `truthy`, pero si la expresión a su izquierda es `falsy`, entonces va a devolver el valor de la expresión a su izquierda (que será `falsy`).
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+let nombre = true && "valor por defecto";   // "valor por defecto"
+let nombre2 = "" && "valor por defecto";    // ""
+```
+
+<br />
+
+En `React` es muy común utilizar el operador `&&` para hacer un renderizado condicional de un componente. A continuación veremos un ejemplo de esto:
+
+```jsx
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => setCount(count + 1)}>Incrementar</button>
+      {count > 0 && <button onClick={() => setCount(count - 1)}>Decrementar</button>}
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+En este caso, el botón de decrementar solamente se va a mostrar si el valor de `count` es mayor a `0`, ya que si es `0` entonces la expresión `count > 0` es `false` y por lo tanto no se va a renderizar el botón de decrementar. Notemos que utilizamos el operador `&&` para hacer esto, ya que si `count > 0` es `false`, entonces la expresión será `false` y en React los valores `false`, `null`, `undefined` y `true` no se renderizan, por lo que no se va a renderizar nada, pero en caso de que sea `true` entonces se va a renderizar el botón de decrementar ya que el operador `&&` va a devolver el valor de la expresión a su derecha.
+
+### Operador lógico OR `||`.
+
+Supongamos que tenemos de forma general la siguiente expresión:
+
+```javascript
+EXPRESION_1 || EXPRESION_2 || ... || EXPRESION_I || ... || EXPRESION_N;
+```
+
+Supongamos que `EXPRESION_I` es `truthy` y que `EXPRESION_1`, `EXPRESION_2`, ..., `EXPRESION_I-1` son `falsy`. Lo que hará JavaScript será evaluar la expresión de izquierda a derecha. Como `EXPRESION_1` es `falsy`, entonces va a evaluar `EXPRESION_2`, como `EXPRESION_2` es `falsy` entonces va a evaluar la siguiente expresión a la derecha, y así sucesivamente hasta llegar a `EXPRESION_I`. Como `EXPRESION_I` es `truthy`, entonces NO va a evaluar las expresiones `EXPRESION_I+1`, ..., `EXPRESION_N` ya que el resultado final de la expresión será el valor `truthy` encontrado sin importar el valor de dichas expresiones restantes a la derecha.
+
+Por otro lado, si todas la expresiones son `falsy`, entonces va a evaluar todas las expresiones hasta llegar a la última, ya que el resultado final será el valor de la última expresión.
+
+Notemos que entonces se dice que hace `short-circuiting` ya que si encuentra un `truthy` en alguna parte de la expresión, entonces no es necesario evaluar el resto de las expresiones a la derecha, ya que devolverá dicho valor `truthy` encontrado. En cambios, si todas las expresiones son `falsy`, entonces evaluará todas las expresiones hasta llegar a la última y devolverá el valor de la última expresión.
+
+#### Caso de uso más común.
+
+El caso de uso más común es para retornar un valor por defecto en caso de que una condición sea `falsy`. Esto lo hacemos de la siguiente forma general:
+
+```javascript
+let nombreVariable = EXPRESION_QUE_PUEDE_SER_FALSY || VALOR_POR_DEFECTO;
+```
+
+De esa manera, si `EXPRESION_QUE_PUEDE_SER_FALSY` es `falsy`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `EXPRESION_QUE_PUEDE_SER_FALSY` es `truthy`, se le asignará a `nombreVariable` el valor `truthy` retornado por la `EXPRESION_QUE_PUEDE_SER_FALSY`.
+
+Esto se debe a que el operador `||` va a devolver el valor de la expresión a su izquierda si la expresión a su izquierda es `falsy`, pero si la expresión a su izquierda es `truthy`, entonces va a devolver el valor de la expresión a su izquierda (que será `truthy`).
+
+A continuación veremos un ejemplo sencillo:
+
+```javascript
+let valor = 1 === 2 || "valor por defecto"; // "valor por defecto"
+let valor2 = 1 === 1 || "valor por defecto"; // true
+```
+
+<br />
+
+También un uso muy común es utilizar el `||` como un reemplazo del operador `??`, pero con la diferencia de que el `||` no solamente chequea por `nullish` sino que también chequea por `falsy`. Es por eso que si queremos asignar un valor por defecto en caso de que una variable sea `null`, `undefined`, `0`, `""`, `false`, `NaN` o `nullish`, entonces podemos hacerlo de la siguiente forma:
+
+```javascript
+let nombreVariable = VALOR_QUE_PUEDE_SER_FALSY || VALOR_POR_DEFECTO;
+```
+
+Donde si `VALOR_QUE_PUEDE_SER_FALSY` es `falsy`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `VALOR_QUE_PUEDE_SER_FALSY` es `truthy`, se le asignará a `nombreVariable` el valor `truthy` retornado por la `VALOR_QUE_PUEDE_SER_FALSY`.
+
+Un ejemplo muy típico es utilizar esta sintáxis para poder establecer los puertos de un servidor de `Express` en caso de que no se haya definido un puerto en una variable de entorno. A continuación veremos un ejemplo de esto:
+
+```javascript
+import express from "express";
+
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+```
+
+Notemos que si la variable de entorno `process.env.PORT` no está definida, entonces se le asignará a `PORT` el valor de `3000`.
+
+### Operador de coalición nula `??`.
+
+Supongamos que tenemos de forma general la siguiente expresión:
+
+```javascript
+EXPRESION_1 ?? EXPRESION_2 ?? ... ?? EXPRESION_I ?? ... ?? EXPRESION_N;
+```
+
+Supongamos que `EXPRESION_I` es `nullish` y que `EXPRESION_1`, `EXPRESION_2`, ..., `EXPRESION_I-1` son `truthy o falsy`. Lo que hará JavaScript será evaluar la expresión de izquierda a derecha. Como `EXPRESION_1` es `truthy o falsy`, entonces va a evaluar `EXPRESION_2`, como `EXPRESION_2` es `truthy o falsy` entonces va a evaluar la siguiente expresión a la derecha, y así sucesivamente hasta llegar a `EXPRESION_I`. Como `EXPRESION_I` es `nullish`, entonces NO va a evaluar las expresiones `EXPRESION_I+1`, ..., `EXPRESION_N` ya que el resultado final de la expresión será el valor `nullish` encontrado sin importar el valor de dichas expresiones restantes a la derecha.
+
+Por otro lado, si todas la expresiones son `truthy o falsy` y ninguna es `nullish`, entonces va a evaluar todas las expresiones hasta llegar a la última, ya que el resultado final será el valor de la última expresión.
+
+Notemos que entonces se dice que hace `short-circuiting` ya que si encuentra un `nullish` en alguna parte de la expresión, entonces no es necesario evaluar el resto de las expresiones a la derecha, ya que devolverá dicho valor `nullish` encontrado. En cambios, si todas las expresiones son `truthy o falsy`, entonces evaluará todas las expresiones hasta llegar a la última y devolverá el valor de la última expresión.
