@@ -1,6 +1,36 @@
 # Sentencias condicionales.
 
-En esta lección aprenderemos a como crear condicionales en JavaScript.
+En esta lección aprenderemos a como crear condicionales en JavaScript. Las sentencias condicionales son aquellas que nos permiten modificar el flujo de ejecución del código dependiendo de ciertas condiciones. En JavaScript, las sentencias condicionales más comunes son `if`, `if .. else`, `if .. else if .. else` y `switch`. Además, veremos los valores `falsy`, `truthy` y `nullish` que son muy importantes para entender el comportamiento de las sentencias condicionales. También veremos los operadores `?.`, `??` y el operador ternario. 
+
+## Valores Falsy, Truthy y Nullish.
+
+En JavaScript, los valores se clasifican entre `falsy` y `truthy`. Los valores `falsy` son aquellos que se consideran como `false` en un contexto booleano, mientras que los valores `truthy` son aquellos que se consideran como `true` en un contexto booleano. A continuicación veremos una lista de los valores `falsy` y `truthy`:
+
+### Valores Falsy.
+
+Los valores `falsy` son todos los siguientes:
+
+1. `false`: el valor booleano `false`.
+2. `0`: el valor numérico `0`.
+3. `""`: el valor string vacío.
+4. `null`: el valor nulo.
+5. `undefined`: el valor indefinido.
+6. `NaN`: el valor `NaN`.
+
+### Valores Truthy.
+
+Los valores `truthy` son todos los valores que NO son `falsy`. Es decir, cualquier valor que no esté en la lista de valores `falsy` es considerado como `truthy`. A continuación veremos algunos ejemplos de valores `truthy`:
+
+1. `true`: el valor booleano `true`.
+2. `1`: cualquier valor numérico distinto de `0`.
+3. `"Hola"`: cualquier string que no sea vacío.
+4. `[]`: cualquier arreglo vacío.
+5. `{}`: cualquier objeto vacío.
+6. `function() {}`: cualquier función.
+
+### Valores Nullish.
+
+Los valores `nullish` son aquellos que son `null` o `undefined`. Es decir, si un valor es `null` o `undefined`, entonces es considerado como `nullish`. Notemos que los valores `nullish` son `falsy`, pero no todos los valores `falsy` son `nullish`.
 
 ## Expresión if
 
@@ -16,7 +46,7 @@ if (/* Condición */) {
 /* Demás código */
 ```
 
-Donde notemos que la `Condición` será un valor booleano (dado generalmente por comparaciones y operadores lógicos). Si el valor de `Condición` es `true`, entonces se va a ejecutar el `Cuerpo del if` y al finalizar seguirá el flujo de ejecución por el `Demás código`, pero si es `false` entonces se va a ignorar dicho código (es decir, seguirá el flujo de ejecución por el `Demás código`). El `Cuerpo del if` puede estar compuesto por una o más instrucciones y como está definidio por entre `{}` entonces es fácil deducir que será un nuevo scope.
+Donde notemos que la `Condición` será un valor booleano (dado generalmente por comparaciones y operadores lógicos). Si el valor de `Condición` es `truthy`, entonces se va a ejecutar el `Cuerpo del if` y al finalizar seguirá el flujo de ejecución por el `Demás código`, pero si es `falsy` entonces se va a ignorar dicho código (es decir, seguirá el flujo de ejecución por el `Demás código`). El `Cuerpo del if` puede estar compuesto por una o más instrucciones y como está definidio por entre `{}` entonces es fácil deducir que será un nuevo scope.
 
 A continuación veremos un ejemplo sencillo:
 
@@ -68,7 +98,7 @@ if (/* Condición */) {
 /* Demás código */
 ```
 
-Esto va a funcionar de la siguiente manera. Si la `Condición` es `true` entonces ejecuta el `Cuerpo del if` y al finalizar seguirá el flujo de ejecución por el `Demás código`, en caso contrario se ejecuta el `Cuerpo del else` y al finalizar seguirá el flujo de ejecución por el `Demás código`.
+Esto va a funcionar de la siguiente manera. Si la `Condición` es `truthy` entonces ejecuta el `Cuerpo del if` y al finalizar seguirá el flujo de ejecución por el `Demás código`, en caso contrario se ejecuta el `Cuerpo del else` y al finalizar seguirá el flujo de ejecución por el `Demás código`.
 
 A continuación veremos un ejemplo:
 
@@ -116,15 +146,15 @@ if (/* Condición 1 */) {
 
 Notemos que podemos agregar toda la cantidad de `else if` que sean necesarios. Esto funciona de la siguiente manera:
 
-1. Se evalúa la `Condición 1`. Si el valor es `true`, entonces se entra al `Cuerpo del if 1` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `false`, entonces se pasa al siguiente paso.
+1. Se evalúa la `Condición 1`. Si el valor es `truthy`, entonces se entra al `Cuerpo del if 1` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `falsy`, entonces se pasa al siguiente paso.
 
-2. Se evalúa la `Condición 2`. Si el valor es `true`, entonces se entra al `Cuerpo del if 2` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `false`, entonces se pasa al siguiente paso.
+2. Se evalúa la `Condición 2`. Si el valor es `truthy`, entonces se entra al `Cuerpo del if 2` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `falsy`, entonces se pasa al siguiente paso.
 
-3. Se evalúa la `Condición n`. Si el valor es `true`, entonces se entra al `Cuerpo del if n` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `false`, entonces se pasa al siguiente paso.
+3. Se evalúa la `Condición n`. Si el valor es `truthy`, entonces se entra al `Cuerpo del if n` y al finalizar se seguirá el flujo de ejecución por el `Demás código`. En caso de que sea `falsy`, entonces se pasa al siguiente paso.
 
-4. Si llegamos hasta este punto, entonces significa que todas las guardas fueron `false`, por consiguiente se entra al `Cuerpo del else` y al finalizar se seguirá el flujo de ejecución por el `Demás código`.
+4. Si llegamos hasta este punto, entonces significa que todas las guardas fueron `falsy`, por consiguiente se entra al `Cuerpo del else` y al finalizar se seguirá el flujo de ejecución por el `Demás código`.
 
-Notemos que esto nos indica que a lo sumo se entrará en el cuerpo de `una` de las sentencias de control (ya sea del if, el else if o del else). Y es muy importante notar que `se entrará en el cuerpo de la primera sentencia cuya condición sea true`; por lo que si tenemos distintas sentencias cuya condición es `true`, entonces sabemos que entrará en la primera que encuentra, la cuál será la que está definida en las líneas de código más arriba que el resto.
+Notemos que esto nos indica que a lo sumo se entrará en el cuerpo de `una` de las sentencias de control (ya sea del if, el else if o del else). Y es muy importante notar que `se entrará en el cuerpo de la primera sentencia cuya condición sea truthy`; por lo que si tenemos distintas sentencias cuya condición es `truthy`, entonces sabemos que entrará en la primera que encuentra, la cuál será la que está definida en las líneas de código más arriba que el resto.
 
 ### Aclaración sobre el else.
 
@@ -148,7 +178,7 @@ if (/* Condición 1 */) {
 /* Demás código */
 ```
 
-Y aquí lo que estará sucediendo es que si todas las condiciones son `false`, entonces continuará el flujo del código por el `Demás código`.
+Y aquí lo que estará sucediendo es que si todas las condiciones son `falsy`, entonces continuará el flujo del código por el `Demás código`.
 
 ### Pequeño ejemplo:
 
@@ -168,39 +198,9 @@ if (age <= 12) {
 
 Entonces, lo que va a pasar es que primero se va a fijar si `age <= 12`, pero como es `false` entonces pasa a la condición de abajo. Va a verificar si `age <= 25` y como es `true`, entonces imprime "Viste Coraje el Perro Cobarde".
 
-## Valores Falsy, Truthy y Nullish.
-
-En JavaScript, existen valores que son considerados `falsy` y `truthy`. Los valores `falsy` son aquellos que se consideran como `false` en un contexto booleano, mientras que los valores `truthy` son aquellos que se consideran como `true` en un contexto booleano. A continuicación veremos una lista de los valores `falsy` y `truthy`:
-
-### Valores Falsy.
-
-Los valores `falsy` son los siguientes:
-
-1. `false`: el valor booleano `false`.
-2. `0`: el valor numérico `0`.
-3. `""`: el valor string vacío.
-4. `null`: el valor nulo.
-5. `undefined`: el valor indefinido.
-6. `NaN`: el valor `NaN`.
-
-### Valores Truthy.
-
-Los valores `truthy` son todos los valores que no son `falsy`. Es decir, cualquier valor que no esté en la lista de valores `falsy` es considerado como `truthy`. A continuación veremos algunos ejemplos de valores `truthy`:
-
-1. `true`: el valor booleano `true`.
-2. `1`: cualquier valor numérico distinto de `0`.
-3. `"Hola"`: cualquier string que no sea vacío.
-4. `[]`: cualquier arreglo vacío.
-5. `{}`: cualquier objeto vacío.
-6. `function() {}`: cualquier función.
-
-### Valores Nullish.
-
-Los valores `nullish` son aquellos que son `null` o `undefined`. Es decir, si un valor es `null` o `undefined`, entonces es considerado como `nullish`. Notemos que los valores `nullish` son `falsy`, pero no todos los valores `falsy` son `nullish`.
-
 ## Operador de acceso condicional "?.".
 
-El operador de acceso condicional `?.` se suele utilizar para acceder a `métodos y atributos` de un `objeto`, pero evitando que salte una excepción en caso de que dicho objeto sea `null` o sea `undefined`. Se usa de las siguientes formas generales:
+El operador de acceso condicional `?.` se suele utilizar para acceder a `métodos y atributos` de un `objeto`, pero evitando que salte una excepción en caso de que dicho objeto sea un valor `nullish` (es decir que sea `null` o sea `undefined`). Se usa de las siguientes formas generales:
 
 1. `Para acceder a un atributo`: podemos acceder al `atributo` de un `objeto` que puede ser `null` o `undefined` de la siguiente forma general:
 
@@ -286,13 +286,13 @@ console.log(userFavAnime); // Imprime: undefined
 
 ## Operador ??
 
-El operador `??` (también llamado `operador de coalición nula`) se utiliza para proporcionar un valor de respaldo en caso de que una expresión sea `null` o `undefined`. Se utiliza de la siguiente forma general:
+El operador `??` (también llamado `operador de coalición nula`) se utiliza para proporcionar un valor de respaldo en caso de que una expresión sea `nullish` (es decir, si es `null` o `undefined`). Se utiliza de la siguiente forma general:
 
 ```javascript
-VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED ?? VALOR_POR_DEFECTO;
+VALOR_O_EXPRESION_QUE_PUEDE_SER_NULL_O_UNDEFINED ?? VALOR_POR_DEFECTO;
 ```
 
-El operador `??` devuelve el valor de `VALOR_QUE_PUEDE_SER_NULL_O_UNDEFINED` si `NO es null y tampoco undefined`; de lo contrario, devuelve el valor de `VALOR_POR_DEFECTO`.
+El operador `??` devuelve el valor de `VALOR_O_EXPRESION_QUE_PUEDE_SER_NULL_O_UNDEFINED` si `NO es null y tampoco undefined`; de lo contrario, devuelve el valor de `VALOR_POR_DEFECTO`.
 
 ### Casos de uso más comunes.
 
@@ -363,7 +363,7 @@ El operador ternario es un operador utilizado para abreviar la sintáxis del `if
 condición ? VALOR_CASO_TRUE : VALOR_CASO_FALSE;
 ```
 
-Esto significa que si la `condición` es `true`, entonces va a devolver el valor de `VALOR_CASO_TRUE`, pero si la `condición` es `false` entonces va a devolver el valor de `VALOR_CASO_FALSE`.
+Esto significa que si la `condición` es `truthy`, entonces va a devolver el valor de `VALOR_CASO_TRUE`, pero si la `condición` es `falsy` entonces va a devolver el valor de `VALOR_CASO_FALSE`.
 
 Como he dicho previamente, se utilizar para asignar valores a variables o constantes bajo el valor de `condición`. A continuación veremos un ejemplo de eso:
 
@@ -496,7 +496,7 @@ switch (mascota) {
 
 En este ejemplo, se va a imprimir por consola "Tengo un perro", ya que el valor de `mascota` coincide con el `case "Perro"`.
 
-## La importancia del break.
+### La importancia del break.
 
 Es muy importante el uso del `break`, ya que es lo que le indica al `switch` donde finaliza el cuerpo de un case en particular. Sin el `break`, el código se seguiría ejecutando una vez que matcheara con un case hasta que el switch finalice o se encuentre con un `break` en el cuerpo de algún otro case.
 
@@ -540,7 +540,7 @@ De esa manera, ahora solamente imprimiría por consola: "El numero 2 fue elegido
 
 `Conclusión`: `Siempre hay que agregar los break para evitar errores`.
 
-## Múltiples casos para un mismo cuerpo.
+### Múltiples casos para un mismo cuerpo.
 
 También se puede hacer que dos o más cases tengan un mismo cuerpo que ejecutar. Eso vamos a ver como se hace con el siguiente ejemplo:
 
@@ -565,7 +565,7 @@ switch (comida) {
 
 En este caso, si la variable `comida` tiene el valor `"Pizza"` o `"Ñoquis"` o `"Fideos"`, va a imprimir por consola "Quiero comida salada".
 
-## Declarando variables y constantes en un switch.
+### Declarando variables y constantes en un switch.
 
 En un `switch` el cuerpo de todos los cases pertenece a un mismo scope, por lo tanto para crear variables o constantes y evitar errores, debemos hacerlo de la siguiente forma general creand un bloque:
 
@@ -616,3 +616,33 @@ switch (mandado) {
   }
 }
 ```
+
+## Short-circuiting en JavaScript.
+
+El `short-circuiting` es un concepto que se refiere a la evaluación de una expresión lógica que se detiene tan pronto como se determina el resultado final. En JavaScript, el `short-circuiting` se da en las expresiones lógicas `&&`, `||` y `??`, ya que para todas estas expresiones bajo ciertas condiciones no es necesario evaluar toda la expresión para determinar el resultado final y por lo tanto se detiene la evaluación.
+
+### Operador lógico AND `&&`.
+
+Supongamos que tenemos de forma general la siguiente expresión:
+
+```javascript
+EXPRESION_1 && EXPRESION_2 && ... && EXPRESION_I && ... && EXPRESION_N;
+```
+
+Supongamos que `EXPRESION_I` es `falsy` y que `EXPRESION_1`, `EXPRESION_2`, ..., `EXPRESION_I-1` son `truthy`. Lo que hará JavaScript será evaluar la expresión de izquierda a derecha. Como `EXPRESION_1` es `truthy`, entonces va a evaluar `EXPRESION_2`, como `EXPRESION_2` es `truthy` entonces va a evaluar la siguiente expresión a la derecha, y así sucesivamente hasta llegar a `EXPRESION_I`. Como `EXPRESION_I` es `falsy`, entonces NO va a evaluar las expresiones `EXPRESION_I+1`, ..., `EXPRESION_N` ya que el resultado final de la expresión será el valor `falsy` encontrado sin importar el valor de dichas expresiones restantes.
+
+Por otro lado, si todas la expresiones son `truthy`, entonces va a evaluar todas las expresiones hasta llegar a la última, ya que el resultado final será el valor de la última expresión.
+
+Notemos que entonces se dice que hace `short-circuiting` ya que si encuentra un `falsy` en alguna parte de la expresión, entonces no es necesario evaluar el resto de las expresiones a la derecha, ya que devolverá dicho valor `falsy` encontrado. En cambios, si todas las expresiones son `truthy`, entonces evaluará todas las expresiones hasta llegar a la última y devolverá el valor de la última expresión. 
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+true && true && false && console.log("Hola"); // Devuelve false.
+
+true && true && true && console.log("Hola"); // Imprime Hola
+```
+
+Notemos que en el primer caso no imprime "Hola" ya que la expresión del medio es `false` y por lo tanto no evalúa la expresión `console.log("Hola")`, ya que apenas se topa con el `false` deja de evaluar lo que hay a su derecha y devuelve `false` para toda la expresión. En cambio, en el segundo caso imprime "Hola" ya que la expresión es `true` y por lo tanto evalúa la expresión `console.log("Hola")`.
+
+
