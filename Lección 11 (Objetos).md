@@ -1387,6 +1387,46 @@ console.log(moviesByDirector);
 */
 ```
 
+En este ejemplo, estamos agrupando los objetos del array `movies` según la clave `director`. Como resultado, obtenemos un objeto donde las keys son los nombres de los directores y los valores son arrays que contienen los objetos agrupados por director.
+
+<br />
+
+Otro ejemplo interesante sería el siguiente:
+
+```javascript
+const students = [
+  { name: "Alice", grade: 10 },
+  { name: "Bob", grade: 9 },
+  { name: "Charlie", grade: 6 },
+  { name: "David", grade: 2 },
+  { name: "Eve", grade: 1 },
+];
+
+const studentsByStatus = Object.groupBy(students, (student) => {
+  return student.grade >= 6 ? "pass" : "fail";
+});
+
+console.log(studentsByStatus);
+
+/*
+  Imprime:
+
+  {
+    "pass": [
+      { name: "Alice", grade: 10 },
+      { name: "Bob", grade: 9 },
+      { name: "Charlie", grade: 6 }
+    ],
+    "fail": [
+      { name: "David", grade: 2 },
+      { name: "Eve", grade: 1 }
+    ]
+  }
+*/
+```
+
+En este caso, estamos agrupando los objetos del array `students` según si el estudiante aprobó o reprobó. Los estudiantes con una calificación de 6 o más se agrupan en la categoría "pass", mientras que los estudiantes con una calificación inferior a 6 se agrupan en la categoría "fail".
+
 #### Implementación equivalente de Object.groupBy().
 
 Podemos implementar el mismo funcionamiento que `Object.groupBy()` utilizando el método `reduce` de arreglos de la siguiente forma general:
@@ -1413,6 +1453,8 @@ const OBJETO_AGRUPADO = ARRAY_OBJETOS.reduce((acumulador, objeto) => {
 ```
 
 Donde notemos que estamos utilizando el método `reduce` de los arreglos para agrupar los objetos de un `array` según una `clave` en común. Y esto es equivalente a utilizar el método `Object.groupBy()`.
+
+Personalmente, ver esta implementación equivalente me dá un mejor entendimiento de cómo funciona el método `Object.groupBy()`.
 
 A continuación veremos un ejemplo de esto:
 
