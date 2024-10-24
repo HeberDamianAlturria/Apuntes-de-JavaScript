@@ -168,18 +168,35 @@ if (age <= 12) {
 
 Entonces, lo que va a pasar es que primero se va a fijar si `age <= 12`, pero como es `false` entonces pasa a la condición de abajo. Va a verificar si `age <= 25` y como es `true`, entonces imprime "Viste Coraje el Perro Cobarde".
 
-## Valores Falsy.
+## Valores Falsy, Truthy y Nullish.
 
-Los siguientes valores se evalúan como `false` si son usados como una condición:
+En JavaScript, existen valores que son considerados `falsy` y `truthy`. Los valores `falsy` son aquellos que se consideran como `false` en un contexto booleano, mientras que los valores `truthy` son aquellos que se consideran como `true` en un contexto booleano. A continuicación veremos una lista de los valores `falsy` y `truthy`:
 
-- false
-- undefined
-- null
-- 0
-- NaN
-- la cadena vacía ("")
+### Valores Falsy.
 
-Todos los demás valores, incluidos todos los objetos, se evalúan como `true` cuando se utilizan en una condición.
+Los valores `falsy` son los siguientes:
+
+1. `false`: el valor booleano `false`.
+2. `0`: el valor numérico `0`.
+3. `""`: el valor string vacío.
+4. `null`: el valor nulo.
+5. `undefined`: el valor indefinido.
+6. `NaN`: el valor `NaN`.
+
+### Valores Truthy.
+
+Los valores `truthy` son todos los valores que no son `falsy`. Es decir, cualquier valor que no esté en la lista de valores `falsy` es considerado como `truthy`. A continuación veremos algunos ejemplos de valores `truthy`:
+
+1. `true`: el valor booleano `true`.
+2. `1`: cualquier valor numérico distinto de `0`.
+3. `"Hola"`: cualquier string que no sea vacío.
+4. `[]`: cualquier arreglo vacío.
+5. `{}`: cualquier objeto vacío.
+6. `function() {}`: cualquier función.
+
+### Valores Nullish.
+
+Los valores `nullish` son aquellos que son `null` o `undefined`. Es decir, si un valor es `null` o `undefined`, entonces es considerado como `nullish`. Notemos que los valores `nullish` son `falsy`, pero no todos los valores `falsy` son `nullish`.
 
 ## Operador de acceso condicional "?.".
 
