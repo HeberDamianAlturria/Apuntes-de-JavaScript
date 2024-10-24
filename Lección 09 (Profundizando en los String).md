@@ -426,6 +426,67 @@ const text3 = "Heber";
 console.log(text3.split("")); // Imprime: [ 'H', 'e', 'b', 'e', 'r' ]
 ```
 
+## El método localeCompare().
+
+Si bien se pueden hacer comparaciones entre strings de la siguientes manera:
+
+```javascript	
+// Para case sensitive.
+const comparacion = STRING1 === STRING2;
+
+// Para case insensitive.
+const comparacion = STRING1.toLowerCase() === STRING2.toLowerCase();
+```
+
+Siendo `STRING1` y `STRING2` dos strings que queremos comparar.
+
+Sin embargo, JavaScript nos provee de un método que nos permite hacer comparaciones entre strings de una manera más precisa. Este método se llama `localeCompare()`. A continuación veremos la forma general de usarlo:
+
+```javascript
+const comparacion = STRING1.localeCompare(STRING2);
+```
+
+Donde notemos que `STRING1` y `STRING2` son los strings que queremos comparar. Este método va a devolver un número entero que va a depender de la comparación entre los dos strings. Si `STRING1` es menor que `STRING2`, entonces va a devolver un `número negativo`. Si `STRING1` es mayor que `STRING2`, entonces va a devolver un `número positivo`. Y si `STRING1` es igual a `STRING2`, entonces va a devolver `0`.
+
+A continuación veremos un ejemplo:
+
+```javascript
+const text1 = "Apple";
+const text2 = "Banana";
+
+console.log(text1.localeCompare(text2)); // Imprime -1.
+
+console.log(text2.localeCompare(text1)); // Imprime 1.
+
+console.log(text1.localeCompare(text1)); // Imprime 0.
+```
+
+### Usando `localeCompare()` para ordenar un array de strings.
+
+Este método es muy útil para `ordenar un array de strings`. A continuación veremos una forma general de como hacerlo:
+
+```javascript
+// Ordenado de menor a mayor.
+const arrayOrdenadoDeMenorAMayor = ARRAY_DE_STRINGS.sort((a, b) => a.localeCompare(b));
+
+// Ordenado de mayor a menor.
+const arrayOrdenadoDeMayorAMenor = ARRAY_DE_STRINGS.sort((a, b) => b.localeCompare(a));
+```
+
+Donde notemos que `ARRAY_DE_STRINGS` es un array de strings que queremos ordenar. Este método va a devolver un nuevo array que va a estar ordenado de manera alfabética (de menor a mayor o de mayor a menor).
+
+A continuación veremos un ejemplo:
+
+```javascript
+const array = ["Banana", "Apple", "Kiwi"];
+
+// Ordenado de menor a mayor.
+console.log(array.sort((a, b) => a.localeCompare(b))); // Imprime [ 'Apple', 'Banana', 'Kiwi' ]
+
+// Ordenado de mayor a menor.
+console.log(array.sort((a, b) => b.localeCompare(a))); // Imprime [ 'Kiwi', 'Banana', 'Apple' ]
+```
+
 ## Interpolación de Strings.
 
 La interpolación de Strings nos permite `insertar fácilmente expresiones de JavaScript dentro de un string`. La manera de hacerlo se ve similar a la siguiente forma general:
