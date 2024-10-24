@@ -907,6 +907,113 @@ console.log(rectangle.width); // 909090
 rectangle.height = -100; // Imprime: Error: La altura no puede ser negativa
 ```
 
+### Métodos privados.
+
+Al igual que los `atributos privados`, los métodos privados NO pueden ser `accedidos` ni `modificados` fuera de la clase. Se definen de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+
+  #nombreDelMetodo(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+  }
+
+  /* Otros métodos de la clase */
+
+}
+```
+
+Notese que los `métodos privados` deben declararse mediante el símbolo `#` como prefijo del nombre que tendrá el método.
+
+Entonces, como los métodos privados NO pueden ser `acedidos` ni `modificados` fuera de la clase, esto significa que de forma general lo siguiente sería incorrecto:
+
+```javascript
+/* Este código es incorrecto, solo se muestra como ejemplo de error. */
+
+const nuevaInstancia = new NombreDeLaClase(/* Valores constructor */);
+
+nuevaInstancia.#nombreDelMetodo(/* Valores */); // Esta línea es incorrecta.
+```
+
+Generalmente, los `métodos privados` se van a utilizar para realizar ciertas operaciones internas de la clase que no necesitan ser accedidas desde fuera de la clase. Es decir, los `métodos privados` se utilizan para `encapsular` ciertas operaciones que son necesarias para el correcto funcionamiento de la clase, pero que no necesitan ser accedidas desde fuera de la clase. De forma general, esto se vería como:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+  
+  #nombreDelMetodo(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+  }
+
+  /* Otros métodos de la clase */
+
+  nombreOtroMetodo(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+    this.#nombreDelMetodo(/* Valores */); // Llamamos al método privado.
+
+    /* Resto del cuerpo del método */
+
+  }
+}
+```
+
+<br />
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear métodos privados:
+
+```javascript
+class Counter {
+  #count;
+
+  constructor() {
+    this.#count = 0;
+  }
+
+  #increment() {
+    this.#count++;
+  }
+
+  #decrement() {
+    this.#count--;
+  }
+
+  getCount() {
+    return this.#count;
+  }
+
+  increment() {
+    this.#increment();
+  }
+
+  decrement() {
+    this.#decrement();
+  }
+}
+
+const counter = new Counter();
+
+console.log(counter.getCount()); // 0
+
+counter.increment();
+
+console.log(counter.getCount()); // 1
+
+counter.decrement();
+
+console.log(counter.getCount()); // 0
+```
+
+En este ejemplo se puede observar claramente que los métodos `#increment` y `#decrement` son `métodos privados` que se utilizan internamente en la clase `Counter` para modificar el valor del contador. Estos métodos no necesitan ser accedidos desde fuera de la clase, por lo que se definen como `métodos privados`.
+
 ## Métodos asíncronos de clase.
 
 También una clase puede contener `métodos asíncronos` definidos mediante el uso del `async/await` de la siguiente forma general:
@@ -1060,6 +1167,121 @@ Este código define una clase `EventLogger` que registra eventos en un archivo, 
 4. **Método asíncrono `clearEvents`**: Limpia todos los eventos, sobrescribiendo el archivo con un contenido vacío.
 
 5. **Uso**: Se puede registrar eventos, listarlos y limpiarlos, manejando posibles errores durante las operaciones de archivo.
+
+### Métodos asíncronos privados.
+
+Al igual que los `métodos privados`, los `métodos asíncronos privados` NO pueden ser `accedidos` ni `modificados` fuera de la clase. Se definen de la siguiente forma general:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+
+  async #nombreDelMetodoAsync(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método asíncrono */
+
+  }
+
+  /* Otros métodos de la clase */
+
+}
+```
+
+Notese que los `métodos asíncronos privados` deben declararse mediante el símbolo `#` como prefijo del nombre que tendrá el método, y además deben ser definidos con la palabra clave `async`.
+
+Entonces, como los métodos asíncronos privados NO pueden ser `acedidos` ni `modificados` fuera de la clase, esto significa que de forma general lo siguiente sería incorrecto:
+
+```javascript
+/* Este código es incorrecto, solo se muestra como ejemplo de error. */
+
+const nuevaInstancia = new NombreDeLaClase(/* Valores constructor */);
+
+await nuevaInstancia.#nombreDelMetodoAsync(/* Valores */); // Esta línea es incorrecta.
+```
+
+Generalmente, los `métodos asíncronos privados` se van a utilizar para realizar ciertas operaciones internas de la clase que no necesitan ser accedidas desde fuera de la clase. Es decir, los `métodos asíncronos privados` se utilizan para `encapsular` ciertas operaciones que son necesarias para el correcto funcionamiento de la clase, pero que no necesitan ser accedidas desde fuera de la clase. De forma general, esto se vería como:
+
+```javascript
+class NombreDeLaClase {
+  /* Constructor y/o atributos. */
+  
+  async #nombreDelMetodoAsync(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+  }
+
+  /* Otros métodos de la clase */
+
+  async nombreOtroMetodoAsync(/* Parámetros que toma (opcional) */) {
+
+    /* Cuerpo del método */
+
+    await this.#nombreDelMetodoAsync(/* Valores */); // Llamamos al método asíncrono privado.
+
+    /* Resto del cuerpo del método */
+
+  }
+}
+```
+
+<b>Ejemplo:</b>
+
+A continuación veremos un ejemplo de como crear métodos asíncronos privados:
+
+```javascript
+class Counter {
+  #count;
+
+  constructor() {
+    this.#count = 0;
+  }
+
+  async #incrementAsync() {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        this.#count++;
+        resolve();
+      }, 1000);
+    });
+  }
+
+  async #decrementAsync() {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        this.#count--;
+        resolve();
+      }, 1000);
+    });
+  }
+
+  getCount() {
+    return this.#count;
+  }
+
+  async increment() {
+    await this.#incrementAsync();
+  }
+
+  async decrement() {
+    await this.#decrementAsync();
+  }
+}
+
+const counter = new Counter();
+
+console.log(counter.getCount()); // 0
+
+await counter.increment();
+
+console.log(counter.getCount()); // 1
+
+await counter.decrement();
+
+console.log(counter.getCount()); // 0
+```
+
+Notemos que en este ejemplo se puede observar claramente que los métodos `#incrementAsync` y `#decrementAsync` son `métodos asíncronos privados` que se utilizan internamente en la clase `Counter` para modificar el valor del contador. Estos métodos no necesitan ser accedidos desde fuera de la clase, por lo que se definen como `métodos asíncronos privados`.
 
 ## Herencia de clases.
 
