@@ -1248,3 +1248,206 @@ const movieEntries = Object.entries(movie);
 console.log(movieEntries);
 // Imprime: [ [ "title", "The Matrix" ], [ "director", "Lana Wachowski" ], [ "releaseYear", 1999 ] ]
 ```
+
+### El método Object.freeze().
+
+Este método se utiliza de la siguiente forma general:
+
+```javascript
+const OBJETO = {
+  key1: value1,
+  key2: value2,
+  /*...*/
+  keyN: valueN,
+};
+
+Object.freeze(OBJETO); // Congela el objeto
+```
+
+Este método lo que hará será `congelar` el `OBJETO`, lo que significa que no se podrá modificar ni añadir ni eliminar `claves` ni `valores` del `OBJETO`. Además, tampoco se podrá modificar los `valores` de las `claves` del `OBJETO`. Este método es muy útil para evitar que un `objeto` sea modificado por error.
+
+Cabe mencionar que este método NO es profundo, lo que significa que si el `OBJETO` tiene `valores` que no sean de `tipo primitivo`, entonces estos `valores` si se podrán modificar. 
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const movie = {
+  title: "The Matrix",
+  director: "Lana Wachowski",
+  releaseYear: 1999,
+};
+
+Object.freeze(movie);
+
+movie.title = "The Matrix Reloaded"; // No se va a modificar
+
+console.log(movie); // Imprime { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 }
+```
+
+#### Comportamiento de Object.freeze() con valores no primitivos.
+
+Como mencioné anteriormente, el método `Object.freeze()` no es profundo, lo que significa que si el `OBJETO` tiene `valores` que no sean de `tipo primitivo`, entonces estos `valores` si se podrán modificar. A continuación veremos un ejemplo de esto:
+
+```javascript
+const movie = {
+  title: "The Matrix",
+  director: "Lana Wachowski",
+  releaseYear: 1999,
+  cast: ["Keanu Reeves", "Carrie-Anne Moss", "Laurence Fishburne"],
+};
+
+Object.freeze(movie);
+
+movie.cast.push("Hugo Weaving");
+
+movie.title = "The Matrix Reloaded"; // No se va a modificar
+
+console.log(movie); // Imprime { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999, cast: ["Keanu Reeves", "Carrie-Anne Moss", "Laurence Fishburne", "Hugo Weaving"] }
+```
+
+Como podemos observar, el arreglo asociado a la clave `cast` se pudo modificar, a pesar de que el objeto `movie` esté congelado. Sin embargo, el valor de la clave `title` no se pudo modificar ya que es de tipo primitivo.
+
+#### Comportamiento de Object.freeze() en strict mode.
+
+Si estamos en `strict mode`, entonces el método `Object.freeze()` lanzará un error si se intenta modificar el `OBJETO` o sus `valores`. A continuación veremos un ejemplo de esto:
+
+```javascript
+"use strict";
+
+const movie = {
+  title: "The Matrix",
+  director: "Lana Wachowski",
+  releaseYear: 1999,
+};
+
+Object.freeze(movie);
+
+try {
+  movie.title = "The Matrix Reloaded"; // Lanza un error
+} catch (error) {
+  console.error(error.message); // Imprime "Cannot assign to read only property 'title' of object '#<Object>'"
+}
+```
+
+### El método Object.groupBy().
+
+El método `Object.groupBy()` se utiliza para agrupar los `objetos` pertenecientes a un `array de objetos` según una `clave` en común. Este método toma un `array de objetos` y una `función de agrupamiento` (callback), y devuelve un `objeto` cuyas `key` son los distintos grupos formados con base en la clave devuelta por la función. Este método se utiliza de la siguiente forma general:
+
+```javascript
+const ARRAY_OBJETOS = [
+  { key1: value1, key2: value2, /*...*/ },
+  { key1: value3, key2: value4, /*...*/ },
+  /*...*/
+  { key1: valueN, key2: valueM, /*...*/ },
+];
+
+const OBJETO_AGRUPADO = Object.groupBy(ARRAY_OBJETOS, (objeto) => {
+  /* Cuerpo de la función callback */
+
+  return VALOR_KEY; // Debe retornar el valor de la key por la que se va a agrupar el objeto.
+});
+```
+
+Donde notemos que el método `Object.groupBy` toma como argumento: el `ARRAY_OBJETOS` que es un `array de objetos` cuyos objetos son los que deseamos agrupar y una `función callback` que se va a encargar de devolver el valor de la key por la que se va a agrupar cada objeto. Y dicho método va a devolver un `OBJETO_AGRUPADO` que va a ser un objeto cuyas `keys` representan los diferentes grupos, y cada key contiene un array con los objetos que comparten esa misma clave.
+
+Básicamente, lo que hace este método es agrupar los objetos de un `array` según una `clave` en común. El funcionamiento de este método sería el siguiente:
+
+1. Se toma un `array de objetos` y una `función de agrupamiento` (callback) que devuelve la clave por la que se agruparán los objetos.
+2. `Object.groupBy()` recorre cada objeto en el array y ejecuta la `función callback`, obteniendo una clave (key) para cada objeto.
+3. Si la clave no existe en el objeto agrupado, se crea una nueva clave con un array vacío. El objeto se añade al array correspondiente a esa clave.
+4. Devuelve un objeto donde las keys son las claves generadas por el callback y los valores son arrays que contienen los objetos agrupados.
+
+A continuación veremos un ejemplo de uso de este método:
+
+```javascript
+const movies = [
+  { title: "Inception", director: "Christopher Nolan", releaseYear: 2010 },
+  { title: "Interstellar", director: "Christopher Nolan", releaseYear: 2014 },
+  { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 },
+  { title: "The Dark Knight", director: "Christopher Nolan", releaseYear: 2008 },
+];
+
+const moviesByDirector = Object.groupBy(movies, (movie) => movie.director);
+
+console.log(moviesByDirector);
+
+/*
+  Imprime:
+
+  {
+    "Lana Wachowski": [
+      { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 }
+    ],
+    "Christopher Nolan": [
+      { title: "Inception", director: "Christopher Nolan", releaseYear: 2010 },
+      { title: "Interstellar", director: "Christopher Nolan", releaseYear: 2014 },
+      { title: "The Dark Knight", director: "Christopher Nolan", releaseYear: 2008 }
+    ]
+  }
+*/
+```
+
+#### Implementación equivalente de Object.groupBy().
+
+Podemos implementar el mismo funcionamiento que `Object.groupBy()` utilizando el método `reduce` de arreglos de la siguiente forma general:
+
+```javascript
+const ARRAY_OBJETOS = [
+  { key1: value1, key2: value2, /*...*/ },
+  { key1: value3, key2: value4, /*...*/ },
+  /*...*/
+  { key1: valueN, key2: valueM, /*...*/ },
+];
+
+const OBJETO_AGRUPADO = ARRAY_OBJETOS.reduce((acumulador, objeto) => {
+  const key = VALOR_KEY; // Se obtiene el valor de la key por la que se va a agrupar el objeto.
+
+  if (!acumulador[key]) {
+    acumulador[key] = [];
+  }
+
+  acumulador[key].push(objeto);
+
+  return acumulador;
+}, {});
+```
+
+Donde notemos que estamos utilizando el método `reduce` de los arreglos para agrupar los objetos de un `array` según una `clave` en común. Y esto es equivalente a utilizar el método `Object.groupBy()`.
+
+A continuación veremos un ejemplo de esto:
+
+```javascript
+const movies = [
+  { title: "Inception", director: "Christopher Nolan", releaseYear: 2010 },
+  { title: "Interstellar", director: "Christopher Nolan", releaseYear: 2014 },
+  { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 },
+  { title: "The Dark Knight", director: "Christopher Nolan", releaseYear: 2008 },
+];
+
+const moviesByDirector = movies.reduce((acc, movie) => {
+  if (!acc[movie.director]) {
+    acc[movie.director] = [];
+  }
+
+  acc[movie.director].push(movie);
+
+  return acc;
+}, {});
+
+console.log(moviesByDirector);
+
+/*
+  Imprime:
+
+  {
+    "Lana Wachowski": [
+      { title: "The Matrix", director: "Lana Wachowski", releaseYear: 1999 }
+    ],
+    "Christopher Nolan": [
+      { title: "Inception", director: "Christopher Nolan", releaseYear: 2010 },
+      { title: "Interstellar", director: "Christopher Nolan", releaseYear: 2014 },
+      { title: "The Dark Knight", director: "Christopher Nolan", releaseYear: 2008 }
+    ]
+  }
+*/
+```
