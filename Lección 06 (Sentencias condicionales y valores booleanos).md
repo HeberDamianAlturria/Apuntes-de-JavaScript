@@ -686,6 +686,34 @@ export default Counter;
 
 En este caso, el botón de decrementar solamente se va a mostrar si el valor de `count` es mayor a `0`, ya que si es `0` entonces la expresión `count > 0` es `false` y por lo tanto no se va a renderizar el botón de decrementar. Notemos que utilizamos el operador `&&` para hacer esto, ya que si `count > 0` es `false`, entonces la expresión será `false` y en React los valores `false`, `null`, `undefined` y `true` no se renderizan, por lo que no se va a renderizar nada, pero en caso de que sea `true` entonces se va a renderizar el botón de decrementar ya que el operador `&&` va a devolver el valor de la expresión a su derecha.
 
+#### Asignación lógica usando `&&=`.
+
+En JavaScript, también podemos hacer una asignación lógica utilizando el operador `&&` de la siguiente forma general:
+
+```javascript
+nombreVariable &&= VALOR_POR_DEFECTO;
+```
+
+De esa manera, si `nombreVariable` es `truthy`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `nombreVariable` es `falsy`, entonces no se le asignará ningún valor a `nombreVariable` y continuará con el valor que tenía previamente.
+
+Notemos que esta sentencia es equivalente a hacer lo siguiente:
+
+```javascript
+nombreVariable = nombreVariable && VALOR_POR_DEFECTO;
+```
+
+A continuación veremos un ejemplo sencillo de esto:
+
+```javascript
+let nombre = "Heber";
+
+nombre &&= "Valor por defecto"; // "Valor por defecto"
+
+let nombre2 = "";
+
+nombre2 &&= "Valor por defecto"; // ""
+```
+
 ### Operador lógico OR `||`.
 
 Supongamos que tenemos de forma general la siguiente expresión:
@@ -745,6 +773,34 @@ app.listen(PORT, () => {
 
 Notemos que si la variable de entorno `process.env.PORT` no está definida, entonces se le asignará a `PORT` el valor de `3000`.
 
+#### Asignación lógica usando `||=`.
+
+En JavaScript, también podemos hacer una asignación lógica utilizando el operador `||` de la siguiente forma general:
+
+```javascript
+nombreVariable ||= VALOR_POR_DEFECTO;
+```
+
+De esa manera, si `nombreVariable` es `falsy`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `nombreVariable` es `truthy`, entonces no se le asignará ningún valor a `nombreVariable` y continuará con el valor que tenía previamente.
+
+Notemos que esta sentencia es equivalente a hacer lo siguiente:
+
+```javascript
+nombreVariable = nombreVariable || VALOR_POR_DEFECTO;
+```
+
+A continuación veremos un ejemplo sencillo de esto:
+
+```javascript
+let nombre = "Heber";
+
+nombre ||= "Valor por defecto"; // "Heber"
+
+let nombre2 = "";
+
+nombre2 ||= "Valor por defecto"; // "Valor por defecto"
+```
+
 ### Operador de coalición nula `??`.
 
 Supongamos que tenemos de forma general la siguiente expresión:
@@ -758,3 +814,31 @@ Supongamos que `EXPRESION_I` es `nullish` y que `EXPRESION_1`, `EXPRESION_2`, ..
 Por otro lado, si todas la expresiones son `truthy o falsy` y ninguna es `nullish`, entonces va a evaluar todas las expresiones hasta llegar a la última, ya que el resultado final será el valor de la última expresión.
 
 Notemos que entonces se dice que hace `short-circuiting` ya que si encuentra un `nullish` en alguna parte de la expresión, entonces no es necesario evaluar el resto de las expresiones a la derecha, ya que devolverá dicho valor `nullish` encontrado. En cambios, si todas las expresiones son `truthy o falsy`, entonces evaluará todas las expresiones hasta llegar a la última y devolverá el valor de la última expresión.
+
+#### Asignación lógica usando `??=`.
+
+En JavaScript, también podemos hacer una asignación lógica utilizando el operador `??` de la siguiente forma general:
+
+```javascript
+nombreVariable ??= VALOR_POR_DEFECTO;
+```
+
+De esa manera, si `nombreVariable` es `nullish`, entonces se le asignará a `nombreVariable` el valor de `VALOR_POR_DEFECTO`. En caso contrario, si `nombreVariable` es `truthy o falsy`, entonces no se le asignará ningún valor a `nombreVariable` y continuará con el valor que tenía previamente.
+
+Notemos que esta sentencia es equivalente a hacer lo siguiente:
+
+```javascript
+nombreVariable = nombreVariable ?? VALOR_POR_DEFECTO;
+```
+
+A continuación veremos un ejemplo sencillo de esto:
+
+```javascript
+let nombre = "Heber";
+
+nombre ??= "Valor por defecto"; // "Heber"
+
+let nombre2 = null;
+
+nombre2 ??= "Valor por defecto"; // "Valor por defecto"
+```
