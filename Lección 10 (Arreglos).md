@@ -210,7 +210,7 @@ Esto significa que sea `arr` un `array`, los índices se cuentan desde el `0` y 
 
    Siendo `n` la longitud del `array`.
 
-   Esto significa que sea `arr` un `array`, los `índices negativos` se cuentan desde el `-1` haste el en el `-arr.length`. Y notemos que en el índice `-1` se encuentra el `último elemento` del array y en el índice `-arr.length` se encuentra el `primer elemento`.
+   Esto significa que sea `arr` un `array`, los `índices negativos` se cuentan desde el `-1` hasta el `-arr.length`. Y notemos que en el índice `-1` se encuentra el `último elemento` del array y en el índice `-arr.length` se encuentra el `primer elemento`.
 
    Como ya hemos dicho, los `índices positivos` se cuentan de la manera que expliqué al inicio de esta sección.
 
