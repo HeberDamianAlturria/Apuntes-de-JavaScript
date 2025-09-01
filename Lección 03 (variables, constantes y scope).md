@@ -70,7 +70,7 @@ console.log(algo); // Imprime "Hola".
 
 Y como podemos notar, el valor de algo pasó de ser un número a un string sin ningún problema.
 
-### La palabra var.
+### La palabra var. (NO RECOMENDADO)
 
 También se pueden crear variables con `var`, esto se hace de la siguiente forma general:
 
