@@ -39,9 +39,9 @@ El `event loop` es un mecanismo que permite a JavaScript manejar operaciones `as
 
 - `Call stack`: Es una estructura de datos tipo stack (LIFO) que contiene los contextos de ejecución de las funciones que se están ejecutando en el `hilo principal`. Cada vez que se invoca una función, su contexto se agrega a la stack, y se elimina cuando la función finaliza. La ejecuciones de las funciones en el `call stack` son `síncronas`.
 
-- `APIs del entorno de ejecución (Web APIs / Node.js APIs)`: Son operaciones `asíncronas` que se ejecutan en segundo plano, fuera del `hilo principal`. Estas tareas pueden incluir operaciones de I/O, temporizadores, solicitudes de red, entre otras. CCuando una de estas operaciones se completa, el entorno de ejecución encola una tarea en la task queue o una microtask, según el mecanismo utilizado (callbacks o Promises).
+- `APIs del entorno de ejecución (Web APIs / Node.js APIs)`: Son operaciones `asíncronas` que se ejecutan en segundo plano, fuera del `hilo principal`. Estas tareas pueden incluir operaciones de I/O, temporizadores, solicitudes de red, entre otras. Cuando una de estas operaciones se completa, el entorno de ejecución encola una tarea en la task queue o una microtask, según el mecanismo utilizado (callbacks o Promises).
 
-- `Microtask queue` (Cola de microtareas): Es una estructura de datos tipo queue (FIFO) que almacena tareas pequeñas y rápidas (microtasks) que deben ejecutarse después de que el `call stack` esté vacío, pero `antes de que se procesen las macrotasks`. Las microtasks incluyen cosas como las resoluciones de promesas y los callbacks de `MutationObserver`. Estas tareas se ejecutan en el hilo principal inmediatamente después de que el `call stack` esté vacío. Incluye, entre otras cosas, las `resoluciones de Promises` y las `continuaciones de async/await`. Todas las microtasks pendientes se ejecutan en una misma iteración del event loop.
+- `Microtask queue` (Cola de microtareas): Es una estructura de datos tipo queue (FIFO) que almacena tareas pequeñas y rápidas (microtasks) que deben ejecutarse después de que el `call stack` esté vacío, pero `antes de que se procesen las macrotasks`. Las microtasks incluyen cosas como las resoluciones de promesas. Estas tareas se ejecutan en el hilo principal inmediatamente después de que el `call stack` esté vacío. Incluye, entre otras cosas, las `resoluciones de Promises` y las `continuaciones de async/await`. Todas las microtasks pendientes se ejecutan en una misma iteración del event loop.
 
 - `Task queue` (Cola de tareas): Es una estructura de datos tipo queue (FIFO) que almacena tareas (llamadas `macrotasks`) listas para ser ejecutadas, generalmente originadas por ciertas operaciones asíncronas como temporizadores, eventos del usuario o callbacks de I/O. Estas tareas se ejecutan en el hilo principal únicamente cuando el `call stack está vacío` y `después de que se hayan procesado todas las microtasks pendientes`, siendo ejecutadas de a una por iteración del event loop.
 
@@ -52,6 +52,8 @@ De esta manera, el `event loop` funciona de la siguiente forma general:
 3. Luego, el `event loop` toma la siguiente `macrotask` de la `task queue` y la ejecuta en el `hilo principal`.
 4. Este proceso se repite continuamente, permitiendo que JavaScript maneje operaciones `asíncronas` sin bloquear el `hilo principal`.
 
+Esto significa que en realidad el asincronismo de JavaScript no es "realmente asíncrono" en el sentido tradicional de otros lenguajes de programación que utilizan múltiples hilos de ejecución. En cambio, JavaScript utiliza un solo hilo de ejecución y maneja las operaciones asíncronas mediante el `event loop` y las `colas de tareas`, lo que permite que el código asíncrono se ejecute sin bloquear el hilo principal.
+
 ### Regla de oro del event loop.
 
 Una regla de oro para entender el `event loop` es la siguiente:
@@ -59,6 +61,8 @@ Una regla de oro para entender el `event loop` es la siguiente:
 `Las resoluciones de Promises, incluidas las continuaciones de async/await, siempre se encolan como microtasks cuando la promesa esperada se resuelve o se rechaza.`
 
 Y hay que pensar al `event loop` como un enfoque cooperativo en donde tanto códigos `síncronos` como `asíncronos` se `turnan` para ejecutarse en el `hilo principal`. Por lo que hay que tener cuidado de no tener operaciones costosas ya que eso bloquearía el `hilo principal` generando que el `event loop` no pueda procesar tareas asíncronas pendientes ni ejecutar nuevo código, lo que provoca bloqueos y pérdida de capacidad de respuesta.
+
+Esto significa que el `event loop` NO está pensado para ejecutar tareas pesadas o de larga duración en el `hilo principal` como pueden ser tareas `CPU bound`, ya que eso bloquearía la capacidad de respuesta de la aplicación. En su lugar, las tareas pesadas deben delegarse a `Web Workers` (en el navegador) o a `Worker Threads` (en Node.js) para que se ejecuten en hilos separados sin bloquear el `hilo principal`. Por lo que cabe mencionar que es recomendable usarlo generalmente para operaciones `I/O bound`, que son aquellas que pasan la mayor parte de su tiempo esperando por operaciones de entrada/salida, como solicitudes de red o acceso a bases de datos.
 
 ## Promesas.
 
@@ -162,7 +166,7 @@ Básicamente, lo que sucede es lo siguiente:
 
 1. El `hilo principal` (mediante el `call stack`) ejecuta de manera `síncrona` el `executor` de la promesa al momento de crearla. En esta etapa, la promesa puede iniciar operaciones asíncronas delegándolas al entorno de ejecución (por ejemplo, I/O, temporizadores o solicitudes de red).
 
-2. Cuando la promesa se resuelve (fulfilled) o se rechaza (rejected), no se ejecuta inmediatamente el `then`. En su lugar, el entorno de ejecución `encola el callback correspondiente como una microtask` en la `microtask queue`.
+2. Cuando la promesa se resuelve (fulfilled), no se ejecuta inmediatamente el `then`. En su lugar, el entorno de ejecución `encola el callback correspondiente como una microtask` en la `microtask queue`.
 
 3. Una vez que el `call stack queda vacío`, el `event loop procesa las microtasks pendientes` y ejecuta el callback del `then` en el `hilo principal`.
 
@@ -260,6 +264,8 @@ Básicamente, lo que sucede es lo siguiente:
 2. Cuando la promesa se resuelve (fulfilled) o se rechaza (rejected), no se ejecuta inmediatamente el `then` o el `catch`. En su lugar, el entorno de ejecución `encola el callback correspondiente como una microtask` en la `microtask queue`.
 
 3. Una vez que el `call stack queda vacío`, el `event loop procesa las microtasks pendientes` y ejecuta el callback del `then` o el `catch` en el `hilo principal`.
+
+<br/>
 
 <b>Ejemplo de uso del catch:</b>
 
@@ -964,8 +970,6 @@ Error: El estado del fetch es 404
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
 ```
 
-Lo que si, al ser `asíncronas`, no podemos saber cuál de los tres `fetchJsonData()` se va a imprimir primero.
-
 ### Errores comunes al trabajar con promesas.
 
 <b>Bloquear el hilo principal con una operación costosa:</b>
@@ -1009,13 +1013,29 @@ Microtask termina
 Timeout
 ```
 
+Siendo que se imprime de manera casi instantánea:
+
+```
+Inicio
+Executor de la promesa
+Fin
+Microtask empieza
+```
+
+Y luego de `5 segundos` se imprimirá:
+
+```
+Microtask termina
+Timeout
+```
+
 Notemos que el problema es que en el `then` estamos bloqueando el `hilo principal` con una operación costosa, lo que afecta la ejecución de otras tareas asíncronas. Sumado a que el `then` siempre se ejecutará antes que el `setTimeout`, ya que los `microtasks` tienen prioridad sobre los `macrotasks`.
 
 ## Async-await.
 
 El `async/await` es una sintaxis especial en JavaScript que permite trabajar con promesas de una manera más cómoda y legible. Se asemeja sintácticamente a la escritura de código síncrono, lo que facilita la comprensión y el mantenimiento del código. Sin embargo, el código resultante sigue siendo `asíncrono`, ya que `async/await` trabaja internamente con promesas y `no bloquea el hilo de ejecución` mientras espera que una promesa se resuelva o se rechace.
 
-El uso general de `async/await` implica marcar una función como `async` para indicar que `contiene código asincrónico` y luego usar la palabra clave `await` dentro de esa función para `esperar la resolución de una promesa`.
+El uso general de `async/await` implica marcar una función como `async` para indicar que `contiene código asincrónico` y luego usar la palabra clave `await` dentro de esa función para `esperar la resolución de una promesa` y obtener su valor resultante.
 
 ### Creando una función asíncrona usando el async.
 
@@ -1030,6 +1050,8 @@ const nombreFuncionAsync = async (/* Parámetros (opcional) */) => {
 ```
 
 Notese que estamos utilizando la palabra clave `async` para `definir la función asíncrona`. De esa manera, ahora podremos utilizar la palabra clave `await` dentro del cuerpo de la función asíncrona, de la cuál hablaremos en breve.
+
+También cabe aclarar que todas las funciones `async` siempre retornan `promesas`. Es decir que si dentro de la función asíncrona retornamos un valor simple, JavaScript lo que hará será envolver dicho valor en una promesa resuelta. Y si dentro de la función asíncrona retornamos una promesa, entonces dicha promesa será la que retorne la función asíncrona. Hablaremos de esto más adelante en la lección.
 
 `Consejo:` Se recomienda que el `nombre de las funciones asíncronas` termine con la palabra `Async` para especificar que es una función especial. Esto es más un consejo que una regla estricta.
 
@@ -1212,6 +1234,34 @@ const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
 
 Entonces el `nombreFuncionAsync` al ser `llamado` retornará una `promesa` que podrá `rechazarse` con el valor de `VALOR_ERROR` si la `condicionDeError` es `true`, o podrá `resolverse` con el valor de `VALOR_RETORNADO`.
 
+También podemos tener una función `async` que NO retorne ningún valor de la siguiente forma general:
+
+```javascript
+const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
+  // Cuerpo de la función async.
+
+  if (condicionDeError) {
+    throw VALOR_ERROR;
+  }
+
+  // No hay return.
+};
+```
+
+En este caso, el `nombreFuncionAsync` al ser `llamado` retornará una `promesa` que podrá `rechazarse` con el valor de `VALOR_ERROR` si la `condicionDeError` es `true`, o podrá `resolverse` con el valor de `undefined` si NO hay error.
+
+Y finalmente también podemos tener una función `async` que retorne una promesa de la siguiente forma general:
+
+```javascript
+const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
+  // Cuerpo de la función async.
+
+  return funcionQueRetornaPromesa();
+};
+```
+
+En este caso, el `nombreFuncionAsync` al ser `llamado` retornará la `promesa` retornada por la función `funcionQueRetornaPromesa()`. Es decir que si dicha promesa se `resuelve`, entonces la promesa retornada por la función `nombreFuncionAsync` también se `resuelve` con el mismo valor. Y si dicha promesa se `rechaza`, entonces la promesa retornada por la función `nombreFuncionAsync` también se `rechaza` con el mismo valor.
+
 ### Como funciona el async/await en el event loop.
 
 El `async/await` al ser en realidad una `sintaxis especial` para trabajar con promesas, funciona de la misma manera que las promesas en el `event loop`. Es decir que cuando se utiliza el `await` dentro de una función `async`, la ejecución de dicha función se `suspende` hasta que la promesa esperada se `resuelva` o se `rechace`. Durante ese tiempo, el `hilo principal` NO se bloquea y el `event loop` puede continuar ejecutando otras tareas. `Una vez que la promesa se resuelve o se rechaza`, la continuación de la función `async` (el código que sigue al `await`) se encola como una microtask. Esta microtask será ejecutada cuando el call stack quede vacío, antes de que el event loop procese cualquier macrotask, respetando el orden en el que las microtasks fueron encoladas.
@@ -1224,7 +1274,7 @@ Es decir que, el código en realidad de una función `async` se ejecuta de maner
 
 Así que lo que se hace con el `event loop` es organizar la manera en que las tareas pueden ejecutarse en el `hilo principal`, cediendo el control cuando es necesario para evitar bloqueos.
 
-Como es un enfoque colaborativo que requiere liberar el `call stack` de forma periódica, es importante que las funciones `async` no contengan operaciones costosas que bloqueen el `hilo principal`, ya que esto puede afectar la capacidad del `event loop` para procesar otras tareas y llevar a bloqueos. Estos problemas los veremos más adelante.
+Como es un enfoque colaborativo que requiere liberar el `call stack` de forma periódica, es importante que las funciones `async` no contengan operaciones costosas que bloqueen el `hilo principal` (como pueden ser operaciones `CPU Bound`), ya que esto puede afectar la capacidad del `event loop` para procesar otras tareas y llevar a bloqueos del `hilo principal`. Estos problemas los veremos más adelante.
 
 <br />
 
@@ -1456,7 +1506,7 @@ getResponse("https://jsonplaceholder.typicode.com/posts/1")
 
 <b>Dato súper importante:</b> 
 
-Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa, pero se ejecutará de manera `síncrona`. Es por eso que se llama `async/await`, ya que siempre intentaremos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
+Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa, pero todo el cuerpo de dicha función se ejecutará de manera `síncrona`. Es por eso que se llama `async/await`, ya que siempre intentaremos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
 
 A continuación veremos un ejemplo para mostrar que lo dicho previamente es cierto:
 
@@ -1484,6 +1534,96 @@ Después de llamar a funcionAsyncSinAwait
 ```
 
 Es decir que la información se imprime de manera `síncrona` debido a que `funcionAsyncSinAwait` NO contiene ningún `await` a una `promesa` en su cuerpo.
+
+### El riesgo de bloquear el `hilo principal`.
+
+Dado que en realiad el código de toda promesa se ejecutará en el `hilo principal` de JavaScript en algún momento, es importante tener cuidado de no escribir código que pueda bloquear dicho `hilo principal` por mucho tiempo, ya que esto haría que el event loop de JavaScript se vea afectado y no pueda seguir ejecutando otras tareas pendientes. 
+
+`Regla intuitiva que podemos seguir para saber si nuestro código puede bloquear el hilo principal`: Dado que el `event loop` podemos pensarlo como un enfoque colaborativo entonces en una `función asíncrona` debemos ceder el control del `hilo principal` cada cierto tiempo mediante el uso de un `await` dentro del cuerpo de dicha `función asíncrona` para que el event loop pueda seguir ejecutando otras tareas pendientes. Si en el código hay `bucles largos` o `operaciones largas` sin ningún tipo de `await` (es decir, `código síncrono` que haga operaciones que lleven tiempo), entonces es muy probable que el `hilo principal` se bloquee y el event loop no pueda seguir ejecutando otras tareas pendientes. El bloqueo puede ser momentáneo (por unos pocos milisegundos) o puede ser prolongado (varios segundos o minutos), dependiendo de la operación que estemos haciendo, también puede darse que el bloqueo sea indefinido (por ejemplo, un bucle infinito).
+
+A continuación veremos algunos casos típicos que pueden generar que el `hilo principal` se bloquee:
+
+1. **Bucles infinitos o muy largos sin pausas**: Si escribimos un bucle que nunca termina o que tarda mucho tiempo en completarse sin ningún tipo de pausa o espera, entonces el `hilo principal` quedará bloqueado hasta que dicho bucle termine. Esto se debe a que es código síncrono que se ejecuta en el `hilo principal` y no cede el control al event loop.
+
+    Por ejemplo, el siguiente código bloquearía el `hilo principal` de JavaScript:
+
+    ```javascript
+    const funcionAsyncBloqueante = async () => {
+      console.log("Inicio de la función bloqueante");
+
+      // Bucle infinito que bloqueará el hilo principal.
+      while (true) {
+        // Haciendo nada.
+      }
+    };
+
+    console.log("Antes de llamar a funcionAsyncBloqueante");
+
+    funcionAsyncBloqueante();
+
+    setInterval(() => {
+      console.log("Esto no se imprimirá nunca debido al bloqueo");
+    }, 1000);
+
+    console.log("Después de llamar a funcionAsyncBloqueante");
+    ```
+
+    Notemos que en este caso, el `setInterval` nunca podrá ejecutar su callback debido a que el `hilo principal` queda bloqueado por el bucle infinito dentro de la función `funcionAsyncBloqueante`. Notemos que en este ejemplo, el bloqueo del `hilo principal` es indefinido, ya que el bucle nunca termina.
+
+2. **Llamadas síncronas a funciones que bloquean**: Si llamamos a funciones síncronas que realizan operaciones de bloqueo (como operaciones de E/S síncronas) dentro de una función asíncrona sin ningún tipo de espera, entonces el `hilo principal` también quedará bloqueado hasta que dichas operaciones terminen.
+
+    Por ejemplo, el siguiente código bloquearía el `hilo principal` de JavaScript:
+
+    ```javascript
+    const fs = require('fs');
+
+    const funcionAsyncBloqueanteEYS = async () => {
+      console.log("Inicio de la función bloqueante de E/S");
+
+      // Operación de E/S síncrona que bloqueará el hilo principal.
+      const data = fs.readFileSync('/path/to/large/file.txt', 'utf-8');
+
+      console.log("Datos leídos:", data);
+    };
+
+    console.log("Antes de llamar a funcionAsyncBloqueanteEYS");
+
+    funcionAsyncBloqueanteEYS();
+
+    setInterval(() => {
+      console.log("Esto se imprimirá después de que termine la operación de E/S");
+    }, 1000);
+
+    console.log("Después de llamar a funcionAsyncBloqueanteEYS");
+    ```
+
+    Notemos que en este caso, el `setInterval` solo podrá ejecutar su callback después de que la operación de E/S síncrona dentro de la función `funcionAsyncBloqueanteEYS` termine, lo que puede tardar mucho tiempo. El bloqueo del `hilo principal` en este caso es momentáneo, pero puede ser prolongado dependiendo del tamaño del archivo que se esté leyendo.
+
+    `Para poder evitar este tipo de bloqueos, es recomendable utilizar funciones asíncronas siempre que sea posible en lugar de funciones síncronas que bloqueen el hilo principal.`
+
+    En este caso el código podría reescribirse de la siguiente forma para evitar el bloqueo:
+
+    ```javascript
+    const fs = require('fs').promises;
+
+    const funcionAsyncNoBloqueanteEYS = async () => {
+      console.log("Inicio de la función no bloqueante de E/S");
+
+      // Operación de E/S asíncrona que NO bloqueará el hilo principal.
+      const data = await fs.readFile('/path/to/large/file.txt', 'utf-8');
+
+      console.log("Datos leídos:", data);
+    };
+
+    console.log("Antes de llamar a funcionAsyncNoBloqueanteEYS");
+    funcionAsyncNoBloqueanteEYS();
+    setInterval(() => {
+      console.log("Esto se imprimirá mientras se lee el archivo");
+    }, 1000);
+    console.log("Después de llamar a funcionAsyncNoBloqueanteEYS");
+    ```
+
+    De esta forma, el `setInterval` podrá ejecutar su callback mientras se está leyendo el archivo, ya que la operación de E/S es asíncrona y no bloquea el `hilo principal`.
 
 ### El `for await...of`.
 
