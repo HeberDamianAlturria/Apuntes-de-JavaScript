@@ -64,6 +64,8 @@ Y hay que pensar al `event loop` como un enfoque cooperativo en donde tanto cód
 
 Esto significa que el `event loop` NO está pensado para ejecutar tareas pesadas o de larga duración en el `hilo principal` como pueden ser tareas `CPU bound`, ya que eso bloquearía la capacidad de respuesta de la aplicación. En su lugar, las tareas pesadas deben delegarse a `Web Workers` (en el navegador) o a `Worker Threads` (en Node.js) para que se ejecuten en hilos separados sin bloquear el `hilo principal`. Por lo que cabe mencionar que es recomendable usarlo generalmente para operaciones `I/O bound`, que son aquellas que pasan la mayor parte de su tiempo esperando por operaciones de entrada/salida, como solicitudes de red o acceso a bases de datos.
 
+`Nuestra meta al escribir código asíncrono en JavaScript debe ser siempre evitar bloquear el hilo principal de ejecución.`
+
 ## Promesas.
 
 Las `promesas` (también llamadas `promises`) son un `objeto` especial de JavaScript, el cuál es utilizado para trabajar de una manera cómoda el `asincronismo`. 
