@@ -8,13 +8,15 @@ En esta lección aprenderemos las bases del asíncronismo en JavaScript, para qu
 
 El código `síncrono` es aquel que se ejecuta de forma secuencial, línea por línea, en el orden en que aparece en el archivo fuente. Notemos que todo el código que hemos estado escribiendo hasta el momento ha sido `síncrono`, ya que podíamos leer el código línea por línea desde el principio del archivo hasta el final, y de esa manera comprender como se ejecutaba. 
 
-En el código `síncrono`, cada instrucción espera a que la anterior se complete antes de ejecutarse. Esto significa que si una operación es lenta o bloqueante, puede hacer que todo el programa se detenga hasta que se complete esa operación. Esta característica puede ser problemática, ya que existen operaciones que son necesarias pero que demandan mucho tiempo, por lo que si nuestro código es `síncrono`, no podría seguir haciendo otras tareas mientra espera que dichas tareas costosas se ejecuten en segundo plano.
+En el código `síncrono`, cada instrucción espera a que la anterior se complete antes de ejecutarse. Esto significa que si una operación es lenta o bloqueante (como por ejemplo esperar alguna respuesta de una base de datos), puede hacer que todo el programa se detenga hasta que se complete esa operación lo que genera tiempos muertos que podrías aprovechar para otras tareas. Esta característica puede ser problemática, ya que existen operaciones que son necesarias pero que demandan mucho tiempo, por lo que si nuestro código es `síncrono`, no podría seguir haciendo otras tareas mientras espera que dichas tareas costosas se ejecuten en segundo plano.
 
-## ¿Qué es el código asíncrono?
+## ¿Qué es el código asíncrono y cómo funciona en JavaScript?
 
 El código `asíncrono`, por otro lado, no espera a que una operación se complete antes de pasar a la siguiente. En lugar de eso, delega las operaciones lentas o bloqueantes a segundo plano y continúa ejecutando el resto del código.
 
-En JavaScript, lo que sucederá es que el código se ejecutará en el `Thread principal` (también llamado `hilo principal`) de manera `síncrona`. Entonces, cuando el `Thread principal` debe realizar una tarea `asíncrona`, lo que hará será delegarla a un `Thread secundario`. Mientras dicha tarea `asíncrona` es procesada en el `Thread secundario`, el `Thread principal` no espera su finalización y continúa procesando de manera síncrona las líneas de código siguiente. Cuando una tarea `asincrónica` se completa, su resultado se comunica de vuelta al `hilo principal`. Esto puede ser a través de mecanismos como `callbacks`, `promesas` o `async/await`.
+Dado que JavaScript es un lenguaje de programación `Single-Threaded` (es decir, que solo tiene un `hilo principal de ejecución`) y también es `síncrono`, entonces el `asincronismo` en JavaScript se maneja mediante un modelo basado en `event loop` (bucle de eventos) y `callbacks` (funciones de retorno). Esto permite que JavaScript realice operaciones `asíncronas` sin bloquear el `hilo principal` de ejecución.
+
+
 
 ## Casos de uso del asíncronismo.
 
@@ -29,6 +31,34 @@ El asincronismo es fundamental en JavaScript y se utiliza en una variedad de sit
 
 4. `Eventos`: El asincronismo se utiliza para manejar eventos del usuario, como clics de ratón y pulsaciones de teclas. Notemos que es crucial la no bloquear el `hilo principal` en estos casos, ya que sino al generar un evento, el resto del sitio web estaría bloqueado hasta que se termine de procesar dicho evento. 
 
+## El event loop.
+
+Si bien mi objetivo no es explicar en profundidad el `event loop`, sí quiero dar una explicación básica para que podamos entender como funciona el asincronismo en JavaScript. Lo cierto es que luego no vamos a necesitar al 100% entender el `event loop` para trabajar con asincronismo, pero sí es importante tener una idea general de como funciona para evitar errores comunes.
+
+El `event loop` es un mecanismo que permite a JavaScript manejar operaciones `asíncronas` de manera eficiente, sin bloquear el hilo principal de ejecución. Para lograrlo, JavaScript NO ejecuta directamente las operaciones que requieren espera (como I/O, temporizadores o solicitudes de red), sino que `delegada su gestión al entorno de ejecución (por ejemplo, el navegador o Node.js)` y solo ejecuta sus continuaciones cuando ya no es necesario esperar. El funcionamiento del event loop se apoya en las siguientes partes principales:
+
+- `Call stack`: Es una estructura de datos tipo stack (LIFO) que contiene los contextos de ejecución de las funciones que se están ejecutando en el `hilo principal`. Cada vez que se invoca una función, su contexto se agrega a la stack, y se elimina cuando la función finaliza. La ejecuciones de las funciones en el `call stack` son `síncronas`.
+
+- `APIs del entorno de ejecución (Web APIs / Node.js APIs)`: Son operaciones `asíncronas` que se ejecutan en segundo plano, fuera del `hilo principal`. Estas tareas pueden incluir operaciones de I/O, temporizadores, solicitudes de red, entre otras. CCuando una de estas operaciones se completa, el entorno de ejecución encola una tarea en la task queue o una microtask, según el mecanismo utilizado (callbacks o Promises).
+
+- `Microtask queue` (Cola de microtareas): Es una estructura de datos tipo queue (FIFO) que almacena tareas pequeñas y rápidas (microtasks) que deben ejecutarse después de que el `call stack` esté vacío, pero `antes de que se procesen las macrotasks`. Las microtasks incluyen cosas como las resoluciones de promesas y los callbacks de `MutationObserver`. Estas tareas se ejecutan en el hilo principal inmediatamente después de que el `call stack` esté vacío. Incluye, entre otras cosas, las `resoluciones de Promises` y las `continuaciones de async/await`. Todas las microtasks pendientes se ejecutan en una misma iteración del event loop.
+
+- `Task queue` (Cola de tareas): Es una estructura de datos tipo queue (FIFO) que almacena tareas (llamadas `macrotasks`) listas para ser ejecutadas, generalmente originadas por ciertas operaciones asíncronas como temporizadores, eventos del usuario o callbacks de I/O. Estas tareas se ejecutan en el hilo principal únicamente cuando el `call stack está vacío` y `después de que se hayan procesado todas las microtasks pendientes`, siendo ejecutadas de a una por iteración del event loop.
+
+De esta manera, el `event loop` funciona de la siguiente forma general:
+
+1. El `hilo principal` ejecuta las funciones en el `call stack` de manera `síncrona`.
+2. Cuando el `call stack` está vacío, el `event loop` primero procesa todas las `microtasks` en la `microtask queue`, ejecutándolas una por una hasta que la cola esté vacía.
+3. Luego, el `event loop` toma la siguiente `macrotask` de la `task queue` y la ejecuta en el `hilo principal`.
+4. Este proceso se repite continuamente, permitiendo que JavaScript maneje operaciones `asíncronas` sin bloquear el `hilo principal`.
+
+### Regla de oro del event loop.
+
+Una regla de oro para entender el `event loop` es la siguiente:
+
+`Las resoluciones de Promises, incluidas las continuaciones de async/await, siempre se encolan como microtasks cuando la promesa esperada se resuelve o se rechaza.`
+
+Y hay que pensar al `event loop` como un enfoque cooperativo en donde tanto códigos `síncronos` como `asíncronos` se `turnan` para ejecutarse en el `hilo principal`. Por lo que hay que tener cuidado de no tener operaciones costosas ya que eso bloquearía el `hilo principal` generando que el `event loop` no pueda procesar tareas asíncronas pendientes ni ejecutar nuevo código, lo que provoca bloqueos y pérdida de capacidad de respuesta.
 
 ## Promesas.
 
@@ -124,15 +154,17 @@ const nuevaPromesa = new Promise((resolve, reject) => {
 
 Notese que el cuerpo del `executor` puede ser más complejo, pero lo simplificamos para explicar como funciona el `then`. En esta forma general, el valor de `resultadoResolved` será el de `ALGUN_VALOR`, ya que se resolvió con ese valor la promesa al hacer `resolve(ALGUN_VALOR);`.
 
-<b>Dato importantísimo:</b>
+<b>Dato importantísimo de como esto funciona con el event loop:</b>
 
-El `then` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `then` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+El método `then` se ejecuta de manera `asíncrona`, lo que significa que su función de callback no se ejecuta inmediatamente, sino que se programa para ejecutarse más adelante por medio del `event loop`.
 
 Básicamente, lo que sucede es lo siguiente:
 
-1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+1. El `hilo principal` (mediante el `call stack`) ejecuta de manera `síncrona` el `executor` de la promesa al momento de crearla. En esta etapa, la promesa puede iniciar operaciones asíncronas delegándolas al entorno de ejecución (por ejemplo, I/O, temporizadores o solicitudes de red).
 
-2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+2. Cuando la promesa se resuelve (fulfilled) o se rechaza (rejected), no se ejecuta inmediatamente el `then`. En su lugar, el entorno de ejecución `encola el callback correspondiente como una microtask` en la `microtask queue`.
+
+3. Una vez que el `call stack queda vacío`, el `event loop procesa las microtasks pendientes` y ejecuta el callback del `then` en el `hilo principal`.
 
 Todavía nos faltaría saber que pasa cuando una promesa es `rejected`, pero pronto lo averiguaremos.
 
@@ -159,6 +191,14 @@ Todo sale bien
 ```
 
 Y como se puede observar, valor de `value` ha sido `Todo sale bien`, ya que la promesa se resuelve como `resolve("Todo sale bien")`. Además, también podemos notar que el `then` se ejecuta de manera `asíncrona`, ya que es el último mensaje en ser mostrado en pantalla.
+
+De manera un poco más formal, el orden de ejecución es el siguiente:
+
+1. Se imprime `Antes de crear la promesa.` en el `hilo principal`.
+2. Se crea la promesa y se ejecuta el `executor` de manera `síncrona`, llamando a `resolve("Todo sale bien")`.
+3. La promesa se resuelve y el callback del `then` se encola como una `microtask`.
+4. Se imprime `Después de haber creado la promesa.` en el `hilo principal`.
+5. El `event loop` procesa la `microtask queue` y ejecuta el callback del `then`, imprimiendo `Todo sale bien`.
 
 ### El método catch.
 
@@ -211,15 +251,15 @@ Obviamente, si la promesa ha sido `resolved`, entonces se ejecutará el `then` y
 
 <b>Dato importantísimo:</b>
 
-El `catch` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `catch` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+El `catch` se va comporta de manera similar al `then`, lo que significa que se ejecuta de manera `asíncrona`, lo que significa que su función de callback no se ejecuta inmediatamente, sino que se programa para ejecutarse más adelante por medio del `event loop`.
 
 Básicamente, lo que sucede es lo siguiente:
 
-1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+1. El `hilo principal` (mediante el `call stack`) ejecuta de manera `síncrona` el `executor` de la promesa al momento de crearla. En esta etapa, la promesa puede iniciar operaciones asíncronas delegándolas al entorno de ejecución (por ejemplo, I/O, temporizadores o solicitudes de red).
 
-2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+2. Cuando la promesa se resuelve (fulfilled) o se rechaza (rejected), no se ejecuta inmediatamente el `then` o el `catch`. En su lugar, el entorno de ejecución `encola el callback correspondiente como una microtask` en la `microtask queue`.
 
-3. Si la promesa es `rejected`, entonces en el `thread secundario` se ejecutará el `catch`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `catch` de la promesa.
+3. Una vez que el `call stack queda vacío`, el `event loop procesa las microtasks pendientes` y ejecuta el callback del `then` o el `catch` en el `hilo principal`.
 
 <b>Ejemplo de uso del catch:</b>
 
@@ -342,17 +382,21 @@ Generalmente, el método `finally` es utilizado para hacer algún tipo de limpie
 
 <b>Dato importantísimo:</b>
 
-El `finally` se va a ejecutar de manera `asíncrona`, lo que significa que la función de callback que le pasemos como argumento al `finally` se va a ejecutar en un `thread secundario` para evitar que el `thread principal` se bloquee.
+El método `finally` se ejecuta de manera `asíncrona`, lo que significa que la función de callback que se le pasa no se ejecuta inmediatamente, sino que se programa para ejecutarse más adelante a través del `event loop`.
 
 Básicamente, lo que sucede es lo siguiente:
 
-1. el `thread principal` ejecuta de manera `síncrona` el `executor` de la promesa para poder crearla y delegarla a un `thread secundario`.
+1. El `hilo principal` ejecuta de manera `síncrona` el `executor` de la promesa al momento de crearla. Durante esta ejecución, la promesa puede iniciar operaciones asíncronas delegándolas al entorno de ejecución (por ejemplo, temporizadores, I/O o solicitudes de red).
 
-2. Una vez creada, si la promesa es `resolved`, entonces en el `thread secundario` se ejecutará el `then`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `then` de la promesa.
+2. Una vez creada la promesa, si esta es `fulfilled` (resuelta), el callback registrado con `then` no se ejecuta inmediatamente. En su lugar, se encola como una `microtask` en la `microtask queue`.
 
-3. Si la promesa es `rejected`, entonces en el `thread secundario` se ejecutará el `catch`. Es por esto que decimos que es `asíncrono`, ya que el `thread principal` seguirá ejecutando otras líneas de código mientras que el `thread secundario` ejecutará el `catch` de la promesa.
+3. Si la promesa es `rejected` (rechazada), el callback registrado con `catch` también se encola como una `microtask` en la `microtask queue`.
 
-4. Sin importar de si la promesa ha sido `resolved` o `rejected`, en el `thread secundario` se ejecutará el `finally`.
+4. Independientemente de si la promesa fue `fulfilled` o `rejected`, el callback registrado con `finally` se encola como una `microtask` y se ejecuta después de los callbacks correspondientes de `then` o `catch`, siempre en el `hilo principal`.
+
+5. Cuando el `call stack` queda vacío, el `event loop` procesa todas las `microtasks` pendientes y ejecuta los callbacks de `then`, `catch` y `finally` en el orden correspondiente.
+
+De esta forma, `then`, `catch` y `finally` se ejecutan de manera asíncrona sin bloquear el `hilo principal`, pero siempre dentro del mismo hilo de ejecución.
 
 <b>Ejemplo:</b>
 
@@ -396,6 +440,15 @@ La promesa ha terminado
 ```
 
 Y notemos que sin importar si la promesa se resolvió o se rechazó, el mensaje del `finally` siempre se imprime al final.
+
+A nivel del `event loop`, el orden de ejecución es el siguiente:
+
+1. Se imprime `Antes de crear la promesa.` en el `hilo principal`.
+2. Se crea la promesa y se ejecuta el `executor` de manera `síncrona`, decidiendo si resolver o rechazar la promesa según el valor aleatorio.
+3. Dependiendo de si la promesa fue `resolved` o `rejected`, el callback correspondiente de `then` o `catch` se encola como una `microtask`.
+4. Independientemente del resultado, el callback de `finally` también se encola como una `microtask`.
+5. Se imprime `Después de haber creado la promesa.` en el `hilo principal`.
+6. El `event loop` procesa la `microtask queue`, ejecutando primero el callback de `then` o `catch`, seguido del callback de `finally`.
 
 ### Encadenamiento de métodos then.
 
@@ -913,13 +966,50 @@ Error: El estado del fetch es 404
 
 Lo que si, al ser `asíncronas`, no podemos saber cuál de los tres `fetchJsonData()` se va a imprimir primero.
 
-### Dato importante para concluir:
+### Errores comunes al trabajar con promesas.
 
-el `executor` de una `Promise` se ejecutará de manera `síncrona`, pero los `then`, `catch` y `finally` se ejecutarán de manera `asíncrona`. 
+<b>Bloquear el hilo principal con una operación costosa:</b>
 
-Notese entonces que los dicha previamente me está indicando que el `executor` de una `Promise` generalmente deberá ser usado para comprobar ciertas precondiciones, pero NO debe realizar operaciones costosas por que trabajan de manera `síncrona`. Las operaciones interesantes y costosas deberán hacerse en el `then`, el `catch` o el `finally`, ya que esos si trabajan de manera `asíncrona`.
+Dado que el `event loop` depende de que el `hilo principal` esté libre para procesar las `microtasks` y `macrotasks`, si realizas una operación costosa (como un bucle intensivo o cálculos pesados) en el `hilo principal`, puedes bloquear el `event loop`. Esto puede causar que las promesas no se resuelvan o rechacen a tiempo, afectando la experiencia del usuario. Notese que esta operación costosa no tiene que ver con las promesas en sí, sino con el hecho de que el `hilo principal` esté ocupado y puede darse por ejemplo en un `then`, `catch` o `finally` o también fuera de ellos.
 
-Además, cabe mencionar que cuando tenemos dos o más promesas, al ser `asíncronas`, nos es imposible deducir cuál terminará primero. Es más, puede que en una ejecución una termine antes que la otra y en la siguiente ejecución pase el revés.
+A continuación un ejemplo de este error común:
+
+```javascript
+console.log("Inicio");
+
+const miPromesa = new Promise((resolve, reject) => {
+  console.log("Executor de la promesa");
+  resolve();
+}).then(() => {
+  console.log("Microtask empieza");
+
+  const start = Date.now();
+  while (Date.now() - start < 5000) {
+    // busy wait 5 segundos
+  }
+
+  console.log("Microtask termina");
+});
+
+setTimeout(() => {
+  console.log("Timeout");
+}, 0); // Macrotask that should run after microtasks.
+
+console.log("Fin");
+```
+
+En este ejemplo, la operación costosa (el bucle `while` que dura 5 segundos) bloquea el `hilo principal`, lo que impide que el `event loop` procese otras tareas, incluyendo el `setTimeout`. Como resultado, la salida será:
+
+```
+Inicio
+Executor de la promesa
+Fin
+Microtask empieza
+Microtask termina
+Timeout
+```
+
+Notemos que el problema es que en el `then` estamos bloqueando el `hilo principal` con una operación costosa, lo que afecta la ejecución de otras tareas asíncronas. Sumado a que el `then` siempre se ejecutará antes que el `setTimeout`, ya que los `microtasks` tienen prioridad sobre los `macrotasks`.
 
 ## Async-await.
 
@@ -945,7 +1035,7 @@ Notese que estamos utilizando la palabra clave `async` para `definir la función
 
 ### Usando await en una función asíncrona.
 
-Dentro de una `función asíncrona` marcada como `async`, puedes usar la palabra clave `await`, la cuál se encargará de `pausar la ejecución de la función asíncrona y esperar que una promesa se resuelva o se rechace antes de continuar`. 
+Dentro de una `función asíncrona` marcada como `async`, puedes usar la palabra clave `await`, la cuál se encargará de `suspender la ejecución de la función asíncrona y registra su continuación para que se ejecute más adelante, una vez que la promesa se resuelva o se rechace.`. Durante ese tiempo, el `hilo principal` NO se bloquea y el `event loop` puede continuar ejecutando otras tareas.
 
 Podemos utilizar el `await` de las siguientes maneras:
 
@@ -1122,11 +1212,25 @@ const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
 
 Entonces el `nombreFuncionAsync` al ser `llamado` retornará una `promesa` que podrá `rechazarse` con el valor de `VALOR_ERROR` si la `condicionDeError` es `true`, o podrá `resolverse` con el valor de `VALOR_RETORNADO`.
 
+### Como funciona el async/await en el event loop.
+
+El `async/await` al ser en realidad una `sintaxis especial` para trabajar con promesas, funciona de la misma manera que las promesas en el `event loop`. Es decir que cuando se utiliza el `await` dentro de una función `async`, la ejecución de dicha función se `suspende` hasta que la promesa esperada se `resuelva` o se `rechace`. Durante ese tiempo, el `hilo principal` NO se bloquea y el `event loop` puede continuar ejecutando otras tareas. `Una vez que la promesa se resuelve o se rechaza`, la continuación de la función `async` (el código que sigue al `await`) se encola como una microtask. Esta microtask será ejecutada cuando el call stack quede vacío, antes de que el event loop procese cualquier macrotask, respetando el orden en el que las microtasks fueron encoladas.
+
+### Explicación mucho más simple de como funciona el async/await.
+
+Con respecto al `async/await`, podemos imaginarnos al `event loop` como un enfoque colaborativo que requiere que se le seda el acceso al `call stack` de forma periódica. Cuando una función `async` encuentra un `await`, la ejecución de esa función se `suspende` y `cede temporalmente` el control al `event loop`, permitiendo que otras tareas continúen ejecutándose en el `call stack`.
+
+Es decir que, el código en realidad de una función `async` se ejecuta de manera `síncrona` dentrol del `call stack` hasta que encuentra un `await`. En ese momento, la función `async` `cede el control` al `event loop`, y la ejecución de la función `async` se `suspende` hasta que la promesa esperada se `resuelva` o se `rechace`. Durante ese tiempo, el `hilo principal` NO se bloquea y el `event loop` puede continuar ejecutando otras tareas.
+
+Así que lo que se hace con el `event loop` es organizar la manera en que las tareas pueden ejecutarse en el `hilo principal`, cediendo el control cuando es necesario para evitar bloqueos.
+
+Como es un enfoque colaborativo que requiere liberar el `call stack` de forma periódica, es importante que las funciones `async` no contengan operaciones costosas que bloqueen el `hilo principal`, ya que esto puede afectar la capacidad del `event loop` para procesar otras tareas y llevar a bloqueos. Estos problemas los veremos más adelante.
+
 <br />
 
 <b>Forma general de llamar a una función async sin esperar a que se resulva o se rechace:</b>
 
-Esto tendrá sentido hacerlo generalmente para la `funciones async` que no retornen ningún valor y que no salten ningún error. Lo que haremos será llamar a dicha función async sin esperar a que se resulvan o se rechacen, para que el código se ejecute en un `hilo secundario` y evitar bloquear el `hilo principal`. Esto podemos hacerlo de la siguiente forma general:
+Esto tendrá sentido hacerlo generalmente para la `funciones async` que no retornen ningún valor y que no salten ningún error. Lo que haremos será llamar a dicha función async sin esperar a que se resulvan o se rechacen, para que el código se ejecute en un `futuro` y evitar bloquear el `hilo principal`. Esto podemos hacerlo de la siguiente forma general:
 
 ```javascript
 const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
@@ -1140,7 +1244,7 @@ const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
 nombreFuncionAsync(/* Argumentos (opcional) */);
 ```
 
-De esa manera, podremos ejecutar el `nombreFuncionAsync` en un `hilo secundario` y eviatar bloquear el `hilo principal`.
+De esa manera, podremos ejecutar el `nombreFuncionAsync` en un `futuro` y eviatar bloquear el `hilo principal`.
 
 A continuación veremos un ejemplo:
 
@@ -1207,7 +1311,7 @@ const nombreFuncionAsync = async (/* Parametros (opcional) */) => {
 
   } catch (error) {
 
-    // Código por si la promesa fue rechazada.
+    // Código por si la promesa fue rechazada o hubo un error.
 
   } 
 
@@ -1314,7 +1418,7 @@ nombreFuncionAsyncLlamada(/* Argumentos (opcional) */)
   });
 ```
 
-De esa manera, podremos ejecutar el `nombreFuncionAsyncLlamada` en un `hilo secundario` sin bloquear el `hilo principal`. Aunque esta sintáxis no la utilicemos casi nunca, es interesante saber que existe, ya que demuestra que siempre las `funciones async` retornan una `promesa`.
+Aunque esta sintáxis no la utilicemos casi nunca, es interesante saber que existe, ya que demuestra que siempre las `funciones async` retornan una `promesa`.
 
 A continuación veremos un ejemplo sencillo de esto:
 
@@ -1352,7 +1456,7 @@ getResponse("https://jsonplaceholder.typicode.com/posts/1")
 
 <b>Dato súper importante:</b> 
 
-Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa. Esto significa que podremos utilizar el `then/catch/finally` en la promesa devuelta por la `función async` una vez que la llamemos, lo cuál si se ejecutaría de manera `asíncrona`. También podemos en el cuerpo de una `función async` usar el `then/catch/finally` para manejar una `promesa`, sin necesidad del `await` y hacerlo que se ejecute de manera `asíncrona`. Pero si no se usa ninguno de estos "Trucos", entonces una función `async` sin un `await a una promesa`, va a ejecutarse de manera `síncrona`; es decir que, en este caso, para que una función `async` se ejecute de manera `asíncrona`, debe contener `al menos` un `await a una promesa`. Es por eso que se llama `async/await`, ya que siempre debemos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
+Es importante recordar que incluso si la función `async` no contiene ninguna expresión `await a una promesa`, seguirá devolviendo una promesa, pero se ejecutará de manera `síncrona`. Es por eso que se llama `async/await`, ya que siempre intentaremos usar tanto la palabra `async` para definir a la función asíncrona, como el `await` para esperar a las promesas.
 
 A continuación veremos un ejemplo para mostrar que lo dicho previamente es cierto:
 
@@ -1417,6 +1521,12 @@ try {
 
 También es posible utilizar el `try/catch/finally` si nos fuese necesario.
 
+#### Aclaración sobre el `for await...of`.
+
+Cabe mencionar que siempre que tengamos una función del tipo `async function*` (es decir, una `función generadora asíncrona`), podremos utilizar el `for await...of` para iterar sobre los valores que vaya generando dicha función. Pero como las `funciones generadoras asíncronas` generan `AsyncIterable`, entonces nunca podremos utilizar el `for...of` normal para iterar sobre ellas, sino que siempre deberemos utilizar el `for await...of`.
+
+También es posible utilizar el `for await...of` con cualquier objeto que implemente el protocolo `AsyncIterable`, como puede ser un `arreglo de promesas`.
+
 #### Ejemplo de uso del `for await...of`.
 
 A continuación veremos un ejemplo sencillo de como utilizar el `for await...of`:
@@ -1440,14 +1550,27 @@ async function* searchCharactersGenerator(initialId, toEndId) {
   let id = initialId;
 
   while (id <= toEndId) {
-    yield await fetchCharacterByIdAsync(id);
+    try {
+      const character = await fetchCharacterByIdAsync(id);
+      yield character;
+    } catch (error) {
+      // Yield an error object instead of throwing the error.
+      yield {
+        id,
+        error: true,
+        message: error.message,
+      };
+    }
     id++;
   }
 }
 
 const fetchRangeOfCharacters = async (initialId, toEndId) => {
   try {
-    for await (const characterInfo of searchCharactersGenerator(initialId, toEndId)) {
+    for await (const characterInfo of searchCharactersGenerator(
+      initialId,
+      toEndId
+    )) {
       console.log(characterInfo);
     }
   } catch (error) {
@@ -1467,7 +1590,7 @@ Y, si todo sale bien, esto imprimiría por consola lo siguiente:
 
 #### Diferencias entre `for await...of` y `Promise.all`.
 
-La principal diferencia entre ambos es que el `Promise.all` se utiliza para esperar a que todas las promesas se resuelva `en paralelo`, en cambio `for await...of` se utiliza para poder esperar a que las promesas se resuelvan de una en una en `secuencia`.
+La principal diferencia entre ambos es que el `Promise.all` se utiliza para esperar a que todas las promesas se resuelva `en paralelo` resolviéndose todas juntas, en cambio `for await...of` permite `consumir los resultados de manera secuencial`, esperando cada valor antes de continuar con la siguiente iteración.
 
 ## Top-level await.
 
