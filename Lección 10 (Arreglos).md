@@ -501,7 +501,7 @@ const arregloResultante = ARRAY_1.concat(ARRAY_2, ARRAY_3, ..., ARRAY_N);
 
 El `spread operator` puede ser utilizado para otros tipos de objetos. En este caso, nos enfocaremos exclusivamente en su uso para arreglos.
 
-El operador `spread` es utilizado para expandir los elementos de un `arreglo`. Supongamos que tenemos un arreglo llamado `ARRAY` que es igual a `[ELEM_1, ELEM_2, ..., ELEM_n]` entonces el operador `spread` se escribe como `...ARRAY` y da como resultando `ELEM_1, ELEM_2, ..., ELEM_n`, por lo que podemos pensar que el operador `spread` le quita los `[]` al `ARRAY` para dejar solamente los elementos que lo conforman.
+El operador `spread` es utilizado para `expandir los elementos de un arreglo dentro de un contexto que permita expansión`. Supongamos que tenemos un arreglo llamado `ARRAY` que es igual a `[ELEM_1, ELEM_2, ..., ELEM_n]` entonces el operador `spread` se escribe como `...ARRAY` y da como resultando `ELEM_1, ELEM_2, ..., ELEM_n`, por lo que podemos pensar de manera conceptual que el operador `spread` le quita los `[]` al `ARRAY` para dejar solamente los elementos que lo conforman. Como ya he mencionado, esto es válido solo dentro de un contexto que permita expansión, como por ejemplo dentro de una función que reciba múltiples argumentos, o dentro de los `[]` para crear un nuevo arreglo, etc.
 
 A continuación veremos una serie de usos que podemos darle al operador `spread`:
 
